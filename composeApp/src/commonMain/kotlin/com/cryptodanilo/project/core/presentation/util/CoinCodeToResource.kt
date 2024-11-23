@@ -1,0 +1,1347 @@
+package com.cryptodanilo.project.core.presentation.util
+
+import cryptotrackerdanilo.composeapp.generated.resources.Res
+import cryptotrackerdanilo.composeapp.generated.resources._inch
+import cryptotrackerdanilo.composeapp.generated.resources._st
+import cryptotrackerdanilo.composeapp.generated.resources._xbtc
+import cryptotrackerdanilo.composeapp.generated.resources.aave
+import cryptotrackerdanilo.composeapp.generated.resources.abbc
+import cryptotrackerdanilo.composeapp.generated.resources.abt
+import cryptotrackerdanilo.composeapp.generated.resources.ac3
+import cryptotrackerdanilo.composeapp.generated.resources.act
+import cryptotrackerdanilo.composeapp.generated.resources.ada
+import cryptotrackerdanilo.composeapp.generated.resources.adb
+import cryptotrackerdanilo.composeapp.generated.resources.adx
+import cryptotrackerdanilo.composeapp.generated.resources.ae
+import cryptotrackerdanilo.composeapp.generated.resources.aeon
+import cryptotrackerdanilo.composeapp.generated.resources.aergo
+import cryptotrackerdanilo.composeapp.generated.resources.agi
+import cryptotrackerdanilo.composeapp.generated.resources.aion
+import cryptotrackerdanilo.composeapp.generated.resources.ait
+import cryptotrackerdanilo.composeapp.generated.resources.akro
+import cryptotrackerdanilo.composeapp.generated.resources.akt
+import cryptotrackerdanilo.composeapp.generated.resources.alcx
+import cryptotrackerdanilo.composeapp.generated.resources.aleph
+import cryptotrackerdanilo.composeapp.generated.resources.algo
+import cryptotrackerdanilo.composeapp.generated.resources.alis
+import cryptotrackerdanilo.composeapp.generated.resources.alpha
+import cryptotrackerdanilo.composeapp.generated.resources.alx
+import cryptotrackerdanilo.composeapp.generated.resources.amb
+import cryptotrackerdanilo.composeapp.generated.resources.amlt
+import cryptotrackerdanilo.composeapp.generated.resources.amp
+import cryptotrackerdanilo.composeapp.generated.resources.ampl
+import cryptotrackerdanilo.composeapp.generated.resources.anc
+import cryptotrackerdanilo.composeapp.generated.resources.anj
+import cryptotrackerdanilo.composeapp.generated.resources.ankr
+import cryptotrackerdanilo.composeapp.generated.resources.ant
+import cryptotrackerdanilo.composeapp.generated.resources.aph
+import cryptotrackerdanilo.composeapp.generated.resources.apl
+import cryptotrackerdanilo.composeapp.generated.resources.appc
+import cryptotrackerdanilo.composeapp.generated.resources.apw
+import cryptotrackerdanilo.composeapp.generated.resources.apy
+import cryptotrackerdanilo.composeapp.generated.resources.ar
+import cryptotrackerdanilo.composeapp.generated.resources.ardr
+import cryptotrackerdanilo.composeapp.generated.resources.ark
+import cryptotrackerdanilo.composeapp.generated.resources.armor
+import cryptotrackerdanilo.composeapp.generated.resources.arn
+import cryptotrackerdanilo.composeapp.generated.resources.aro
+import cryptotrackerdanilo.composeapp.generated.resources.arrr
+import cryptotrackerdanilo.composeapp.generated.resources.ast
+import cryptotrackerdanilo.composeapp.generated.resources.atmi
+import cryptotrackerdanilo.composeapp.generated.resources.atom
+import cryptotrackerdanilo.composeapp.generated.resources.auc
+import cryptotrackerdanilo.composeapp.generated.resources.aura
+import cryptotrackerdanilo.composeapp.generated.resources.auto
+import cryptotrackerdanilo.composeapp.generated.resources.avax
+import cryptotrackerdanilo.composeapp.generated.resources.awc
+import cryptotrackerdanilo.composeapp.generated.resources.axp
+import cryptotrackerdanilo.composeapp.generated.resources.bac
+import cryptotrackerdanilo.composeapp.generated.resources.bal
+import cryptotrackerdanilo.composeapp.generated.resources.band
+import cryptotrackerdanilo.composeapp.generated.resources.bao
+import cryptotrackerdanilo.composeapp.generated.resources.bat
+import cryptotrackerdanilo.composeapp.generated.resources.bay
+import cryptotrackerdanilo.composeapp.generated.resources.bbr
+import cryptotrackerdanilo.composeapp.generated.resources.bcd
+import cryptotrackerdanilo.composeapp.generated.resources.bch
+import cryptotrackerdanilo.composeapp.generated.resources.bcha
+import cryptotrackerdanilo.composeapp.generated.resources.bcn
+import cryptotrackerdanilo.composeapp.generated.resources.bco
+import cryptotrackerdanilo.composeapp.generated.resources.bel
+import cryptotrackerdanilo.composeapp.generated.resources.beta
+import cryptotrackerdanilo.composeapp.generated.resources.bf
+import cryptotrackerdanilo.composeapp.generated.resources.bifi
+import cryptotrackerdanilo.composeapp.generated.resources.bix
+import cryptotrackerdanilo.composeapp.generated.resources.blk
+import cryptotrackerdanilo.composeapp.generated.resources.block
+import cryptotrackerdanilo.composeapp.generated.resources.blt
+import cryptotrackerdanilo.composeapp.generated.resources.blue
+import cryptotrackerdanilo.composeapp.generated.resources.blz
+import cryptotrackerdanilo.composeapp.generated.resources.bnb
+import cryptotrackerdanilo.composeapp.generated.resources.bnt
+import cryptotrackerdanilo.composeapp.generated.resources.bond
+import cryptotrackerdanilo.composeapp.generated.resources.bondly
+import cryptotrackerdanilo.composeapp.generated.resources.bora
+import cryptotrackerdanilo.composeapp.generated.resources.box
+import cryptotrackerdanilo.composeapp.generated.resources.bpt
+import cryptotrackerdanilo.composeapp.generated.resources.brd
+import cryptotrackerdanilo.composeapp.generated.resources.btc
+import cryptotrackerdanilo.composeapp.generated.resources.btc__
+import cryptotrackerdanilo.composeapp.generated.resources.btcp
+import cryptotrackerdanilo.composeapp.generated.resources.btg
+import cryptotrackerdanilo.composeapp.generated.resources.btmx
+import cryptotrackerdanilo.composeapp.generated.resources.bto
+import cryptotrackerdanilo.composeapp.generated.resources.bts
+import cryptotrackerdanilo.composeapp.generated.resources.btt
+import cryptotrackerdanilo.composeapp.generated.resources.btu
+import cryptotrackerdanilo.composeapp.generated.resources.bu
+import cryptotrackerdanilo.composeapp.generated.resources.bunny
+import cryptotrackerdanilo.composeapp.generated.resources.busd
+import cryptotrackerdanilo.composeapp.generated.resources.bwt
+import cryptotrackerdanilo.composeapp.generated.resources.bz
+import cryptotrackerdanilo.composeapp.generated.resources.bznt
+import cryptotrackerdanilo.composeapp.generated.resources.bzrx
+import cryptotrackerdanilo.composeapp.generated.resources.c20
+import cryptotrackerdanilo.composeapp.generated.resources.c98
+import cryptotrackerdanilo.composeapp.generated.resources.cake
+import cryptotrackerdanilo.composeapp.generated.resources.capp
+import cryptotrackerdanilo.composeapp.generated.resources.car
+import cryptotrackerdanilo.composeapp.generated.resources.card
+import cryptotrackerdanilo.composeapp.generated.resources.cbat
+import cryptotrackerdanilo.composeapp.generated.resources.cbt
+import cryptotrackerdanilo.composeapp.generated.resources.cdai
+import cryptotrackerdanilo.composeapp.generated.resources.cdt
+import cryptotrackerdanilo.composeapp.generated.resources.cel
+import cryptotrackerdanilo.composeapp.generated.resources.celo
+import cryptotrackerdanilo.composeapp.generated.resources.celr
+import cryptotrackerdanilo.composeapp.generated.resources.cennz
+import cryptotrackerdanilo.composeapp.generated.resources.ceth
+import cryptotrackerdanilo.composeapp.generated.resources.cfx
+import cryptotrackerdanilo.composeapp.generated.resources.chai
+import cryptotrackerdanilo.composeapp.generated.resources.chat
+import cryptotrackerdanilo.composeapp.generated.resources.chsb
+import cryptotrackerdanilo.composeapp.generated.resources.chz
+import cryptotrackerdanilo.composeapp.generated.resources.ckb
+import cryptotrackerdanilo.composeapp.generated.resources.clo
+import cryptotrackerdanilo.composeapp.generated.resources.cloak
+import cryptotrackerdanilo.composeapp.generated.resources.clout
+import cryptotrackerdanilo.composeapp.generated.resources.cmt
+import cryptotrackerdanilo.composeapp.generated.resources.cnd
+import cryptotrackerdanilo.composeapp.generated.resources.cnx
+import cryptotrackerdanilo.composeapp.generated.resources.comp
+import cryptotrackerdanilo.composeapp.generated.resources.coni
+import cryptotrackerdanilo.composeapp.generated.resources.cosm
+import cryptotrackerdanilo.composeapp.generated.resources.coti
+import cryptotrackerdanilo.composeapp.generated.resources.cov
+import cryptotrackerdanilo.composeapp.generated.resources.cova
+import cryptotrackerdanilo.composeapp.generated.resources.cover
+import cryptotrackerdanilo.composeapp.generated.resources.cpc
+import cryptotrackerdanilo.composeapp.generated.resources.cre
+import cryptotrackerdanilo.composeapp.generated.resources.cream
+import cryptotrackerdanilo.composeapp.generated.resources.cred
+import cryptotrackerdanilo.composeapp.generated.resources.crep
+import cryptotrackerdanilo.composeapp.generated.resources.cro
+import cryptotrackerdanilo.composeapp.generated.resources.crpt
+import cryptotrackerdanilo.composeapp.generated.resources.crv
+import cryptotrackerdanilo.composeapp.generated.resources.cs
+import cryptotrackerdanilo.composeapp.generated.resources.csai
+import cryptotrackerdanilo.composeapp.generated.resources.csc
+import cryptotrackerdanilo.composeapp.generated.resources.ctc
+import cryptotrackerdanilo.composeapp.generated.resources.ctxc
+import cryptotrackerdanilo.composeapp.generated.resources.cusdc
+import cryptotrackerdanilo.composeapp.generated.resources.cv
+import cryptotrackerdanilo.composeapp.generated.resources.cvc
+import cryptotrackerdanilo.composeapp.generated.resources.cvp
+import cryptotrackerdanilo.composeapp.generated.resources.cvt
+import cryptotrackerdanilo.composeapp.generated.resources.cvx
+import cryptotrackerdanilo.composeapp.generated.resources.cwbtc
+import cryptotrackerdanilo.composeapp.generated.resources.czrx
+import cryptotrackerdanilo.composeapp.generated.resources.dadi
+import cryptotrackerdanilo.composeapp.generated.resources.dafi
+import cryptotrackerdanilo.composeapp.generated.resources.dag
+import cryptotrackerdanilo.composeapp.generated.resources.dai
+import cryptotrackerdanilo.composeapp.generated.resources.dash
+import cryptotrackerdanilo.composeapp.generated.resources.dat
+import cryptotrackerdanilo.composeapp.generated.resources.data
+import cryptotrackerdanilo.composeapp.generated.resources.datx
+import cryptotrackerdanilo.composeapp.generated.resources.dbc
+import cryptotrackerdanilo.composeapp.generated.resources.dcn
+import cryptotrackerdanilo.composeapp.generated.resources.dcr
+import cryptotrackerdanilo.composeapp.generated.resources.dct
+import cryptotrackerdanilo.composeapp.generated.resources.ddd
+import cryptotrackerdanilo.composeapp.generated.resources.dent
+import cryptotrackerdanilo.composeapp.generated.resources.deri
+import cryptotrackerdanilo.composeapp.generated.resources.dfi
+import cryptotrackerdanilo.composeapp.generated.resources.dft
+import cryptotrackerdanilo.composeapp.generated.resources.dfyn
+import cryptotrackerdanilo.composeapp.generated.resources.dgb
+import cryptotrackerdanilo.composeapp.generated.resources.dgd
+import cryptotrackerdanilo.composeapp.generated.resources.dgtx
+import cryptotrackerdanilo.composeapp.generated.resources.divi
+import cryptotrackerdanilo.composeapp.generated.resources.dlt
+import cryptotrackerdanilo.composeapp.generated.resources.dmt
+import cryptotrackerdanilo.composeapp.generated.resources.dnt
+import cryptotrackerdanilo.composeapp.generated.resources.dock
+import cryptotrackerdanilo.composeapp.generated.resources.dodo
+import cryptotrackerdanilo.composeapp.generated.resources.doge
+import cryptotrackerdanilo.composeapp.generated.resources.dor
+import cryptotrackerdanilo.composeapp.generated.resources.dot
+import cryptotrackerdanilo.composeapp.generated.resources.drgn
+import cryptotrackerdanilo.composeapp.generated.resources.drop
+import cryptotrackerdanilo.composeapp.generated.resources.dta
+import cryptotrackerdanilo.composeapp.generated.resources.dtr
+import cryptotrackerdanilo.composeapp.generated.resources.dtx
+import cryptotrackerdanilo.composeapp.generated.resources.dvf
+import cryptotrackerdanilo.composeapp.generated.resources.dxd
+import cryptotrackerdanilo.composeapp.generated.resources.dxt
+import cryptotrackerdanilo.composeapp.generated.resources.edg
+import cryptotrackerdanilo.composeapp.generated.resources.edo
+import cryptotrackerdanilo.composeapp.generated.resources.efi
+import cryptotrackerdanilo.composeapp.generated.resources.efx
+import cryptotrackerdanilo.composeapp.generated.resources.egld
+import cryptotrackerdanilo.composeapp.generated.resources.egt
+import cryptotrackerdanilo.composeapp.generated.resources.ekg
+import cryptotrackerdanilo.composeapp.generated.resources.ekt
+import cryptotrackerdanilo.composeapp.generated.resources.ela
+import cryptotrackerdanilo.composeapp.generated.resources.elec
+import cryptotrackerdanilo.composeapp.generated.resources.elf
+import cryptotrackerdanilo.composeapp.generated.resources.emc
+import cryptotrackerdanilo.composeapp.generated.resources.emc2
+import cryptotrackerdanilo.composeapp.generated.resources.eng
+import cryptotrackerdanilo.composeapp.generated.resources.enj
+import cryptotrackerdanilo.composeapp.generated.resources.eos
+import cryptotrackerdanilo.composeapp.generated.resources.eosdac
+import cryptotrackerdanilo.composeapp.generated.resources.ern
+import cryptotrackerdanilo.composeapp.generated.resources.esd
+import cryptotrackerdanilo.composeapp.generated.resources.esp
+import cryptotrackerdanilo.composeapp.generated.resources.ess
+import cryptotrackerdanilo.composeapp.generated.resources.etc
+import cryptotrackerdanilo.composeapp.generated.resources.eth
+import cryptotrackerdanilo.composeapp.generated.resources.etn
+import cryptotrackerdanilo.composeapp.generated.resources.etp
+import cryptotrackerdanilo.composeapp.generated.resources.etz
+import cryptotrackerdanilo.composeapp.generated.resources.evx
+import cryptotrackerdanilo.composeapp.generated.resources.ewt
+import cryptotrackerdanilo.composeapp.generated.resources.exrn
+import cryptotrackerdanilo.composeapp.generated.resources.exy
+import cryptotrackerdanilo.composeapp.generated.resources.fab
+import cryptotrackerdanilo.composeapp.generated.resources.fct
+import cryptotrackerdanilo.composeapp.generated.resources.feed
+import cryptotrackerdanilo.composeapp.generated.resources.fei
+import cryptotrackerdanilo.composeapp.generated.resources.fet
+import cryptotrackerdanilo.composeapp.generated.resources.fida
+import cryptotrackerdanilo.composeapp.generated.resources.fil
+import cryptotrackerdanilo.composeapp.generated.resources.filda
+import cryptotrackerdanilo.composeapp.generated.resources.flow
+import cryptotrackerdanilo.composeapp.generated.resources.fota
+import cryptotrackerdanilo.composeapp.generated.resources.fox
+import cryptotrackerdanilo.composeapp.generated.resources.frax
+import cryptotrackerdanilo.composeapp.generated.resources.frm
+import cryptotrackerdanilo.composeapp.generated.resources.front
+import cryptotrackerdanilo.composeapp.generated.resources.fsn
+import cryptotrackerdanilo.composeapp.generated.resources.ft
+import cryptotrackerdanilo.composeapp.generated.resources.ftc
+import cryptotrackerdanilo.composeapp.generated.resources.ftm
+import cryptotrackerdanilo.composeapp.generated.resources.ftt
+import cryptotrackerdanilo.composeapp.generated.resources.fuel
+import cryptotrackerdanilo.composeapp.generated.resources.`fun`
+import cryptotrackerdanilo.composeapp.generated.resources.fxc
+import cryptotrackerdanilo.composeapp.generated.resources.fxt
+import cryptotrackerdanilo.composeapp.generated.resources.gala
+import cryptotrackerdanilo.composeapp.generated.resources.gdc
+import cryptotrackerdanilo.composeapp.generated.resources.gem
+import cryptotrackerdanilo.composeapp.generated.resources.gen
+import cryptotrackerdanilo.composeapp.generated.resources.gno
+import cryptotrackerdanilo.composeapp.generated.resources.gnt
+import cryptotrackerdanilo.composeapp.generated.resources.gnx
+import cryptotrackerdanilo.composeapp.generated.resources.go
+import cryptotrackerdanilo.composeapp.generated.resources.goc
+import cryptotrackerdanilo.composeapp.generated.resources.got
+import cryptotrackerdanilo.composeapp.generated.resources.grin
+import cryptotrackerdanilo.composeapp.generated.resources.grs
+import cryptotrackerdanilo.composeapp.generated.resources.grt
+import cryptotrackerdanilo.composeapp.generated.resources.gsc
+import cryptotrackerdanilo.composeapp.generated.resources.gswap
+import cryptotrackerdanilo.composeapp.generated.resources.gt
+import cryptotrackerdanilo.composeapp.generated.resources.gtc
+import cryptotrackerdanilo.composeapp.generated.resources.gto
+import cryptotrackerdanilo.composeapp.generated.resources.gusd
+import cryptotrackerdanilo.composeapp.generated.resources.gvt
+import cryptotrackerdanilo.composeapp.generated.resources.gxs
+import cryptotrackerdanilo.composeapp.generated.resources.hakka
+import cryptotrackerdanilo.composeapp.generated.resources.hbar
+import cryptotrackerdanilo.composeapp.generated.resources.hc
+import cryptotrackerdanilo.composeapp.generated.resources.hedg
+import cryptotrackerdanilo.composeapp.generated.resources.her
+import cryptotrackerdanilo.composeapp.generated.resources.hex
+import cryptotrackerdanilo.composeapp.generated.resources.high
+import cryptotrackerdanilo.composeapp.generated.resources.hive
+import cryptotrackerdanilo.composeapp.generated.resources.hnt
+import cryptotrackerdanilo.composeapp.generated.resources.hot
+import cryptotrackerdanilo.composeapp.generated.resources.hot_x
+import cryptotrackerdanilo.composeapp.generated.resources.hpb
+import cryptotrackerdanilo.composeapp.generated.resources.hsr
+import cryptotrackerdanilo.composeapp.generated.resources.ht
+import cryptotrackerdanilo.composeapp.generated.resources.hum
+import cryptotrackerdanilo.composeapp.generated.resources.husd
+import cryptotrackerdanilo.composeapp.generated.resources.hvn
+import cryptotrackerdanilo.composeapp.generated.resources.hydro
+import cryptotrackerdanilo.composeapp.generated.resources.hyn
+import cryptotrackerdanilo.composeapp.generated.resources.hzn
+import cryptotrackerdanilo.composeapp.generated.resources.ibat
+import cryptotrackerdanilo.composeapp.generated.resources.icn
+import cryptotrackerdanilo.composeapp.generated.resources.icp
+import cryptotrackerdanilo.composeapp.generated.resources.icx
+import cryptotrackerdanilo.composeapp.generated.resources.idai
+import cryptotrackerdanilo.composeapp.generated.resources.idex
+import cryptotrackerdanilo.composeapp.generated.resources.ieth
+import cryptotrackerdanilo.composeapp.generated.resources.ignis
+import cryptotrackerdanilo.composeapp.generated.resources.iknc
+import cryptotrackerdanilo.composeapp.generated.resources.ilink
+import cryptotrackerdanilo.composeapp.generated.resources.inb
+import cryptotrackerdanilo.composeapp.generated.resources.ins
+import cryptotrackerdanilo.composeapp.generated.resources.iost
+import cryptotrackerdanilo.composeapp.generated.resources.iota
+import cryptotrackerdanilo.composeapp.generated.resources.iotx
+import cryptotrackerdanilo.composeapp.generated.resources.iq
+import cryptotrackerdanilo.composeapp.generated.resources.irep
+import cryptotrackerdanilo.composeapp.generated.resources.iris
+import cryptotrackerdanilo.composeapp.generated.resources.isusd
+import cryptotrackerdanilo.composeapp.generated.resources.iusdc
+import cryptotrackerdanilo.composeapp.generated.resources.iwbtc
+import cryptotrackerdanilo.composeapp.generated.resources.izrx
+import cryptotrackerdanilo.composeapp.generated.resources.jnt
+import cryptotrackerdanilo.composeapp.generated.resources.jst
+import cryptotrackerdanilo.composeapp.generated.resources.juno
+import cryptotrackerdanilo.composeapp.generated.resources.kava
+import cryptotrackerdanilo.composeapp.generated.resources.kcs
+import cryptotrackerdanilo.composeapp.generated.resources.kda
+import cryptotrackerdanilo.composeapp.generated.resources.keep
+import cryptotrackerdanilo.composeapp.generated.resources.key
+import cryptotrackerdanilo.composeapp.generated.resources.kick
+import cryptotrackerdanilo.composeapp.generated.resources.kin
+import cryptotrackerdanilo.composeapp.generated.resources.klay
+import cryptotrackerdanilo.composeapp.generated.resources.klv
+import cryptotrackerdanilo.composeapp.generated.resources.kmd
+import cryptotrackerdanilo.composeapp.generated.resources.knc
+import cryptotrackerdanilo.composeapp.generated.resources.ksm
+import cryptotrackerdanilo.composeapp.generated.resources.lamb
+import cryptotrackerdanilo.composeapp.generated.resources.land
+import cryptotrackerdanilo.composeapp.generated.resources.lba
+import cryptotrackerdanilo.composeapp.generated.resources.lcx
+import cryptotrackerdanilo.composeapp.generated.resources.ldo
+import cryptotrackerdanilo.composeapp.generated.resources.lend
+import cryptotrackerdanilo.composeapp.generated.resources.leo
+import cryptotrackerdanilo.composeapp.generated.resources.link
+import cryptotrackerdanilo.composeapp.generated.resources.lit
+import cryptotrackerdanilo.composeapp.generated.resources.lky
+import cryptotrackerdanilo.composeapp.generated.resources.ln
+import cryptotrackerdanilo.composeapp.generated.resources.loki
+import cryptotrackerdanilo.composeapp.generated.resources.lon
+import cryptotrackerdanilo.composeapp.generated.resources.looks
+import cryptotrackerdanilo.composeapp.generated.resources.loom
+import cryptotrackerdanilo.composeapp.generated.resources.lpt
+import cryptotrackerdanilo.composeapp.generated.resources.lqd
+import cryptotrackerdanilo.composeapp.generated.resources.lqty
+import cryptotrackerdanilo.composeapp.generated.resources.lrc
+import cryptotrackerdanilo.composeapp.generated.resources.lsk
+import cryptotrackerdanilo.composeapp.generated.resources.ltc
+import cryptotrackerdanilo.composeapp.generated.resources.lto
+import cryptotrackerdanilo.composeapp.generated.resources.lun
+import cryptotrackerdanilo.composeapp.generated.resources.luna
+import cryptotrackerdanilo.composeapp.generated.resources.lxt
+import cryptotrackerdanilo.composeapp.generated.resources.lym
+import cryptotrackerdanilo.composeapp.generated.resources.maha
+import cryptotrackerdanilo.composeapp.generated.resources.maid
+import cryptotrackerdanilo.composeapp.generated.resources.man
+import cryptotrackerdanilo.composeapp.generated.resources.mana
+import cryptotrackerdanilo.composeapp.generated.resources.math
+import cryptotrackerdanilo.composeapp.generated.resources.matic
+import cryptotrackerdanilo.composeapp.generated.resources.matter
+import cryptotrackerdanilo.composeapp.generated.resources.mbc
+import cryptotrackerdanilo.composeapp.generated.resources.mco
+import cryptotrackerdanilo.composeapp.generated.resources.mcx
+import cryptotrackerdanilo.composeapp.generated.resources.mda
+import cryptotrackerdanilo.composeapp.generated.resources.mds
+import cryptotrackerdanilo.composeapp.generated.resources.med
+import cryptotrackerdanilo.composeapp.generated.resources.medx
+import cryptotrackerdanilo.composeapp.generated.resources.met
+import cryptotrackerdanilo.composeapp.generated.resources.mfg
+import cryptotrackerdanilo.composeapp.generated.resources.mft
+import cryptotrackerdanilo.composeapp.generated.resources.mim
+import cryptotrackerdanilo.composeapp.generated.resources.mir
+import cryptotrackerdanilo.composeapp.generated.resources.mith
+import cryptotrackerdanilo.composeapp.generated.resources.mkr
+import cryptotrackerdanilo.composeapp.generated.resources.mln
+import cryptotrackerdanilo.composeapp.generated.resources.mngo
+import cryptotrackerdanilo.composeapp.generated.resources.mod
+import cryptotrackerdanilo.composeapp.generated.resources.mot
+import cryptotrackerdanilo.composeapp.generated.resources.mpl
+import cryptotrackerdanilo.composeapp.generated.resources.mta
+import cryptotrackerdanilo.composeapp.generated.resources.mth
+import cryptotrackerdanilo.composeapp.generated.resources.mtl
+import cryptotrackerdanilo.composeapp.generated.resources.mtn
+import cryptotrackerdanilo.composeapp.generated.resources.mvc
+import cryptotrackerdanilo.composeapp.generated.resources.mvl
+import cryptotrackerdanilo.composeapp.generated.resources.mvp
+import cryptotrackerdanilo.composeapp.generated.resources.mwat
+import cryptotrackerdanilo.composeapp.generated.resources.mwc
+import cryptotrackerdanilo.composeapp.generated.resources.mxm
+import cryptotrackerdanilo.composeapp.generated.resources.myb
+import cryptotrackerdanilo.composeapp.generated.resources.nano
+import cryptotrackerdanilo.composeapp.generated.resources.nas
+import cryptotrackerdanilo.composeapp.generated.resources.nav
+import cryptotrackerdanilo.composeapp.generated.resources.ncash
+import cryptotrackerdanilo.composeapp.generated.resources.nct
+import cryptotrackerdanilo.composeapp.generated.resources.near
+import cryptotrackerdanilo.composeapp.generated.resources.nebl
+import cryptotrackerdanilo.composeapp.generated.resources.nec
+import cryptotrackerdanilo.composeapp.generated.resources.neo
+import cryptotrackerdanilo.composeapp.generated.resources.nex
+import cryptotrackerdanilo.composeapp.generated.resources.nexxo
+import cryptotrackerdanilo.composeapp.generated.resources.nft
+import cryptotrackerdanilo.composeapp.generated.resources.ngc
+import cryptotrackerdanilo.composeapp.generated.resources.niox
+import cryptotrackerdanilo.composeapp.generated.resources.nkn
+import cryptotrackerdanilo.composeapp.generated.resources.nlg
+import cryptotrackerdanilo.composeapp.generated.resources.nmr
+import cryptotrackerdanilo.composeapp.generated.resources.noia
+import cryptotrackerdanilo.composeapp.generated.resources.nper
+import cryptotrackerdanilo.composeapp.generated.resources.npxs
+import cryptotrackerdanilo.composeapp.generated.resources.nrg
+import cryptotrackerdanilo.composeapp.generated.resources.nrve
+import cryptotrackerdanilo.composeapp.generated.resources.nu
+import cryptotrackerdanilo.composeapp.generated.resources.nuls
+import cryptotrackerdanilo.composeapp.generated.resources.nxs
+import cryptotrackerdanilo.composeapp.generated.resources.oag
+import cryptotrackerdanilo.composeapp.generated.resources.oax
+import cryptotrackerdanilo.composeapp.generated.resources.ocean
+import cryptotrackerdanilo.composeapp.generated.resources.ocn
+import cryptotrackerdanilo.composeapp.generated.resources.ode
+import cryptotrackerdanilo.composeapp.generated.resources.ogn
+import cryptotrackerdanilo.composeapp.generated.resources.ohm
+import cryptotrackerdanilo.composeapp.generated.resources.okb
+import cryptotrackerdanilo.composeapp.generated.resources.olt
+import cryptotrackerdanilo.composeapp.generated.resources.omg
+import cryptotrackerdanilo.composeapp.generated.resources.one
+import cryptotrackerdanilo.composeapp.generated.resources.onion
+import cryptotrackerdanilo.composeapp.generated.resources.ont
+import cryptotrackerdanilo.composeapp.generated.resources.open
+import cryptotrackerdanilo.composeapp.generated.resources.opium
+import cryptotrackerdanilo.composeapp.generated.resources.orbs
+import cryptotrackerdanilo.composeapp.generated.resources.orc
+import cryptotrackerdanilo.composeapp.generated.resources.orn
+import cryptotrackerdanilo.composeapp.generated.resources.osmo
+import cryptotrackerdanilo.composeapp.generated.resources.ost
+import cryptotrackerdanilo.composeapp.generated.resources.ovc
+import cryptotrackerdanilo.composeapp.generated.resources.oxt
+import cryptotrackerdanilo.composeapp.generated.resources.pai
+import cryptotrackerdanilo.composeapp.generated.resources.paint
+import cryptotrackerdanilo.composeapp.generated.resources.pal
+import cryptotrackerdanilo.composeapp.generated.resources.par
+import cryptotrackerdanilo.composeapp.generated.resources.part
+import cryptotrackerdanilo.composeapp.generated.resources.pax
+import cryptotrackerdanilo.composeapp.generated.resources.paxg
+import cryptotrackerdanilo.composeapp.generated.resources.pay
+import cryptotrackerdanilo.composeapp.generated.resources.pbr
+import cryptotrackerdanilo.composeapp.generated.resources.pbtc
+import cryptotrackerdanilo.composeapp.generated.resources.pendle
+import cryptotrackerdanilo.composeapp.generated.resources.perl
+import cryptotrackerdanilo.composeapp.generated.resources.perp
+import cryptotrackerdanilo.composeapp.generated.resources.pickle
+import cryptotrackerdanilo.composeapp.generated.resources.pivx
+import cryptotrackerdanilo.composeapp.generated.resources.play
+import cryptotrackerdanilo.composeapp.generated.resources.pldai
+import cryptotrackerdanilo.composeapp.generated.resources.plr
+import cryptotrackerdanilo.composeapp.generated.resources.plusdc
+import cryptotrackerdanilo.composeapp.generated.resources.png
+import cryptotrackerdanilo.composeapp.generated.resources.pnk
+import cryptotrackerdanilo.composeapp.generated.resources.pnt
+import cryptotrackerdanilo.composeapp.generated.resources.poa
+import cryptotrackerdanilo.composeapp.generated.resources.poe
+import cryptotrackerdanilo.composeapp.generated.resources.pokt
+import cryptotrackerdanilo.composeapp.generated.resources.pols
+import cryptotrackerdanilo.composeapp.generated.resources.poly
+import cryptotrackerdanilo.composeapp.generated.resources.pond
+import cryptotrackerdanilo.composeapp.generated.resources.pool
+import cryptotrackerdanilo.composeapp.generated.resources.powr
+import cryptotrackerdanilo.composeapp.generated.resources.ppay
+import cryptotrackerdanilo.composeapp.generated.resources.ppc
+import cryptotrackerdanilo.composeapp.generated.resources.ppp
+import cryptotrackerdanilo.composeapp.generated.resources.ppt
+import cryptotrackerdanilo.composeapp.generated.resources.pre
+import cryptotrackerdanilo.composeapp.generated.resources.premia
+import cryptotrackerdanilo.composeapp.generated.resources.prl
+import cryptotrackerdanilo.composeapp.generated.resources.pro
+import cryptotrackerdanilo.composeapp.generated.resources.pros
+import cryptotrackerdanilo.composeapp.generated.resources.prq
+import cryptotrackerdanilo.composeapp.generated.resources.pst
+import cryptotrackerdanilo.composeapp.generated.resources.qash
+import cryptotrackerdanilo.composeapp.generated.resources.qbit
+import cryptotrackerdanilo.composeapp.generated.resources.qi
+import cryptotrackerdanilo.composeapp.generated.resources.qkc
+import cryptotrackerdanilo.composeapp.generated.resources.qlc
+import cryptotrackerdanilo.composeapp.generated.resources.qnt
+import cryptotrackerdanilo.composeapp.generated.resources.qsp
+import cryptotrackerdanilo.composeapp.generated.resources.qtum
+import cryptotrackerdanilo.composeapp.generated.resources.question_sign
+import cryptotrackerdanilo.composeapp.generated.resources.quick
+import cryptotrackerdanilo.composeapp.generated.resources.r
+import cryptotrackerdanilo.composeapp.generated.resources.rae
+import cryptotrackerdanilo.composeapp.generated.resources.rari
+import cryptotrackerdanilo.composeapp.generated.resources.ray
+import cryptotrackerdanilo.composeapp.generated.resources.rcn
+import cryptotrackerdanilo.composeapp.generated.resources.rdd
+import cryptotrackerdanilo.composeapp.generated.resources.rdn
+import cryptotrackerdanilo.composeapp.generated.resources.ren
+import cryptotrackerdanilo.composeapp.generated.resources.rep
+import cryptotrackerdanilo.composeapp.generated.resources.req
+import cryptotrackerdanilo.composeapp.generated.resources.resource_new
+import cryptotrackerdanilo.composeapp.generated.resources.resource_super
+import cryptotrackerdanilo.composeapp.generated.resources.rev
+import cryptotrackerdanilo.composeapp.generated.resources.rfox
+import cryptotrackerdanilo.composeapp.generated.resources.rhoc
+import cryptotrackerdanilo.composeapp.generated.resources.rif
+import cryptotrackerdanilo.composeapp.generated.resources.rlc
+import cryptotrackerdanilo.composeapp.generated.resources.rook
+import cryptotrackerdanilo.composeapp.generated.resources.rose
+import cryptotrackerdanilo.composeapp.generated.resources.rpx
+import cryptotrackerdanilo.composeapp.generated.resources.rsr
+import cryptotrackerdanilo.composeapp.generated.resources.rsv
+import cryptotrackerdanilo.composeapp.generated.resources.rune
+import cryptotrackerdanilo.composeapp.generated.resources.rvn
+import cryptotrackerdanilo.composeapp.generated.resources.s
+import cryptotrackerdanilo.composeapp.generated.resources.sai
+import cryptotrackerdanilo.composeapp.generated.resources.salt
+import cryptotrackerdanilo.composeapp.generated.resources.san
+import cryptotrackerdanilo.composeapp.generated.resources.sand
+import cryptotrackerdanilo.composeapp.generated.resources.sar
+import cryptotrackerdanilo.composeapp.generated.resources.scrl
+import cryptotrackerdanilo.composeapp.generated.resources.scrt
+import cryptotrackerdanilo.composeapp.generated.resources.sdt
+import cryptotrackerdanilo.composeapp.generated.resources.seele
+import cryptotrackerdanilo.composeapp.generated.resources.sefi
+import cryptotrackerdanilo.composeapp.generated.resources.sem
+import cryptotrackerdanilo.composeapp.generated.resources.sfi
+import cryptotrackerdanilo.composeapp.generated.resources.sfp
+import cryptotrackerdanilo.composeapp.generated.resources.shib
+import cryptotrackerdanilo.composeapp.generated.resources.shr
+import cryptotrackerdanilo.composeapp.generated.resources.shuf
+import cryptotrackerdanilo.composeapp.generated.resources.sia
+import cryptotrackerdanilo.composeapp.generated.resources.skl
+import cryptotrackerdanilo.composeapp.generated.resources.sky
+import cryptotrackerdanilo.composeapp.generated.resources.slt
+import cryptotrackerdanilo.composeapp.generated.resources.smart
+import cryptotrackerdanilo.composeapp.generated.resources.snc
+import cryptotrackerdanilo.composeapp.generated.resources.sngls
+import cryptotrackerdanilo.composeapp.generated.resources.snm
+import cryptotrackerdanilo.composeapp.generated.resources.snt
+import cryptotrackerdanilo.composeapp.generated.resources.snx
+import cryptotrackerdanilo.composeapp.generated.resources.sol
+import cryptotrackerdanilo.composeapp.generated.resources.soul
+import cryptotrackerdanilo.composeapp.generated.resources.sov
+import cryptotrackerdanilo.composeapp.generated.resources.spn
+import cryptotrackerdanilo.composeapp.generated.resources.srm
+import cryptotrackerdanilo.composeapp.generated.resources.stake
+import cryptotrackerdanilo.composeapp.generated.resources.steem
+import cryptotrackerdanilo.composeapp.generated.resources.step
+import cryptotrackerdanilo.composeapp.generated.resources.steth
+import cryptotrackerdanilo.composeapp.generated.resources.stmx
+import cryptotrackerdanilo.composeapp.generated.resources.storj
+import cryptotrackerdanilo.composeapp.generated.resources.storm
+import cryptotrackerdanilo.composeapp.generated.resources.stpt
+import cryptotrackerdanilo.composeapp.generated.resources.strat
+import cryptotrackerdanilo.composeapp.generated.resources.stx
+import cryptotrackerdanilo.composeapp.generated.resources.sub
+import cryptotrackerdanilo.composeapp.generated.resources.suqa
+import cryptotrackerdanilo.composeapp.generated.resources.sushi
+import cryptotrackerdanilo.composeapp.generated.resources.suter
+import cryptotrackerdanilo.composeapp.generated.resources.swap
+import cryptotrackerdanilo.composeapp.generated.resources.swth
+import cryptotrackerdanilo.composeapp.generated.resources.sxdt
+import cryptotrackerdanilo.composeapp.generated.resources.sxp
+import cryptotrackerdanilo.composeapp.generated.resources.sys
+import cryptotrackerdanilo.composeapp.generated.resources.tbtc
+import cryptotrackerdanilo.composeapp.generated.resources.tct
+import cryptotrackerdanilo.composeapp.generated.resources.tel
+import cryptotrackerdanilo.composeapp.generated.resources.tfuel
+import cryptotrackerdanilo.composeapp.generated.resources.thc
+import cryptotrackerdanilo.composeapp.generated.resources.theta
+import cryptotrackerdanilo.composeapp.generated.resources.thr
+import cryptotrackerdanilo.composeapp.generated.resources.tio
+import cryptotrackerdanilo.composeapp.generated.resources.titan
+import cryptotrackerdanilo.composeapp.generated.resources.tkn
+import cryptotrackerdanilo.composeapp.generated.resources.tky
+import cryptotrackerdanilo.composeapp.generated.resources.tnb
+import cryptotrackerdanilo.composeapp.generated.resources.tnc
+import cryptotrackerdanilo.composeapp.generated.resources.tnt
+import cryptotrackerdanilo.composeapp.generated.resources.tomo
+import cryptotrackerdanilo.composeapp.generated.resources.torn
+import cryptotrackerdanilo.composeapp.generated.resources.tpay
+import cryptotrackerdanilo.composeapp.generated.resources.trac
+import cryptotrackerdanilo.composeapp.generated.resources.trb
+import cryptotrackerdanilo.composeapp.generated.resources.tribe
+import cryptotrackerdanilo.composeapp.generated.resources.trig
+import cryptotrackerdanilo.composeapp.generated.resources.trtl
+import cryptotrackerdanilo.composeapp.generated.resources.tru
+import cryptotrackerdanilo.composeapp.generated.resources.trx
+import cryptotrackerdanilo.composeapp.generated.resources.tryb
+import cryptotrackerdanilo.composeapp.generated.resources.tube
+import cryptotrackerdanilo.composeapp.generated.resources.tusd
+import cryptotrackerdanilo.composeapp.generated.resources.twt
+import cryptotrackerdanilo.composeapp.generated.resources.ubq
+import cryptotrackerdanilo.composeapp.generated.resources.ubt
+import cryptotrackerdanilo.composeapp.generated.resources.uft
+import cryptotrackerdanilo.composeapp.generated.resources.ult
+import cryptotrackerdanilo.composeapp.generated.resources.uma
+import cryptotrackerdanilo.composeapp.generated.resources.uncx
+import cryptotrackerdanilo.composeapp.generated.resources.unfi
+import cryptotrackerdanilo.composeapp.generated.resources.uni
+import cryptotrackerdanilo.composeapp.generated.resources.unn
+import cryptotrackerdanilo.composeapp.generated.resources.uos
+import cryptotrackerdanilo.composeapp.generated.resources.upp
+import cryptotrackerdanilo.composeapp.generated.resources.usdc
+import cryptotrackerdanilo.composeapp.generated.resources.usdp
+import cryptotrackerdanilo.composeapp.generated.resources.usds
+import cryptotrackerdanilo.composeapp.generated.resources.usdt
+import cryptotrackerdanilo.composeapp.generated.resources.utk
+import cryptotrackerdanilo.composeapp.generated.resources.uuu
+import cryptotrackerdanilo.composeapp.generated.resources.value
+import cryptotrackerdanilo.composeapp.generated.resources.veri
+import cryptotrackerdanilo.composeapp.generated.resources.vest
+import cryptotrackerdanilo.composeapp.generated.resources.vet
+import cryptotrackerdanilo.composeapp.generated.resources.vgx
+import cryptotrackerdanilo.composeapp.generated.resources.via
+import cryptotrackerdanilo.composeapp.generated.resources.vib
+import cryptotrackerdanilo.composeapp.generated.resources.vibe
+import cryptotrackerdanilo.composeapp.generated.resources.vidt
+import cryptotrackerdanilo.composeapp.generated.resources.vikky
+import cryptotrackerdanilo.composeapp.generated.resources.vin
+import cryptotrackerdanilo.composeapp.generated.resources.vite
+import cryptotrackerdanilo.composeapp.generated.resources.viu
+import cryptotrackerdanilo.composeapp.generated.resources.vlx
+import cryptotrackerdanilo.composeapp.generated.resources.vrs
+import cryptotrackerdanilo.composeapp.generated.resources.vsp
+import cryptotrackerdanilo.composeapp.generated.resources.vsys
+import cryptotrackerdanilo.composeapp.generated.resources.vtc
+import cryptotrackerdanilo.composeapp.generated.resources.wabi
+import cryptotrackerdanilo.composeapp.generated.resources.wan
+import cryptotrackerdanilo.composeapp.generated.resources.waves
+import cryptotrackerdanilo.composeapp.generated.resources.wbtc
+import cryptotrackerdanilo.composeapp.generated.resources.wct
+import cryptotrackerdanilo.composeapp.generated.resources.wexpoly
+import cryptotrackerdanilo.composeapp.generated.resources.whale
+import cryptotrackerdanilo.composeapp.generated.resources.wib
+import cryptotrackerdanilo.composeapp.generated.resources.wing
+import cryptotrackerdanilo.composeapp.generated.resources.wings
+import cryptotrackerdanilo.composeapp.generated.resources.woo
+import cryptotrackerdanilo.composeapp.generated.resources.wpr
+import cryptotrackerdanilo.composeapp.generated.resources.wrx
+import cryptotrackerdanilo.composeapp.generated.resources.wtc
+import cryptotrackerdanilo.composeapp.generated.resources.wxt
+import cryptotrackerdanilo.composeapp.generated.resources.xas
+import cryptotrackerdanilo.composeapp.generated.resources.xchf
+import cryptotrackerdanilo.composeapp.generated.resources.xem
+import cryptotrackerdanilo.composeapp.generated.resources.xhv
+import cryptotrackerdanilo.composeapp.generated.resources.xin
+import cryptotrackerdanilo.composeapp.generated.resources.xlm
+import cryptotrackerdanilo.composeapp.generated.resources.xlq
+import cryptotrackerdanilo.composeapp.generated.resources.xmark
+import cryptotrackerdanilo.composeapp.generated.resources.xmr
+import cryptotrackerdanilo.composeapp.generated.resources.xmx
+import cryptotrackerdanilo.composeapp.generated.resources.xnk
+import cryptotrackerdanilo.composeapp.generated.resources.xns
+import cryptotrackerdanilo.composeapp.generated.resources.xor
+import cryptotrackerdanilo.composeapp.generated.resources.xrd
+import cryptotrackerdanilo.composeapp.generated.resources.xrp
+import cryptotrackerdanilo.composeapp.generated.resources.xsn
+import cryptotrackerdanilo.composeapp.generated.resources.xsr
+import cryptotrackerdanilo.composeapp.generated.resources.xtz
+import cryptotrackerdanilo.composeapp.generated.resources.xvg
+import cryptotrackerdanilo.composeapp.generated.resources.xyo
+import cryptotrackerdanilo.composeapp.generated.resources.xzc
+import cryptotrackerdanilo.composeapp.generated.resources.yfi
+import cryptotrackerdanilo.composeapp.generated.resources.yoyo
+import cryptotrackerdanilo.composeapp.generated.resources.zai
+import cryptotrackerdanilo.composeapp.generated.resources.zb
+import cryptotrackerdanilo.composeapp.generated.resources.zco
+import cryptotrackerdanilo.composeapp.generated.resources.zec
+import cryptotrackerdanilo.composeapp.generated.resources.zen
+import cryptotrackerdanilo.composeapp.generated.resources.zil
+import cryptotrackerdanilo.composeapp.generated.resources.zks
+import cryptotrackerdanilo.composeapp.generated.resources.zrx
+import org.jetbrains.compose.resources.DrawableResource
+
+fun getDrawableIdForCoin(symbol: String): DrawableResource {
+    return when (symbol.uppercase()) {
+        "1INCH" -> Res.drawable._inch
+        "ST" -> Res.drawable._st
+        "XBTC" -> Res.drawable._xbtc
+        "AAVE" -> Res.drawable.aave
+        "ABBC" -> Res.drawable.abbc
+        "ABT" -> Res.drawable.abt
+        "AC3" -> Res.drawable.ac3
+        "ACT" -> Res.drawable.act
+        "ADA" -> Res.drawable.ada
+        "ADB" -> Res.drawable.adb
+        "ADX" -> Res.drawable.adx
+        "AE" -> Res.drawable.ae
+        "AEON" -> Res.drawable.aeon
+        "AERGO" -> Res.drawable.aergo
+        "AGI" -> Res.drawable.agi
+        "AION" -> Res.drawable.aion
+        "AIT" -> Res.drawable.ait
+        "AKRO" -> Res.drawable.akro
+        "AKT" -> Res.drawable.akt
+        "ALCX" -> Res.drawable.alcx
+        "ALEPH" -> Res.drawable.aleph
+        "ALGO" -> Res.drawable.algo
+        "ALIS" -> Res.drawable.alis
+        "ALPHA" -> Res.drawable.alpha
+        "ALX" -> Res.drawable.alx
+        "AMB" -> Res.drawable.amb
+        "AMLT" -> Res.drawable.amlt
+        "AMP" -> Res.drawable.amp
+        "AMPL" -> Res.drawable.ampl
+        "ANC" -> Res.drawable.anc
+        "ANJ" -> Res.drawable.anj
+        "ANKR" -> Res.drawable.ankr
+        "ANT" -> Res.drawable.ant
+        "APH" -> Res.drawable.aph
+        "APL" -> Res.drawable.apl
+        "APPC" -> Res.drawable.appc
+        "APW" -> Res.drawable.apw
+        "APY" -> Res.drawable.apy
+        "AR" -> Res.drawable.ar
+        "ARDR" -> Res.drawable.ardr
+        "ARK" -> Res.drawable.ark
+        "ARMOR" -> Res.drawable.armor
+        "ARN" -> Res.drawable.arn
+        "ARO" -> Res.drawable.aro
+        "ARRR" -> Res.drawable.arrr
+        "AST" -> Res.drawable.ast
+        "ATMI" -> Res.drawable.atmi
+        "ATOM" -> Res.drawable.atom
+        "AUC" -> Res.drawable.auc
+        "AURA" -> Res.drawable.aura
+        "AUTO" -> Res.drawable.auto
+        "AVAX" -> Res.drawable.avax
+        "AWC" -> Res.drawable.awc
+        "AXP" -> Res.drawable.axp
+        "BAC" -> Res.drawable.bac
+        "BAL" -> Res.drawable.bal
+        "BAND" -> Res.drawable.band
+        "BAO" -> Res.drawable.bao
+        "BAT" -> Res.drawable.bat
+        "BAY" -> Res.drawable.bay
+        "BBR" -> Res.drawable.bbr
+        "BCD" -> Res.drawable.bcd
+        "BCH" -> Res.drawable.bch
+        "BCHA" -> Res.drawable.bcha
+        "BCN" -> Res.drawable.bcn
+        "BCO" -> Res.drawable.bco
+        "BEL" -> Res.drawable.bel
+        "BETA" -> Res.drawable.beta
+        "BF" -> Res.drawable.bf
+        "BIFI" -> Res.drawable.bifi
+        "BIX" -> Res.drawable.bix
+        "BLK" -> Res.drawable.blk
+        "BLOCK" -> Res.drawable.block
+        "BLT" -> Res.drawable.blt
+        "BLUE" -> Res.drawable.blue
+        "BLZ" -> Res.drawable.blz
+        "BNB" -> Res.drawable.bnb
+        "BNT" -> Res.drawable.bnt
+        "BOND" -> Res.drawable.bond
+        "BONDLY" -> Res.drawable.bondly
+        "BORA" -> Res.drawable.bora
+        "BOX" -> Res.drawable.box
+        "BPT" -> Res.drawable.bpt
+        "BRD" -> Res.drawable.brd
+        "BTC" -> Res.drawable.btc
+        "BTC_" -> Res.drawable.btc__
+        "BTCP" -> Res.drawable.btcp
+        "BTG" -> Res.drawable.btg
+        "BTMX" -> Res.drawable.btmx
+        "BTO" -> Res.drawable.bto
+        "BTS" -> Res.drawable.bts
+        "BTT" -> Res.drawable.btt
+        "BTU" -> Res.drawable.btu
+        "BU" -> Res.drawable.bu
+        "BUNNY" -> Res.drawable.bunny
+        "BUSD" -> Res.drawable.busd
+        "BWT" -> Res.drawable.bwt
+        "BZ" -> Res.drawable.bz
+        "BZNT" -> Res.drawable.bznt
+        "BZRX" -> Res.drawable.bzrx
+        "C20" -> Res.drawable.c20
+        "C98" -> Res.drawable.c98
+        "CAKE" -> Res.drawable.cake
+        "CAPP" -> Res.drawable.capp
+        "CAR" -> Res.drawable.car
+        "CARD" -> Res.drawable.card
+        "CBAT" -> Res.drawable.cbat
+        "CBT" -> Res.drawable.cbt
+        "CDAI" -> Res.drawable.cdai
+        "CDT" -> Res.drawable.cdt
+        "CEL" -> Res.drawable.cel
+        "CELO" -> Res.drawable.celo
+        "CELR" -> Res.drawable.celr
+        "CENNZ" -> Res.drawable.cennz
+        "CETH" -> Res.drawable.ceth
+        "CFX" -> Res.drawable.cfx
+        "CHAI" -> Res.drawable.chai
+        "CHAT" -> Res.drawable.chat
+        "CHSB" -> Res.drawable.chsb
+        "CHZ" -> Res.drawable.chz
+        "CKB" -> Res.drawable.ckb
+        "CLO" -> Res.drawable.clo
+        "CLOAK" -> Res.drawable.cloak
+        "CLOUT" -> Res.drawable.clout
+        "CMT" -> Res.drawable.cmt
+        "CND" -> Res.drawable.cnd
+        "CNX" -> Res.drawable.cnx
+        "COMP" -> Res.drawable.comp
+        "CONI" -> Res.drawable.coni
+        "COSM" -> Res.drawable.cosm
+        "COTI" -> Res.drawable.coti
+        "COV" -> Res.drawable.cov
+        "COVA" -> Res.drawable.cova
+        "COVER" -> Res.drawable.cover
+        "CPC" -> Res.drawable.cpc
+        "CRE" -> Res.drawable.cre
+        "CREAM" -> Res.drawable.cream
+        "CRED" -> Res.drawable.cred
+        "CREP" -> Res.drawable.crep
+        "CRO" -> Res.drawable.cro
+        "CRPT" -> Res.drawable.crpt
+        "CRV" -> Res.drawable.crv
+        "CS" -> Res.drawable.cs
+        "CSAI" -> Res.drawable.csai
+        "CSC" -> Res.drawable.csc
+        "CTC" -> Res.drawable.ctc
+        "CTXC" -> Res.drawable.ctxc
+        "CUSDC" -> Res.drawable.cusdc
+        "CV" -> Res.drawable.cv
+        "CVC" -> Res.drawable.cvc
+        "CVP" -> Res.drawable.cvp
+        "CVT" -> Res.drawable.cvt
+        "CVX" -> Res.drawable.cvx
+        "CWBTC" -> Res.drawable.cwbtc
+        "CZR" -> Res.drawable.czrx
+        "DADI" -> Res.drawable.dadi
+        "DAFI" -> Res.drawable.dafi
+        "DAG" -> Res.drawable.dag
+        "DAI" -> Res.drawable.dai
+        "DASH" -> Res.drawable.dash
+        "DAT" -> Res.drawable.dat
+        "DATA" -> Res.drawable.data
+        "DATX" -> Res.drawable.datx
+        "DBC" -> Res.drawable.dbc
+        "DCN" -> Res.drawable.dcn
+        "DCR" -> Res.drawable.dcr
+        "DCT" -> Res.drawable.dct
+        "DDD" -> Res.drawable.ddd
+        "DENT" -> Res.drawable.dent
+        "DERI" -> Res.drawable.deri
+        "DFI" -> Res.drawable.dfi
+        "DFT" -> Res.drawable.dft
+        "DFYN" -> Res.drawable.dfyn
+        "DGB" -> Res.drawable.dgb
+        "DGD" -> Res.drawable.dgd
+        "DGTX" -> Res.drawable.dgtx
+        "DIVI" -> Res.drawable.divi
+        "DLT" -> Res.drawable.dlt
+        "DMT" -> Res.drawable.dmt
+        "DNT" -> Res.drawable.dnt
+        "DOCK" -> Res.drawable.dock
+        "DODO" -> Res.drawable.dodo
+        "DOGE" -> Res.drawable.doge
+        "DOR" -> Res.drawable.dor
+        "DOT" -> Res.drawable.dot
+        "DRGN" -> Res.drawable.drgn
+        "DROP" -> Res.drawable.drop
+        "DTA" -> Res.drawable.dta
+        "DTR" -> Res.drawable.dtr
+        "DTX" -> Res.drawable.dtx
+        "DVF" -> Res.drawable.dvf
+        "DXD" -> Res.drawable.dxd
+        "DXT" -> Res.drawable.dxt
+        "EDG" -> Res.drawable.edg
+        "EDO" -> Res.drawable.edo
+        "EFI" -> Res.drawable.efi
+        "EFX" -> Res.drawable.efx
+        "EGLD" -> Res.drawable.egld
+        "EGT" -> Res.drawable.egt
+        "EKG" -> Res.drawable.ekg
+        "EKT" -> Res.drawable.ekt
+        "ELA" -> Res.drawable.ela
+        "ELEC" -> Res.drawable.elec
+        "ELF" -> Res.drawable.elf
+        "EMC" -> Res.drawable.emc
+        "EMC2" -> Res.drawable.emc2
+        "ENG" -> Res.drawable.eng
+        "ENJ" -> Res.drawable.enj
+        "EOS" -> Res.drawable.eos
+        "EOSDAC" -> Res.drawable.eosdac
+        "ERN" -> Res.drawable.ern
+        "ESD" -> Res.drawable.esd
+        "ESP" -> Res.drawable.esp
+        "ESS" -> Res.drawable.ess
+        "ETC" -> Res.drawable.etc
+        "ETH" -> Res.drawable.eth
+        "ETN" -> Res.drawable.etn
+        "ETP" -> Res.drawable.etp
+        "ETZ" -> Res.drawable.etz
+        "EVX" -> Res.drawable.evx
+        "EWT" -> Res.drawable.ewt
+        "EXRN" -> Res.drawable.exrn
+        "EXY" -> Res.drawable.exy
+        "FAB" -> Res.drawable.fab
+        "FCT" -> Res.drawable.fct
+        "FEED" -> Res.drawable.feed
+        "FEI" -> Res.drawable.fei
+        "FET" -> Res.drawable.fet
+        "FIDA" -> Res.drawable.fida
+        "FIL" -> Res.drawable.fil
+        "FILDA" -> Res.drawable.filda
+        "FLOW" -> Res.drawable.flow
+        "FOTA" -> Res.drawable.fota
+        "FOX" -> Res.drawable.fox
+        "FRAX" -> Res.drawable.frax
+        "FRM" -> Res.drawable.frm
+        "FRONT" -> Res.drawable.front
+        "FSN" -> Res.drawable.fsn
+        "FT" -> Res.drawable.ft
+        "FTC" -> Res.drawable.ftc
+        "FTM" -> Res.drawable.ftm
+        "FTT" -> Res.drawable.ftt
+        "FUEL" -> Res.drawable.fuel
+        "FUN" -> Res.drawable.`fun`
+        "FXC" -> Res.drawable.fxc
+        "FXT" -> Res.drawable.fxt
+        "GALA" -> Res.drawable.gala
+        "GDC" -> Res.drawable.gdc
+        "GEM" -> Res.drawable.gem
+        "GEN" -> Res.drawable.gen
+        "GNO" -> Res.drawable.gno
+        "GNT" -> Res.drawable.gnt
+        "GNX" -> Res.drawable.gnx
+        "GO" -> Res.drawable.go
+        "GOC" -> Res.drawable.goc
+        "GOT" -> Res.drawable.got
+        "GRIN" -> Res.drawable.grin
+        "GRS" -> Res.drawable.grs
+        "GRT" -> Res.drawable.grt
+        "GSC" -> Res.drawable.gsc
+        "GSWAP" -> Res.drawable.gswap
+        "GT" -> Res.drawable.gt
+        "GTC" -> Res.drawable.gtc
+        "GTO" -> Res.drawable.gto
+        "GUSD" -> Res.drawable.gusd
+        "GVT" -> Res.drawable.gvt
+        "GXS" -> Res.drawable.gxs
+        "HAKKA" -> Res.drawable.hakka
+        "HBAR" -> Res.drawable.hbar
+        "HC" -> Res.drawable.hc
+        "HEDG" -> Res.drawable.hedg
+        "HER" -> Res.drawable.her
+        "HEX" -> Res.drawable.hex
+        "HIGH" -> Res.drawable.high
+        "HIVE" -> Res.drawable.hive
+        "HNT" -> Res.drawable.hnt
+        "HOT" -> Res.drawable.hot
+        "HOT_X" -> Res.drawable.hot_x
+        "HPB" -> Res.drawable.hpb
+        "HSR" -> Res.drawable.hsr
+        "HT" -> Res.drawable.ht
+        "HUM" -> Res.drawable.hum
+        "HUSD" -> Res.drawable.husd
+        "HVN" -> Res.drawable.hvn
+        "HYDRO" -> Res.drawable.hydro
+        "HYN" -> Res.drawable.hyn
+        "HZN" -> Res.drawable.hzn
+        "IBAT" -> Res.drawable.ibat
+        "ICN" -> Res.drawable.icn
+        "ICP" -> Res.drawable.icp
+        "ICX" -> Res.drawable.icx
+        "IDAI" -> Res.drawable.idai
+        "IDEX" -> Res.drawable.idex
+        "IETH" -> Res.drawable.ieth
+        "IGNIS" -> Res.drawable.ignis
+        "IKNC" -> Res.drawable.iknc
+        "ILINK" -> Res.drawable.ilink
+        "INB" -> Res.drawable.inb
+        "INS" -> Res.drawable.ins
+        "IOST" -> Res.drawable.iost
+        "IOTA" -> Res.drawable.iota
+        "IOTX" -> Res.drawable.iotx
+        "IQ" -> Res.drawable.iq
+        "IREP" -> Res.drawable.irep
+        "IRIS" -> Res.drawable.iris
+        "ISUSD" -> Res.drawable.isusd
+        "IUSDC" -> Res.drawable.iusdc
+        "IWBTC" -> Res.drawable.iwbtc
+        "IZRX" -> Res.drawable.izrx
+        "JNT" -> Res.drawable.jnt
+        "JST" -> Res.drawable.jst
+        "JUNO" -> Res.drawable.juno
+        "KAVA" -> Res.drawable.kava
+        "KCS" -> Res.drawable.kcs
+        "KDA" -> Res.drawable.kda
+        "KEEP" -> Res.drawable.keep
+        "KEY" -> Res.drawable.key
+        "KICK" -> Res.drawable.kick
+        "KIN" -> Res.drawable.kin
+        "KLAY" -> Res.drawable.klay
+        "KLV" -> Res.drawable.klv
+        "KMD" -> Res.drawable.kmd
+        "KNC" -> Res.drawable.knc
+        "KSM" -> Res.drawable.ksm
+        "LAMB" -> Res.drawable.lamb
+        "LAND" -> Res.drawable.land
+        "LBA" -> Res.drawable.lba
+        "LCX" -> Res.drawable.lcx
+        "LDO" -> Res.drawable.ldo
+        "LEND" -> Res.drawable.lend
+        "LEO" -> Res.drawable.leo
+        "LINK" -> Res.drawable.link
+        "LIT" -> Res.drawable.lit
+        "LKY" -> Res.drawable.lky
+        "LN" -> Res.drawable.ln
+        "LOKI" -> Res.drawable.loki
+        "LON" -> Res.drawable.lon
+        "LOOKS" -> Res.drawable.looks
+        "LOOM" -> Res.drawable.loom
+        "LPT" -> Res.drawable.lpt
+        "LQD" -> Res.drawable.lqd
+        "LQTY" -> Res.drawable.lqty
+        "LRC" -> Res.drawable.lrc
+        "LSK" -> Res.drawable.lsk
+        "LTC" -> Res.drawable.ltc
+        "LTO" -> Res.drawable.lto
+        "LUN" -> Res.drawable.lun
+        "LUNA" -> Res.drawable.luna
+        "LXT" -> Res.drawable.lxt
+        "LYM" -> Res.drawable.lym
+        "MAHA" -> Res.drawable.maha
+        "MAID" -> Res.drawable.maid
+        "MAN" -> Res.drawable.man
+        "MANA" -> Res.drawable.mana
+        "MATH" -> Res.drawable.math
+        "MATIC" -> Res.drawable.matic
+        "MATTER" -> Res.drawable.matter
+        "MBC" -> Res.drawable.mbc
+        "MCO" -> Res.drawable.mco
+        "MCX" -> Res.drawable.mcx
+        "MDA" -> Res.drawable.mda
+        "MDS" -> Res.drawable.mds
+        "MED" -> Res.drawable.med
+        "MEDX" -> Res.drawable.medx
+        "MET" -> Res.drawable.met
+        "MFG" -> Res.drawable.mfg
+        "MFT" -> Res.drawable.mft
+        "MIM" -> Res.drawable.mim
+        "MIR" -> Res.drawable.mir
+        "MITH" -> Res.drawable.mith
+        "MKR" -> Res.drawable.mkr
+        "MLN" -> Res.drawable.mln
+        "MNGO" -> Res.drawable.mngo
+        "MOD" -> Res.drawable.mod
+        "MOT" -> Res.drawable.mot
+        "MPL" -> Res.drawable.mpl
+        "MTA" -> Res.drawable.mta
+        "MTH" -> Res.drawable.mth
+        "MTL" -> Res.drawable.mtl
+        "MTN" -> Res.drawable.mtn
+        "MVC" -> Res.drawable.mvc
+        "MVL" -> Res.drawable.mvl
+        "MVP" -> Res.drawable.mvp
+        "MWAT" -> Res.drawable.mwat
+        "MWC" -> Res.drawable.mwc
+        "MXM" -> Res.drawable.mxm
+        "MYB" -> Res.drawable.myb
+        "NANO" -> Res.drawable.nano
+        "NAS" -> Res.drawable.nas
+        "NAV" -> Res.drawable.nav
+        "NCASH" -> Res.drawable.ncash
+        "NCT" -> Res.drawable.nct
+        "NEAR" -> Res.drawable.near
+        "NEBL" -> Res.drawable.nebl
+        "NEC" -> Res.drawable.nec
+        "NEO" -> Res.drawable.neo
+        "NEX" -> Res.drawable.nex
+        "NEXXO" -> Res.drawable.nexxo
+        "NFT" -> Res.drawable.nft
+        "NGC" -> Res.drawable.ngc
+        "NIOX" -> Res.drawable.niox
+        "NKN" -> Res.drawable.nkn
+        "NLG" -> Res.drawable.nlg
+        "NMR" -> Res.drawable.nmr
+        "NOIA" -> Res.drawable.noia
+        "NPER" -> Res.drawable.nper
+        "NPXS" -> Res.drawable.npxs
+        "NRG" -> Res.drawable.nrg
+        "NRVE" -> Res.drawable.nrve
+        "NU" -> Res.drawable.nu
+        "NULS" -> Res.drawable.nuls
+        "NXS" -> Res.drawable.nxs
+        "OAG" -> Res.drawable.oag
+        "OAX" -> Res.drawable.oax
+        "OCEAN" -> Res.drawable.ocean
+        "OCN" -> Res.drawable.ocn
+        "ODE" -> Res.drawable.ode
+        "OGN" -> Res.drawable.ogn
+        "OHM" -> Res.drawable.ohm
+        "OKB" -> Res.drawable.okb
+        "OLT" -> Res.drawable.olt
+        "OMG" -> Res.drawable.omg
+        "ONE" -> Res.drawable.one
+        "ONION" -> Res.drawable.onion
+        "ONT" -> Res.drawable.ont
+        "OPEN" -> Res.drawable.open
+        "OPIUM" -> Res.drawable.opium
+        "ORBS" -> Res.drawable.orbs
+        "ORC" -> Res.drawable.orc
+        "ORN" -> Res.drawable.orn
+        "OSMO" -> Res.drawable.osmo
+        "OST" -> Res.drawable.ost
+        "OVC" -> Res.drawable.ovc
+        "OXT" -> Res.drawable.oxt
+        "PAI" -> Res.drawable.pai
+        "PAINT" -> Res.drawable.paint
+        "PAL" -> Res.drawable.pal
+        "PAR" -> Res.drawable.par
+        "PART" -> Res.drawable.part
+        "PAX" -> Res.drawable.pax
+        "PAXG" -> Res.drawable.paxg
+        "PAY" -> Res.drawable.pay
+        "PBR" -> Res.drawable.pbr
+        "PBTC" -> Res.drawable.pbtc
+        "PENDLE" -> Res.drawable.pendle
+        "PERL" -> Res.drawable.perl
+        "PERP" -> Res.drawable.perp
+        "PICKLE" -> Res.drawable.pickle
+        "PIVX" -> Res.drawable.pivx
+        "PLAY" -> Res.drawable.play
+        "PLDAI" -> Res.drawable.pldai
+        "PLR" -> Res.drawable.plr
+        "PLUSDC" -> Res.drawable.plusdc
+        "PNG" -> Res.drawable.png
+        "PNK" -> Res.drawable.pnk
+        "PNT" -> Res.drawable.pnt
+        "POA" -> Res.drawable.poa
+        "POE" -> Res.drawable.poe
+        "POKT" -> Res.drawable.pokt
+        "POLS" -> Res.drawable.pols
+        "POLY" -> Res.drawable.poly
+        "POND" -> Res.drawable.pond
+        "POOL" -> Res.drawable.pool
+        "POWR" -> Res.drawable.powr
+        "PPAY" -> Res.drawable.ppay
+        "PPC" -> Res.drawable.ppc
+        "PPP" -> Res.drawable.ppp
+        "PPT" -> Res.drawable.ppt
+        "PRE" -> Res.drawable.pre
+        "PREMIA" -> Res.drawable.premia
+        "PRL" -> Res.drawable.prl
+        "PRO" -> Res.drawable.pro
+        "PROS" -> Res.drawable.pros
+        "PRQ" -> Res.drawable.prq
+        "PST" -> Res.drawable.pst
+        "QASH" -> Res.drawable.qash
+        "QBIT" -> Res.drawable.qbit
+        "QI" -> Res.drawable.qi
+        "QKC" -> Res.drawable.qkc
+        "QLC" -> Res.drawable.qlc
+        "QNT" -> Res.drawable.qnt
+        "QSP" -> Res.drawable.qsp
+        "QTUM" -> Res.drawable.qtum
+        "QUICK" -> Res.drawable.quick
+        "R" -> Res.drawable.r
+        "RAE" -> Res.drawable.rae
+        "RARI" -> Res.drawable.rari
+        "RAY" -> Res.drawable.ray
+        "RCN" -> Res.drawable.rcn
+        "RDD" -> Res.drawable.rdd
+        "RDN" -> Res.drawable.rdn
+        "REN" -> Res.drawable.ren
+        "REP" -> Res.drawable.rep
+        "REQ" -> Res.drawable.req
+        "RESOURCE_NEW" -> Res.drawable.resource_new
+        "RESOURCE_SUPER" -> Res.drawable.resource_super
+        "REV" -> Res.drawable.rev
+        "RFOX" -> Res.drawable.rfox
+        "RHOC" -> Res.drawable.rhoc
+        "RIF" -> Res.drawable.rif
+        "RLC" -> Res.drawable.rlc
+        "ROOK" -> Res.drawable.rook
+        "ROSE" -> Res.drawable.rose
+        "RPX" -> Res.drawable.rpx
+        "RSR" -> Res.drawable.rsr
+        "RSV" -> Res.drawable.rsv
+        "RUNE" -> Res.drawable.rune
+        "RVN" -> Res.drawable.rvn
+        "S" -> Res.drawable.s
+        "SAI" -> Res.drawable.sai
+        "SALT" -> Res.drawable.salt
+        "SAN" -> Res.drawable.san
+        "SAND" -> Res.drawable.sand
+        "SAR" -> Res.drawable.sar
+        "SCRL" -> Res.drawable.scrl
+        "SCRT" -> Res.drawable.scrt
+        "SDT" -> Res.drawable.sdt
+        "SEELE" -> Res.drawable.seele
+        "SEFI" -> Res.drawable.sefi
+        "SEM" -> Res.drawable.sem
+        "SFI" -> Res.drawable.sfi
+        "SFP" -> Res.drawable.sfp
+        "SHIB" -> Res.drawable.shib
+        "SHR" -> Res.drawable.shr
+        "SHUF" -> Res.drawable.shuf
+        "SIA" -> Res.drawable.sia
+        "SKL" -> Res.drawable.skl
+        "SKY" -> Res.drawable.sky
+        "SLT" -> Res.drawable.slt
+        "SMART" -> Res.drawable.smart
+        "SNC" -> Res.drawable.snc
+        "SNGLS" -> Res.drawable.sngls
+        "SNM" -> Res.drawable.snm
+        "SNT" -> Res.drawable.snt
+        "SNX" -> Res.drawable.snx
+        "SOL" -> Res.drawable.sol
+        "SOUL" -> Res.drawable.soul
+        "SOV" -> Res.drawable.sov
+        "SPN" -> Res.drawable.spn
+        "SRM" -> Res.drawable.srm
+        "STAKE" -> Res.drawable.stake
+        "STEEM" -> Res.drawable.steem
+        "STEP" -> Res.drawable.step
+        "STETH" -> Res.drawable.steth
+        "STMX" -> Res.drawable.stmx
+        "STORJ" -> Res.drawable.storj
+        "STORM" -> Res.drawable.storm
+        "STPT" -> Res.drawable.stpt
+        "STRAT" -> Res.drawable.strat
+        "STX" -> Res.drawable.stx
+        "SUB" -> Res.drawable.sub
+        "SUQA" -> Res.drawable.suqa
+        "SUSHI" -> Res.drawable.sushi
+        "SUTER" -> Res.drawable.suter
+        "SWAP" -> Res.drawable.swap
+        "SWTH" -> Res.drawable.swth
+        "SXDT" -> Res.drawable.sxdt
+        "SXP" -> Res.drawable.sxp
+        "SYS" -> Res.drawable.sys
+        "TBTC" -> Res.drawable.tbtc
+        "TCT" -> Res.drawable.tct
+        "TEL" -> Res.drawable.tel
+        "TFUEL" -> Res.drawable.tfuel
+        "THC" -> Res.drawable.thc
+        "THETA" -> Res.drawable.theta
+        "THR" -> Res.drawable.thr
+        "TIO" -> Res.drawable.tio
+        "TITAN" -> Res.drawable.titan
+        "TKN" -> Res.drawable.tkn
+        "TKY" -> Res.drawable.tky
+        "TNB" -> Res.drawable.tnb
+        "TNC" -> Res.drawable.tnc
+        "TNT" -> Res.drawable.tnt
+        "TOMO" -> Res.drawable.tomo
+        "TORN" -> Res.drawable.torn
+        "TPAY" -> Res.drawable.tpay
+        "TRAC" -> Res.drawable.trac
+        "TRB" -> Res.drawable.trb
+        "TRIBE" -> Res.drawable.tribe
+        "TRIG" -> Res.drawable.trig
+        "TRTL" -> Res.drawable.trtl
+        "TRU" -> Res.drawable.tru
+        "TRX" -> Res.drawable.trx
+        "TRYB" -> Res.drawable.tryb
+        "TUBE" -> Res.drawable.tube
+        "TUSD" -> Res.drawable.tusd
+        "TWT" -> Res.drawable.twt
+        "UBQ" -> Res.drawable.ubq
+        "UBT" -> Res.drawable.ubt
+        "UFT" -> Res.drawable.uft
+        "ULT" -> Res.drawable.ult
+        "UMA" -> Res.drawable.uma
+        "UNCX" -> Res.drawable.uncx
+        "UNFI" -> Res.drawable.unfi
+        "UNI" -> Res.drawable.uni
+        "UNN" -> Res.drawable.unn
+        "UOS" -> Res.drawable.uos
+        "UPP" -> Res.drawable.upp
+        "USDC" -> Res.drawable.usdc
+        "USDP" -> Res.drawable.usdp
+        "USDS" -> Res.drawable.usds
+        "USDT" -> Res.drawable.usdt
+        "UTK" -> Res.drawable.utk
+        "UUU" -> Res.drawable.uuu
+        "VALUE" -> Res.drawable.value
+        "VERI" -> Res.drawable.veri
+        "VEST" -> Res.drawable.vest
+        "VET" -> Res.drawable.vet
+        "VGX" -> Res.drawable.vgx
+        "VIA" -> Res.drawable.via
+        "VIB" -> Res.drawable.vib
+        "VIBE" -> Res.drawable.vibe
+        "VIDT" -> Res.drawable.vidt
+        "VIKKY" -> Res.drawable.vikky
+        "VIN" -> Res.drawable.vin
+        "VITE" -> Res.drawable.vite
+        "VIU" -> Res.drawable.viu
+        "VLX" -> Res.drawable.vlx
+        "VRS" -> Res.drawable.vrs
+        "VSP" -> Res.drawable.vsp
+        "VSYS" -> Res.drawable.vsys
+        "VTC" -> Res.drawable.vtc
+        "WABI" -> Res.drawable.wabi
+        "WAN" -> Res.drawable.wan
+        "WAVES" -> Res.drawable.waves
+        "WBTC" -> Res.drawable.wbtc
+        "WCT" -> Res.drawable.wct
+        "WEXPOLY" -> Res.drawable.wexpoly
+        "WHALE" -> Res.drawable.whale
+        "WIB" -> Res.drawable.wib
+        "WING" -> Res.drawable.wing
+        "WINGS" -> Res.drawable.wings
+        "WOO" -> Res.drawable.woo
+        "WPR" -> Res.drawable.wpr
+        "WRX" -> Res.drawable.wrx
+        "WTC" -> Res.drawable.wtc
+        "WXT" -> Res.drawable.wxt
+        "XAS" -> Res.drawable.xas
+        "XCHF" -> Res.drawable.xchf
+        "XEM" -> Res.drawable.xem
+        "XHV" -> Res.drawable.xhv
+        "XIN" -> Res.drawable.xin
+        "XLM" -> Res.drawable.xlm
+        "XLQ" -> Res.drawable.xlq
+        "XMARK" -> Res.drawable.xmark
+        "XMR" -> Res.drawable.xmr
+        "XMX" -> Res.drawable.xmx
+        "XNK" -> Res.drawable.xnk
+        "XNS" -> Res.drawable.xns
+        "XOR" -> Res.drawable.xor
+        "XRD" -> Res.drawable.xrd
+        "XRP" -> Res.drawable.xrp
+        "XSN" -> Res.drawable.xsn
+        "XSR" -> Res.drawable.xsr
+        "XTZ" -> Res.drawable.xtz
+        "XVG" -> Res.drawable.xvg
+        "XYO" -> Res.drawable.xyo
+        "XZC" -> Res.drawable.xzc
+        "YFI" -> Res.drawable.yfi
+        "YOYO" -> Res.drawable.yoyo
+        "ZAI" -> Res.drawable.zai
+        "ZB" -> Res.drawable.zb
+        "ZCO" -> Res.drawable.zco
+        "ZEC" -> Res.drawable.zec
+        "ZEN" -> Res.drawable.zen
+        "ZIL" -> Res.drawable.zil
+        "ZKS" -> Res.drawable.zks
+        "ZRX" -> Res.drawable.zrx
+        else -> Res.drawable.question_sign
+    }
+}

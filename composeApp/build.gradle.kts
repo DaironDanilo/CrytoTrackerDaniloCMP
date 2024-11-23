@@ -20,7 +20,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -31,9 +31,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -53,10 +53,10 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -72,6 +72,9 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.adaptive)
+            implementation(libs.adaptive.navigation)
+            implementation(libs.adaptive.layout)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
@@ -83,21 +86,13 @@ kotlin {
 
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
+            implementation(libs.kotlinx.datetime)
         }
-//        val wasmJsMain by getting {
-//            dependencies {
-////                implementation(libs.kermit)
-//                implementation(libs.bundles.ktor)
-//                implementation(libs.bundles.coil)
-////                implementation(libs.kotlinx.coroutines.core)
-//                implementation(libs.kotlinx.serialization.json)
-////                implementation(libs.decompose)
-////                implementation(libs.decompose.jetbrains)
-////                implementation(libs.coil3.coil.compose)
-////                implementation(libs.coil3.network.ktor)
-//                implementation(libs.koin.core)
-//            }
-//        }
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.js)
+            }
+        }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
