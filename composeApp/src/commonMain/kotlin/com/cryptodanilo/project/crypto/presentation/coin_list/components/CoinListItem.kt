@@ -126,12 +126,15 @@ internal val previewCoin = Coin(
 expect fun getScreenSize(): IntSize
 
 fun Modifier.putIfPortrait(modifier: Modifier): Modifier = composed {
-    // Get the current window size
-    val windowSize = getScreenSize()
-    // Check if the height is greater than the width (portrait) or width is greater (landscape)
-    if (windowSize.height > windowSize.width) {
+    if (currentModeIsPortrait()) {
         this.then(modifier) // Portrait
     } else {
         this // Landscape or other
     }
+}
+
+@Composable
+fun currentModeIsPortrait(): Boolean {
+    val windowSize = getScreenSize()
+    return windowSize.height > windowSize.width
 }

@@ -60,7 +60,10 @@ fun AdaptiveCoinListDetailPane(
             },
             detailPane = {
                 AnimatedPane {
-                    CoinDetailScreen(animatedPaneScope = this, state = state)
+                    CoinDetailScreen(
+                        animatedPaneScope = this,
+                        state = state,
+                        onBack = { navigator.navigateBack() })
                 }
             },
             modifier = modifier
