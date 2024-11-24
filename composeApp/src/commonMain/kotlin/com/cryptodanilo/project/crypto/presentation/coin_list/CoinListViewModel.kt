@@ -18,6 +18,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.days
@@ -51,7 +52,7 @@ class CoinListViewModel(
         viewModelScope.launch {
             coinDataSource.getCoinHistory(
                 coinId = coinUi.id,
-                start = Clock.System.now().minus(5.days)
+                start = Clock.System.now().minus(7.days)
                     .toLocalDateTime(TimeZone.currentSystemDefault()),
                 end = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             ).onSuccess { history ->
@@ -89,6 +90,10 @@ class CoinListViewModel(
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun formatDateTime(time: LocalDateTime): String {
-    val format = LocalDateTime.Format { byUnicodePattern("H\nM/d") }
-    return format.format(time)
+    val formatDate = LocalDateTime.Format {
+        amPmHour(Padding.NONE)
+        amPmMarker("AM", "PM")
+        byUnicodePattern("\nM/d")
+    }
+    return formatDate.format(time)
 }

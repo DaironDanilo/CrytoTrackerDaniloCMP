@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
-import com.cryptodanilo.project.ui.greenBackground
+import com.cryptodanilo.project.ui.theme.greenBackground
 
 @Composable
 fun PriceChange(

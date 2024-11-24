@@ -37,14 +37,11 @@ fun Coin.toCoinUi(): CoinUi {
 
 fun Double.toDisplayableNumber(): DisplayableNumber {
     // Manually formatting the number using string interpolation
-    val formatted = this.toString().let { str ->
-        val dotIndex = str.indexOf(".")
-        if (dotIndex != -1 && str.length > dotIndex + 2) {
-            // Limit to two decimals after the point
-            str.substring(0, dotIndex + 3) // Keep 2 decimal places
-        } else {
-            str // Return as is if already formatted
-        }
+    val formatted = this.let { number ->
+        val integerPart =
+            number.toLong().toString().reversed().chunked(3).joinToString(",").reversed()
+        val fractionalPart = ((number - number.toLong()) * 100).toInt().toString().padStart(2, '0')
+        "$integerPart.$fractionalPart"
     }
 
     return DisplayableNumber(value = this, formatted = formatted)
