@@ -1,5 +1,10 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
 
+
+
+https://github.com/user-attachments/assets/c1aeda6e-2357-4fde-93bb-aec05fb04cc5
+
+
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
   - `commonMain` is for code that’s common for all targets.
