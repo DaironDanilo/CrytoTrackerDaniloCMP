@@ -1,8 +1,30 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
 
+<table>
+  <tr>
+    <th>Android</th>
+    <th>iOS</th>
+  </tr>
+  <tr>
+    <td><video src="https://github.com/user-attachments/assets/addecced-d20f-42d6-a02d-27293ce14f4d"></td>
+    <td><video src="https://github.com/user-attachments/assets/d69b64ae-29c7-4c4c-8144-edc40bcc315f"></td>
+  </tr>
+  <tr>
+    <th colspan="2">Desktop</th>
+  </tr>
+  <tr>
+    <td colspan="2"><video src="https://github.com/user-attachments/assets/0e80f837-89d0-407e-a636-1b4a4b92390f"></td>
+  </tr>
+  <tr>
+    <th colspan="2">Web</th>
+  </tr>
+  <tr>
+    <td colspan="2"><video src="https://github.com/user-attachments/assets/48bc0159-ca51-45b8-b8b4-b79aa8e8f44b"></td>
+  </tr>
+</table>
 
 
-https://github.com/user-attachments/assets/c1aeda6e-2357-4fde-93bb-aec05fb04cc5
+
 
 
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
