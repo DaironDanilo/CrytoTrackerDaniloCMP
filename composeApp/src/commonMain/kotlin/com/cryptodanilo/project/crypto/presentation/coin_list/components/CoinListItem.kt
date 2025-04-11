@@ -19,7 +19,6 @@ import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
@@ -36,6 +35,7 @@ import org.jetbrains.compose.resources.painterResource
 fun SharedTransitionScope.CoinListItem(
     animatedPaneScope: AnimatedPaneScope,
     coin: CoinUi,
+    shouldExistSharedElementTransition: Boolean,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,14 +57,17 @@ fun SharedTransitionScope.CoinListItem(
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .size(85.dp)
-                .putIfPortrait(
-                    Modifier.sharedElement(
-                        state = rememberSharedContentState(key = "image/${coin.id}"),
-                        animatedVisibilityScope = animatedPaneScope,
-                        boundsTransform = { _, _ ->
-                            tween(durationMillis = 1000)
-                        }
-                    )
+                .conditional(
+                    condition = shouldExistSharedElementTransition,
+                    ifTrue = {
+                        sharedElement(
+                            state = rememberSharedContentState(key = "image/${coin.id}"),
+                            animatedVisibilityScope = animatedPaneScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        )
+                    }
                 )
         )
         Column(modifier = Modifier.weight(1f)) {
@@ -125,12 +128,14 @@ internal val previewCoin = Coin(
 @Composable
 expect fun getScreenSize(): IntSize
 
-fun Modifier.putIfPortrait(modifier: Modifier): Modifier = composed {
-    if (currentModeIsPortrait()) {
-        this.then(modifier) // Portrait
-    } else {
-        this // Landscape or other
-    }
+inline fun Modifier.conditional(
+    condition: Boolean,
+    ifTrue: Modifier.() -> Modifier,
+    ifFalse: Modifier.() -> Modifier = { this },
+): Modifier = if (condition) {
+    then(ifTrue(Modifier))
+} else {
+    then(ifFalse(Modifier))
 }
 
 @Composable
