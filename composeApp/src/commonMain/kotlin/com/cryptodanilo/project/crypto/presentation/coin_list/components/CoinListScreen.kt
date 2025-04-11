@@ -22,6 +22,7 @@ import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListState
 fun SharedTransitionScope.CoinListScreen(
     animatedPaneScope: AnimatedPaneScope,
     state: CoinListState,
+    shouldExistSharedElementTransition: Boolean,
     onAction: (CoinListAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,6 +42,7 @@ fun SharedTransitionScope.CoinListScreen(
                 CoinListItem(
                     animatedPaneScope = animatedPaneScope,
                     coin = coin,
+                    shouldExistSharedElementTransition = shouldExistSharedElementTransition,
                     onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
                     modifier = Modifier.fillParentMaxWidth()
                 )

@@ -3,9 +3,13 @@ package com.cryptodanilo.project.core.navigation
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +41,21 @@ fun AdaptiveCoinListDetailPane(
             }
         }
     }
-    val navigator = rememberListDetailPaneScaffoldNavigator<Any>()
+    val navigator = rememberListDetailPaneScaffoldNavigator(
+        scaffoldDirective = calculatePaneScaffoldDirective(
+            currentWindowAdaptiveInfo()
+        ),
+    )
+    // calculates if the list pane is hidden
+    val isListOfCoinsPaneHidden =
+        navigator.scaffoldValue[ThreePaneScaffoldRole.Secondary] == PaneAdaptedValue.Hidden
+
+    // calculates if the coin details pane is hidden
+    val isCoinDetailPaneHidden =
+        navigator.scaffoldValue[ThreePaneScaffoldRole.Primary] == PaneAdaptedValue.Hidden
+
+    val shouldExistSharedElementTransition =
+        !isListOfCoinsPaneHidden && isCoinDetailPaneHidden || isListOfCoinsPaneHidden && !isCoinDetailPaneHidden
 
     BackHandler(onBack = { navigator.navigateBack() })
     SharedTransitionLayout {
@@ -46,16 +64,20 @@ fun AdaptiveCoinListDetailPane(
             value = navigator.scaffoldValue,
             listPane = {
                 AnimatedPane {
-                    CoinListScreen(animatedPaneScope = this, state = state, onAction = { action ->
-                        viewModel.onAction(action)
-                        when (action) {
-                            is CoinListAction.OnCoinClicked -> {
-                                navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
-                            }
+                    CoinListScreen(
+                        animatedPaneScope = this,
+                        state = state,
+                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                        onAction = { action ->
+                            viewModel.onAction(action)
+                            when (action) {
+                                is CoinListAction.OnCoinClicked -> {
+                                    navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                }
 
-                            CoinListAction.OnRefresh -> TODO()
-                        }
-                    })
+                                CoinListAction.OnRefresh -> TODO()
+                            }
+                        })
                 }
             },
             detailPane = {
@@ -63,6 +85,8 @@ fun AdaptiveCoinListDetailPane(
                     CoinDetailScreen(
                         animatedPaneScope = this,
                         state = state,
+                        shouldShowBackNavigationIcon = isListOfCoinsPaneHidden,
+                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
                         onBack = { navigator.navigateBack() })
                 }
             },
