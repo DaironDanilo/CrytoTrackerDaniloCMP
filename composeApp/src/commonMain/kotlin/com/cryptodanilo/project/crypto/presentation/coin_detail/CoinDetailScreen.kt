@@ -42,9 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.coin_detail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListState
-import com.cryptodanilo.project.crypto.presentation.coin_list.components.currentModeIsPortrait
+import com.cryptodanilo.project.crypto.presentation.coin_list.components.conditional
 import com.cryptodanilo.project.crypto.presentation.coin_list.components.getScreenSize
-import com.cryptodanilo.project.crypto.presentation.coin_list.components.putIfPortrait
 import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.composeapp.generated.resources.Res
@@ -59,11 +58,13 @@ import cryptotrackerdanilo.composeapp.generated.resources.trending_down
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SharedTransitionScope.CoinDetailScreen(
     animatedPaneScope: AnimatedPaneScope,
     state: CoinListState,
+    shouldShowBackNavigationIcon: Boolean,
+    shouldExistSharedElementTransition: Boolean,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {}
 ) {
@@ -95,14 +96,17 @@ fun SharedTransitionScope.CoinDetailScreen(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(100.dp)
-                        .putIfPortrait(
-                            Modifier.sharedElement(
-                                state = rememberSharedContentState(key = "image/${coin.id}"),
-                                animatedVisibilityScope = animatedPaneScope,
-                                boundsTransform = { _, _ ->
-                                    tween(durationMillis = 1000)
-                                }
-                            )
+                        .conditional(
+                            condition = shouldExistSharedElementTransition,
+                            ifTrue = {
+                                sharedElement(
+                                    state = rememberSharedContentState(key = "image/${coin.id}"),
+                                    animatedVisibilityScope = animatedPaneScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    }
+                                )
+                            }
                         )
                 )
                 Text(
@@ -192,7 +196,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                     )
                 }
             }
-            if (currentModeIsPortrait()) {
+            if (shouldShowBackNavigationIcon) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(Res.string.go_back),
