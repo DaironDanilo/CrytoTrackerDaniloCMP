@@ -1,5 +1,5 @@
 [versions]
-adaptiveZ = "1.0.0"
+adaptiveZ = "1.1.1"
 agp = "8.6.1"
 android-compileSdk = "35"
 android-minSdk = "24"
@@ -12,15 +12,16 @@ androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.4"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
-compose-multiplatform = "1.7.3"
+compose-multiplatform = "1.8.1"
 junit = "4.13.2"
 kotlin = "2.1.20"
 kotlinx-coroutines = "1.9.0"
 kotlinxDatetime = "0.6.1"
 ksp = "2.1.20-2.0.0"
+materialIconsCore = "1.7.3"
 navigationCompose = "2.8.0-alpha10"
 kotlinSerialization = "1.7.3"
-koin = "4.0.0"
+koin = "4.0.2"
 ktor = "3.0.0"
 coil3 = "3.0.0"
 buildKonfig = "0.15.1"
@@ -66,6 +67,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3"
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
+material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
