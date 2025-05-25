@@ -61,7 +61,7 @@ fun SharedTransitionScope.CoinListItem(
                     condition = shouldExistSharedElementTransition,
                     ifTrue = {
                         sharedElement(
-                            state = rememberSharedContentState(key = "image/${coin.id}"),
+                            sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
                             animatedVisibilityScope = animatedPaneScope,
                             boundsTransform = { _, _ ->
                                 tween(durationMillis = 1000)
