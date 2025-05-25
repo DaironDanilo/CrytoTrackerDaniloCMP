@@ -100,11 +100,12 @@ fun SharedTransitionScope.CoinDetailScreen(
                             condition = shouldExistSharedElementTransition,
                             ifTrue = {
                                 sharedElement(
-                                    state = rememberSharedContentState(key = "image/${coin.id}"),
+                                    sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
                                     animatedVisibilityScope = animatedPaneScope,
                                     boundsTransform = { _, _ ->
                                         tween(durationMillis = 1000)
-                                    }
+                                    },
+                                    renderInOverlayDuringTransition = false
                                 )
                             }
                         )

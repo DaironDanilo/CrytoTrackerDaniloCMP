@@ -13,6 +13,7 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
@@ -21,6 +22,7 @@ import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListEvent
 import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListViewModel
 import com.cryptodanilo.project.crypto.presentation.coin_list.components.CoinListScreen
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -57,7 +59,13 @@ fun AdaptiveCoinListDetailPane(
     val shouldExistSharedElementTransition =
         !isListOfCoinsPaneHidden && isCoinDetailPaneHidden || isListOfCoinsPaneHidden && !isCoinDetailPaneHidden
 
-    BackHandler(onBack = { navigator.navigateBack() })
+    val coroutineScope = rememberCoroutineScope()
+
+    BackHandler {
+        coroutineScope.launch {
+            navigator.navigateBack()
+        }
+    }
     SharedTransitionLayout {
         ListDetailPaneScaffold(
             directive = navigator.scaffoldDirective,
@@ -72,7 +80,9 @@ fun AdaptiveCoinListDetailPane(
                             viewModel.onAction(action)
                             when (action) {
                                 is CoinListAction.OnCoinClicked -> {
-                                    navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                    coroutineScope.launch {
+                                        navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                    }
                                 }
 
                                 CoinListAction.OnRefresh -> TODO()
@@ -87,7 +97,11 @@ fun AdaptiveCoinListDetailPane(
                         state = state,
                         shouldShowBackNavigationIcon = isListOfCoinsPaneHidden,
                         shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                        onBack = { navigator.navigateBack() })
+                        onBack = {
+                            coroutineScope.launch {
+                                navigator.navigateBack()
+                            }
+                        })
                 }
             },
             modifier = modifier
