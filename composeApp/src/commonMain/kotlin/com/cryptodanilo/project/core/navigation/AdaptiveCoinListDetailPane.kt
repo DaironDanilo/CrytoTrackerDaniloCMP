@@ -14,7 +14,9 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
 import com.cryptodanilo.project.crypto.presentation.coin_detail.CoinDetailScreen
@@ -25,10 +27,9 @@ import com.cryptodanilo.project.crypto.presentation.coin_list.components.CoinLis
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-@Composable
-expect fun BackHandler(enabled: Boolean = true, onBack: () -> Unit = {})
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun AdaptiveCoinListDetailPane(
     viewModel: CoinListViewModel = koinViewModel(),
