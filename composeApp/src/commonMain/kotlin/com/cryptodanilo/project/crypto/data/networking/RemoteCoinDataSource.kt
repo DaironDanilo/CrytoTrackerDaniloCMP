@@ -18,6 +18,7 @@ import io.ktor.client.request.parameter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlin.time.ExperimentalTime
 
 class RemoteCoinDataSource(
     private val httpClient: HttpClient
@@ -32,6 +33,7 @@ class RemoteCoinDataSource(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun getCoinHistory(
         coinId: String,
         start: LocalDateTime,

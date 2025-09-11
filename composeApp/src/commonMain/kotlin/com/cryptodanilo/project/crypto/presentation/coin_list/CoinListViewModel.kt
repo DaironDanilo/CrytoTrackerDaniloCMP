@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
@@ -22,6 +22,7 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
 
 class CoinListViewModel(
     private val coinDataSource: CoinDataSource
@@ -47,6 +48,7 @@ class CoinListViewModel(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun selectCoin(coinUi: CoinUi) {
         _state.update { it.copy(selectedCoinUi = coinUi) }
         viewModelScope.launch {
