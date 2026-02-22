@@ -36,6 +36,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
-    implementation("org.jetbrains.compose.ui:ui-tooling-preview:${libs.versions.compose.multiplatform.get()}")
-    debugImplementation("org.jetbrains.compose.ui:ui-tooling:${libs.versions.compose.multiplatform.get()}")
+    implementation(libs.ui.tooling.preview)
+    debugImplementation(libs.ui.tooling)
 }

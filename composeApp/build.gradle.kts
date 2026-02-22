@@ -55,6 +55,7 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
+        val wasmJsMain by getting
 
         androidMain.dependencies {
             implementation(libs.koin.android)
@@ -87,11 +88,11 @@ kotlin {
             implementation(libs.ui.backhandler)
             implementation(libs.navigation.event)
         }
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(libs.ktor.client.js)
-            }
+
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.js)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
