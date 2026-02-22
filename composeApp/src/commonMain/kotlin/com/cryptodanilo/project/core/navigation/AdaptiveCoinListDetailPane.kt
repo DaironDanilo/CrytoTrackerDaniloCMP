@@ -14,9 +14,10 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
 import com.cryptodanilo.project.crypto.presentation.coin_detail.CoinDetailScreen
@@ -27,9 +28,7 @@ import com.cryptodanilo.project.crypto.presentation.coin_list.components.CoinLis
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class,
-    ExperimentalComposeUiApi::class
-)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun AdaptiveCoinListDetailPane(
     viewModel: CoinListViewModel = koinViewModel(),
@@ -62,11 +61,16 @@ fun AdaptiveCoinListDetailPane(
 
     val coroutineScope = rememberCoroutineScope()
 
-    BackHandler {
-        coroutineScope.launch {
-            navigator.navigateBack()
+    val navState = rememberNavigationEventState(NavigationEventInfo.None)
+    NavigationBackHandler(
+        state = navState,
+        isBackEnabled = true,
+        onBackCompleted = {
+            coroutineScope.launch {
+                navigator.navigateBack()
+            }
         }
-    }
+    )
     SharedTransitionLayout {
         ListDetailPaneScaffold(
             directive = navigator.scaffoldDirective,
