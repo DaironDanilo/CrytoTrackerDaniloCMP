@@ -149,6 +149,8 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 │   └── src/
 │       └── main/
 │           └── kotlin/          # MainActivity → sets up Koin + Compose
+├── iosApp/                      # iOS application entry point
+│   └── iosApp.xcodeproj/        # Xcode project — open this to run on iOS
 ├── composeApp/                  # Shared KMP module (library)
 │   └── src/
 │       ├── commonMain/          # Shared UI, domain, and data code
