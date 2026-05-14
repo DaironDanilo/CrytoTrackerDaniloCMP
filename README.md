@@ -166,6 +166,7 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 │       ├── iosMain/             # iOS-specific implementations
 │       ├── desktopMain/         # Desktop entry point (main.kt)
 │       └── wasmJsMain/          # Web entry point (main.kt)
+├── kotlin-js-store/             # yarn.lock for Kotlin/Wasm npm deps — committed for reproducible builds
 ├── gradle/
 │   └── libs.versions.toml       # Version catalog
 ├── secrets.properties           # API key — NOT committed (see .gitignore)
