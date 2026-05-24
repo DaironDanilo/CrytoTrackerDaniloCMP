@@ -123,19 +123,19 @@ Before the first iOS run, set your development team in Xcode:
 ### Desktop (JVM)
 
 ```bash
-./gradlew :composeApp:run
+./gradlew :desktopApp:run
 ```
 
 To produce a distributable package (`.dmg` / `.msi` / `.deb`):
 
 ```bash
-./gradlew :composeApp:packageDistributionForCurrentOS
+./gradlew :desktopApp:packageDistributionForCurrentOS
 ```
 
 ### Web (Kotlin/Wasm)
 
 ```bash
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+./gradlew :webApp:wasmJsBrowserDevelopmentRun
 ```
 
 Open the URL printed in the console (typically `http://localhost:8080`).
@@ -151,7 +151,7 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 │           └── kotlin/          # MainActivity → sets up Koin + Compose
 ├── iosApp/                      # iOS application entry point
 │   └── iosApp.xcodeproj/        # Xcode project — open this to run on iOS
-├── composeApp/                  # Shared KMP module (library)
+├── shared/                      # Shared KMP library module
 │   └── src/
 │       ├── commonMain/          # Shared UI, domain, and data code
 │       │   └── kotlin/com/cryptodanilo/project/
@@ -164,8 +164,12 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 │       │       └── ui/theme/    # Material 3 theme, colors, typography
 │       ├── androidMain/         # Android-specific implementations
 │       ├── iosMain/             # iOS-specific implementations
-│       ├── desktopMain/         # Desktop entry point (main.kt)
-│       └── wasmJsMain/          # Web entry point (main.kt)
+│       ├── desktopMain/         # Desktop-specific implementations
+│       └── wasmJsMain/          # Web-specific implementations
+├── desktopApp/                  # Desktop application entry point
+│   └── src/main/kotlin/         # main.kt → initializes Koin + launches window
+├── webApp/                      # Web application entry point
+│   └── src/wasmJsMain/          # main.kt + index.html + styles.css
 ├── kotlin-js-store/             # yarn.lock for Kotlin/Wasm npm deps — committed for reproducible builds
 ├── gradle/
 │   └── libs.versions.toml       # Version catalog
@@ -195,9 +199,9 @@ UI (Compose) ──► Action ──► ViewModel ──► UseCase / DataSource
 | Task | Description |
 |---|---|
 | `./gradlew :androidApp:installDebug` | Build and install Android debug APK |
-| `./gradlew :composeApp:run` | Run Desktop app |
-| `./gradlew :composeApp:wasmJsBrowserDevelopmentRun` | Run Web app in browser |
-| `./gradlew :composeApp:packageDistributionForCurrentOS` | Package Desktop distributable |
+| `./gradlew :desktopApp:run` | Run Desktop app |
+| `./gradlew :webApp:wasmJsBrowserDevelopmentRun` | Run Web app in browser |
+| `./gradlew :desktopApp:packageDistributionForCurrentOS` | Package Desktop distributable |
 | `./gradlew build` | Build all targets |
 
 ---

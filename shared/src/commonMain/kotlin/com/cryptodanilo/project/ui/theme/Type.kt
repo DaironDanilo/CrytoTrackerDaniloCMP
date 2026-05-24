@@ -7,11 +7,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import cryptotrackerdanilo.composeapp.generated.resources.Res
-import cryptotrackerdanilo.composeapp.generated.resources.space_mono_bold
-import cryptotrackerdanilo.composeapp.generated.resources.space_mono_bold_italic
-import cryptotrackerdanilo.composeapp.generated.resources.space_mono_italic
-import cryptotrackerdanilo.composeapp.generated.resources.space_mono_regular
+import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.space_mono_bold
+import cryptotrackerdanilo.shared.generated.resources.space_mono_bold_italic
+import cryptotrackerdanilo.shared.generated.resources.space_mono_italic
+import cryptotrackerdanilo.shared.generated.resources.space_mono_regular
 import org.jetbrains.compose.resources.Font
 
 @Composable

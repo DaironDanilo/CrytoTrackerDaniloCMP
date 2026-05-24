@@ -1,13 +1,13 @@
 package com.cryptodanilo.project.core.presentation.util
 
 import com.cryptodanilo.project.core.domain.util.NetworkError
-import cryptotrackerdanilo.composeapp.generated.resources.Res
-import cryptotrackerdanilo.composeapp.generated.resources.no_internet
-import cryptotrackerdanilo.composeapp.generated.resources.request_timeout
-import cryptotrackerdanilo.composeapp.generated.resources.serialization_error
-import cryptotrackerdanilo.composeapp.generated.resources.server_error
-import cryptotrackerdanilo.composeapp.generated.resources.too_many_requests
-import cryptotrackerdanilo.composeapp.generated.resources.unknown_error
+import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.no_internet
+import cryptotrackerdanilo.shared.generated.resources.request_timeout
+import cryptotrackerdanilo.shared.generated.resources.serialization_error
+import cryptotrackerdanilo.shared.generated.resources.server_error
+import cryptotrackerdanilo.shared.generated.resources.too_many_requests
+import cryptotrackerdanilo.shared.generated.resources.unknown_error
 
 fun NetworkError.toUiString(): UiText {
     val redId = when (this) {

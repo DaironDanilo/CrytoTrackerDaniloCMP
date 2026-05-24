@@ -21,7 +21,7 @@ kotlin {
     sourceSets {
         val wasmJsMain by getting
         wasmJsMain.dependencies {
-            implementation(projects.composeApp)
+            implementation(projects.shared)
             implementation(libs.ui)
         }
     }

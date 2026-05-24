@@ -46,15 +46,15 @@ import com.cryptodanilo.project.crypto.presentation.coin_list.components.conditi
 import com.cryptodanilo.project.crypto.presentation.coin_list.components.getScreenSize
 import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.greenBackground
-import cryptotrackerdanilo.composeapp.generated.resources.Res
-import cryptotrackerdanilo.composeapp.generated.resources.change_last_24h
-import cryptotrackerdanilo.composeapp.generated.resources.dollar
-import cryptotrackerdanilo.composeapp.generated.resources.go_back
-import cryptotrackerdanilo.composeapp.generated.resources.market_cap
-import cryptotrackerdanilo.composeapp.generated.resources.price
-import cryptotrackerdanilo.composeapp.generated.resources.stock
-import cryptotrackerdanilo.composeapp.generated.resources.trending
-import cryptotrackerdanilo.composeapp.generated.resources.trending_down
+import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.change_last_24h
+import cryptotrackerdanilo.shared.generated.resources.dollar
+import cryptotrackerdanilo.shared.generated.resources.go_back
+import cryptotrackerdanilo.shared.generated.resources.market_cap
+import cryptotrackerdanilo.shared.generated.resources.price
+import cryptotrackerdanilo.shared.generated.resources.stock
+import cryptotrackerdanilo.shared.generated.resources.trending
+import cryptotrackerdanilo.shared.generated.resources.trending_down
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
