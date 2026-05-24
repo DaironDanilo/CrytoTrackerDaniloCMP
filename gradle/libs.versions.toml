@@ -95,6 +95,7 @@ jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serializati
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 buildKonfigPlugin = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 [bundles]
 ktor = [

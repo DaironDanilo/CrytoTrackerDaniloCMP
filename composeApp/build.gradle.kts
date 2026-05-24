@@ -1,5 +1,4 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
@@ -105,18 +104,6 @@ kotlin {
 
 dependencies {
     "androidRuntimeClasspath"(libs.ui.tooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.cryptodanilo.project.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.cryptodanilo.project"
-            packageVersion = "1.0.0"
-        }
-    }
 }
 
 buildkonfig {
