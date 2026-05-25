@@ -32,6 +32,7 @@ buildKonfig = "0.21.2"
 backhandler = "1.11.0"
 navigationEvent = "1.1.0"
 runtime = "1.11.0"
+ktlintGradle = "14.2.0"
 
 [libraries]
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptiveZ" }
@@ -96,6 +97,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 buildKonfigPlugin = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
 androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintGradle" }
 
 [bundles]
 ktor = [
