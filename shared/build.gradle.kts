@@ -14,7 +14,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.cryptodanilo.project.shared"
         compileSdk =
             libs.versions.android.compileSdk
@@ -32,6 +32,8 @@ kotlin {
         androidResources {
             enable = true
         }
+
+        withHostTest {}
     }
 
     listOf(
@@ -98,6 +100,9 @@ kotlin {
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
     }
 }
