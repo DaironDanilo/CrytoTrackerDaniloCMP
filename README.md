@@ -1,6 +1,6 @@
 # CryptoTracker — Kotlin Multiplatform
 
-A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targeting Android, iOS, Desktop (JVM), and Web (Wasm). It displays live coin prices and historical charts sourced from the [CoinAPI](https://www.coinapi.io/) REST API.
+A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targeting Android, iOS, Desktop (JVM), and Web (Wasm). It displays live coin prices and historical charts sourced from the [CoinCap](https://pro.coincap.io/api-docs) REST API.
 
 <table>
   <tr>
@@ -42,7 +42,7 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 | Layer | Library |
 |---|---|
 | UI | [Compose Multiplatform 1.11.0](https://github.com/JetBrains/compose-multiplatform) · Material 3 |
-| Navigation | [Navigation 3 1.0.0-alpha05 (multiplatform)](https://developer.android.com/guide/navigation/navigation-3) · Material 3 Adaptive 1.3.0-beta01 |
+| Navigation | [Jetpack Compose Navigation](https://developer.android.com/guide/navigation/navigation-compose) · Material 3 Adaptive 1.3.0-beta01 |
 | Networking | [Ktor 3.5.0](https://ktor.io/) (OkHttp on Android/Desktop · Darwin on iOS · JS on Web) |
 | Serialization | [kotlinx.serialization 1.11.0](https://github.com/Kotlin/kotlinx.serialization) |
 | Image loading | [Coil 3.4.0](https://coil-kt.github.io/coil/) |
@@ -75,9 +75,9 @@ git clone https://github.com/DaironDanilo/CrytoTrackerDaniloCMP.git
 cd CrytoTrackerDaniloCMP
 ```
 
-### 2. Obtain a CoinAPI key
+### 2. Obtain a CoinCap API key
 
-1. Go to [coinapi.io](https://www.coinapi.io/) and create a free account.
+1. Go to [pro.coincap.io](https://pro.coincap.io/) and create a free account.
 2. Copy your API key from the dashboard.
 
 ### 3. Create `secrets.properties`
