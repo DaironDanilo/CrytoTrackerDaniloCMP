@@ -10,13 +10,14 @@ import cryptotrackerdanilo.shared.generated.resources.too_many_requests
 import cryptotrackerdanilo.shared.generated.resources.unknown_error
 
 fun NetworkError.toUiString(): UiText {
-    val redId = when (this) {
-        NetworkError.REQUEST_TIMEOUT -> Res.string.request_timeout
-        NetworkError.TOO_MANY_REQUESTS -> Res.string.too_many_requests
-        NetworkError.NO_INTERNET -> Res.string.no_internet
-        NetworkError.SERVER_ERROR -> Res.string.server_error
-        NetworkError.SERIALIZATION -> Res.string.serialization_error
-        NetworkError.UNKNOWN -> Res.string.unknown_error
-    }
+    val redId =
+        when (this) {
+            NetworkError.REQUEST_TIMEOUT -> Res.string.request_timeout
+            NetworkError.TOO_MANY_REQUESTS -> Res.string.too_many_requests
+            NetworkError.NO_INTERNET -> Res.string.no_internet
+            NetworkError.SERVER_ERROR -> Res.string.server_error
+            NetworkError.SERIALIZATION -> Res.string.serialization_error
+            NetworkError.UNKNOWN -> Res.string.unknown_error
+        }
     return UiText.StringResourceId(redId)
 }

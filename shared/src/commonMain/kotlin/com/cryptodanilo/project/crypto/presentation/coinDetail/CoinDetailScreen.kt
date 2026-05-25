@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_detail
+package com.cryptodanilo.project.crypto.presentation.coinDetail
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -40,10 +40,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.cryptodanilo.project.crypto.presentation.coin_detail.components.InfoCard
-import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListState
-import com.cryptodanilo.project.crypto.presentation.coin_list.components.conditional
-import com.cryptodanilo.project.crypto.presentation.coin_list.components.getScreenSize
+import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
+import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinlist.components.conditional
+import com.cryptodanilo.project.crypto.presentation.coinlist.components.getScreenSize
 import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.shared.generated.resources.Res
@@ -66,17 +66,18 @@ fun SharedTransitionScope.CoinDetailScreen(
     shouldShowBackNavigationIcon: Boolean,
     shouldExistSharedElementTransition: Boolean,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
 ) {
-    val contentColor = if (isSystemInDarkTheme()) {
-        Color.White
-    } else {
-        Color.Black
-    }
+    val contentColor =
+        if (isSystemInDarkTheme()) {
+            Color.White
+        } else {
+            Color.Black
+        }
     if (state.isLoading) {
         Box(
             modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator()
         }
@@ -84,88 +85,93 @@ fun SharedTransitionScope.CoinDetailScreen(
         val coin = state.selectedCoinUi
         Box {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
                     painter = painterResource(coin.iconRes),
                     contentDescription = coin.name,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .conditional(
-                            condition = shouldExistSharedElementTransition,
-                            ifTrue = {
-                                sharedElement(
-                                    sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                    animatedVisibilityScope = animatedPaneScope,
-                                    boundsTransform = { _, _ ->
-                                        tween(durationMillis = 1000)
-                                    },
-                                    renderInOverlayDuringTransition = false
-                                )
-                            }
-                        )
+                    modifier =
+                        Modifier
+                            .size(100.dp)
+                            .conditional(
+                                condition = shouldExistSharedElementTransition,
+                                ifTrue = {
+                                    sharedElement(
+                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                        animatedVisibilityScope = animatedPaneScope,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = 1000)
+                                        },
+                                        renderInOverlayDuringTransition = false,
+                                    )
+                                },
+                            ),
                 )
                 Text(
                     text = coin.name,
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Black,
                     textAlign = TextAlign.Center,
-                    color = contentColor
+                    color = contentColor,
                 )
                 Text(
                     text = coin.symbol,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Light,
                     textAlign = TextAlign.Center,
-                    color = contentColor
+                    color = contentColor,
                 )
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     InfoCard(
                         title = stringResource(Res.string.market_cap),
                         formattedValue = "$ ${coin.marketCapUsd.formatted}",
-                        icon = Res.drawable.stock
+                        icon = Res.drawable.stock,
                     )
                     InfoCard(
                         title = stringResource(Res.string.price),
                         formattedValue = "$ ${coin.priceUsd.formatted}",
-                        icon = Res.drawable.dollar
+                        icon = Res.drawable.dollar,
                     )
                     val absoluteChangeFormatted =
                         ((coin.priceUsd.value) * (coin.changePercent24Hr.value / 100)).toDisplayableNumber()
                     val isPositiveChange = coin.changePercent24Hr.value > 0.0
-                    val contentColorInfoCard = if (isPositiveChange) {
-                        if (isSystemInDarkTheme()) Color.Green else greenBackground
-                    } else {
-                        MaterialTheme.colorScheme.error
-                    }
+                    val contentColorInfoCard =
+                        if (isPositiveChange) {
+                            if (isSystemInDarkTheme()) Color.Green else greenBackground
+                        } else {
+                            MaterialTheme.colorScheme.error
+                        }
                     InfoCard(
                         title = stringResource(Res.string.change_last_24h),
                         formattedValue = absoluteChangeFormatted.formatted,
-                        icon = if (isPositiveChange) {
-                            Res.drawable.trending
-                        } else {
-                            Res.drawable.trending_down
-                        },
-                        contentColor = contentColorInfoCard
+                        icon =
+                            if (isPositiveChange) {
+                                Res.drawable.trending
+                            } else {
+                                Res.drawable.trending_down
+                            },
+                        contentColor = contentColorInfoCard,
                     )
                 }
                 AnimatedVisibility(visible = coin.coinPriceHistory.isNotEmpty()) {
                     var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
                     var labelWidth by remember { mutableFloatStateOf(0f) }
                     var totalChartWidth by remember { mutableFloatStateOf(0f) }
-                    val amountOfVisibleDataPoints = if (labelWidth > 0) {
-                        ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
-                    } else {
-                        0
-                    }
+                    val amountOfVisibleDataPoints =
+                        if (labelWidth > 0) {
+                            ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
+                        } else {
+                            0
+                        }
                     val startIndex =
                         (coin.coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
                             .coerceAtLeast(0)
@@ -173,27 +179,29 @@ fun SharedTransitionScope.CoinDetailScreen(
                     val aspectRatio = remember(screenSize) { calculateAspectRatio(screenSize) }
                     LineChart(
                         dataPoints = coin.coinPriceHistory,
-                        style = ChartStyle(
-                            charLineColor = MaterialTheme.colorScheme.primary,
-                            unselectedColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                            selectedColor = MaterialTheme.colorScheme.primary,
-                            helperLinesThicknessPx = 5f,
-                            axisLinesThicknessPx = 5f,
-                            labelFontSize = 14.sp,
-                            minYLabelSpacing = 25.dp,
-                            verticalPadding = 8.dp,
-                            horizontalPadding = 8.dp,
-                            xAxisLabelSpacing = 8.dp,
-                        ),
+                        style =
+                            ChartStyle(
+                                charLineColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                helperLinesThicknessPx = 5f,
+                                axisLinesThicknessPx = 5f,
+                                labelFontSize = 14.sp,
+                                minYLabelSpacing = 25.dp,
+                                verticalPadding = 8.dp,
+                                horizontalPadding = 8.dp,
+                                xAxisLabelSpacing = 8.dp,
+                            ),
                         visibleDataPointsIndices = startIndex..coin.coinPriceHistory.lastIndex,
                         unit = "$",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(aspectRatio)
-                            .onSizeChanged { totalChartWidth = it.width.toFloat() },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(aspectRatio)
+                                .onSizeChanged { totalChartWidth = it.width.toFloat() },
                         selectedDataPoint = selectedDataPoint,
                         onSelectedDataPoint = { selectedDataPoint = it },
-                        onXLabelWidthChange = { labelWidth = it }
+                        onXLabelWidthChange = { labelWidth = it },
                     )
                 }
             }
@@ -202,10 +210,11 @@ fun SharedTransitionScope.CoinDetailScreen(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(Res.string.go_back),
                     tint = contentColor,
-                    modifier = Modifier
-                        .clickable { onBack() }
-                        .padding(24.dp)
-                        .size(36.dp)
+                    modifier =
+                        Modifier
+                            .clickable { onBack() }
+                            .padding(24.dp)
+                            .size(36.dp),
                 )
             }
         }
@@ -216,15 +225,15 @@ fun calculateAspectRatio(screenSize: IntSize): Float {
     val aspectRatio = screenSize.height.toFloat() / screenSize.width.toFloat()
 
     return when {
-        aspectRatio > 1.42 -> 14f / 9f   // Mobile devices (portrait mode)
-        aspectRatio in 0.5..1.42 -> 20f / 9f   // Tablets
-        else -> 26f / 9f  // Desktop or landscape-oriented screens
+        aspectRatio > 1.42 -> 14f / 9f // Mobile devices (portrait mode)
+        aspectRatio in 0.5..1.42 -> 20f / 9f // Tablets
+        else -> 26f / 9f // Desktop or landscape-oriented screens
     }
 }
 
-//@PreviewLightDark()
-//@Composable
-//fun CoinDetailScreenPreview() {
+// @PreviewLightDark()
+// @Composable
+// fun CoinDetailScreenPreview() {
 //    CryptoTrackerTheme {
 //        CoinDetailScreen(
 //            state = CoinListState(
@@ -233,4 +242,4 @@ fun calculateAspectRatio(screenSize: IntSize): Float {
 //            modifier = Modifier.background(MaterialTheme.colorScheme.background)
 //        )
 //    }
-//}
+// }

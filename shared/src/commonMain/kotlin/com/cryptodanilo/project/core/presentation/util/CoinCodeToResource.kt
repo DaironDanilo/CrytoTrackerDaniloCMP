@@ -672,8 +672,8 @@ import cryptotrackerdanilo.shared.generated.resources.zks
 import cryptotrackerdanilo.shared.generated.resources.zrx
 import org.jetbrains.compose.resources.DrawableResource
 
-fun getDrawableIdForCoin(symbol: String): DrawableResource {
-    return when (symbol.uppercase()) {
+fun getDrawableIdForCoin(symbol: String): DrawableResource =
+    when (symbol.uppercase()) {
         "1INCH" -> Res.drawable._inch
         "ST" -> Res.drawable._st
         "XBTC" -> Res.drawable._xbtc
@@ -1344,4 +1344,3 @@ fun getDrawableIdForCoin(symbol: String): DrawableResource {
         "ZRX" -> Res.drawable.zrx
         else -> Res.drawable.question_sign
     }
-}

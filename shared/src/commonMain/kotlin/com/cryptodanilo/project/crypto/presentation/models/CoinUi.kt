@@ -2,7 +2,7 @@ package com.cryptodanilo.project.crypto.presentation.models
 
 import com.cryptodanilo.project.core.presentation.util.getDrawableIdForCoin
 import com.cryptodanilo.project.crypto.domain.Coin
-import com.cryptodanilo.project.crypto.presentation.coin_detail.DataPoint
+import com.cryptodanilo.project.crypto.presentation.coinDetail.DataPoint
 import org.jetbrains.compose.resources.DrawableResource
 
 data class CoinUi(
@@ -22,8 +22,8 @@ data class DisplayableNumber(
     val formatted: String,
 )
 
-fun Coin.toCoinUi(): CoinUi {
-    return CoinUi(
+fun Coin.toCoinUi(): CoinUi =
+    CoinUi(
         id = id,
         rank = rank,
         symbol = symbol,
@@ -31,18 +31,24 @@ fun Coin.toCoinUi(): CoinUi {
         marketCapUsd = marketCapUsd.toDisplayableNumber(),
         priceUsd = priceUsd.toDisplayableNumber(),
         changePercent24Hr = changePercent24Hr.toDisplayableNumber(),
-        iconRes = getDrawableIdForCoin(symbol)
+        iconRes = getDrawableIdForCoin(symbol),
     )
-}
 
 fun Double.toDisplayableNumber(): DisplayableNumber {
     // Manually formatting the number using string interpolation
-    val formatted = this.let { number ->
-        val integerPart =
-            number.toLong().toString().reversed().chunked(3).joinToString(",").reversed()
-        val fractionalPart = ((number - number.toLong()) * 100).toInt().toString().padStart(2, '0')
-        "$integerPart.$fractionalPart"
-    }
+    val formatted =
+        this.let { number ->
+            val integerPart =
+                number
+                    .toLong()
+                    .toString()
+                    .reversed()
+                    .chunked(3)
+                    .joinToString(",")
+                    .reversed()
+            val fractionalPart = ((number - number.toLong()) * 100).toInt().toString().padStart(2, '0')
+            "$integerPart.$fractionalPart"
+        }
 
     return DisplayableNumber(value = this, formatted = formatted)
 }

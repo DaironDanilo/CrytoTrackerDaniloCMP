@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_detail
+package com.cryptodanilo.project.crypto.presentation.coinDetail
 
 data class DataPoint(
     val x: Float,

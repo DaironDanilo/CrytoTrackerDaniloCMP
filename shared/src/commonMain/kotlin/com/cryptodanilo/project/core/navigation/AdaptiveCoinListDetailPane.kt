@@ -3,7 +3,7 @@ package com.cryptodanilo.project.core.navigation
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -15,16 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
-import com.cryptodanilo.project.crypto.presentation.coin_detail.CoinDetailScreen
-import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListAction
-import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListEvent
-import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListViewModel
-import com.cryptodanilo.project.crypto.presentation.coin_list.components.CoinListScreen
+import com.cryptodanilo.project.crypto.presentation.coinDetail.CoinDetailScreen
+import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListAction
+import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListEvent
+import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListViewModel
+import com.cryptodanilo.project.crypto.presentation.coinlist.components.CoinListScreen
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -43,11 +43,13 @@ fun AdaptiveCoinListDetailPane(
             }
         }
     }
-    val navigator = rememberListDetailPaneScaffoldNavigator(
-        scaffoldDirective = calculatePaneScaffoldDirective(
-            currentWindowAdaptiveInfo()
-        ),
-    )
+    val navigator =
+        rememberListDetailPaneScaffoldNavigator(
+            scaffoldDirective =
+                calculatePaneScaffoldDirective(
+                    currentWindowAdaptiveInfoV2(),
+                ),
+        )
     // calculates if the list pane is hidden
     val isListOfCoinsPaneHidden =
         navigator.scaffoldValue[ThreePaneScaffoldRole.Secondary] == PaneAdaptedValue.Hidden
@@ -69,7 +71,7 @@ fun AdaptiveCoinListDetailPane(
             coroutineScope.launch {
                 navigator.navigateBack()
             }
-        }
+        },
     )
     SharedTransitionLayout {
         ListDetailPaneScaffold(
@@ -92,7 +94,8 @@ fun AdaptiveCoinListDetailPane(
 
                                 CoinListAction.OnRefresh -> TODO()
                             }
-                        })
+                        },
+                    )
                 }
             },
             detailPane = {
@@ -106,10 +109,11 @@ fun AdaptiveCoinListDetailPane(
                             coroutineScope.launch {
                                 navigator.navigateBack()
                             }
-                        })
+                        },
+                    )
                 }
             },
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

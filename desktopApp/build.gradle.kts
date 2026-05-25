@@ -15,7 +15,7 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.cryptodanilo.project.MainKt"
+        mainClass = "com.cryptodanilo.project.DesktopAppKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

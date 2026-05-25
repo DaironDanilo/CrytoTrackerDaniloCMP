@@ -4,22 +4,21 @@ import com.cryptodanilo.project.crypto.data.networking.dto.CoinDto
 import com.cryptodanilo.project.crypto.data.networking.dto.CoinPriceDto
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.domain.CoinPrice
-import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
-fun CoinDto.toCoin(): Coin {
-    return Coin(
+fun CoinDto.toCoin(): Coin =
+    Coin(
         id = id,
         rank = rank,
         name = name,
         symbol = symbol,
         marketCapUsd = marketCapUsd,
         priceUsd = priceUsd,
-        changePercent24Hr = changePercent24Hr
+        changePercent24Hr = changePercent24Hr,
     )
-}
 
 @OptIn(ExperimentalTime::class)
 fun CoinPriceDto.toCoinPrice(): CoinPrice {
@@ -28,6 +27,6 @@ fun CoinPriceDto.toCoinPrice(): CoinPrice {
 
     return CoinPrice(
         priceUsd = priceUsd,
-        dateTime = localDateTime
+        dateTime = localDateTime,
     )
 }

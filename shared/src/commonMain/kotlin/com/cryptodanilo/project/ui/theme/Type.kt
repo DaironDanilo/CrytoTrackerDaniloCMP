@@ -15,54 +15,61 @@ import cryptotrackerdanilo.shared.generated.resources.space_mono_regular
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun SpaceMono() = FontFamily(
-    Font(
-        resource = Res.font.space_mono_regular,
-        weight = FontWeight.Normal
-    ),
-    Font(
-        resource = Res.font.space_mono_italic,
-        weight = FontWeight.Normal,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resource = Res.font.space_mono_bold,
-        weight = FontWeight.Bold
-    ),
-    Font(
-        resource = Res.font.space_mono_bold_italic,
-        weight = FontWeight.Bold,
-        style = FontStyle.Italic
-    ),
-)
+fun SpaceMono() =
+    FontFamily(
+        Font(
+            resource = Res.font.space_mono_regular,
+            weight = FontWeight.Normal,
+        ),
+        Font(
+            resource = Res.font.space_mono_italic,
+            weight = FontWeight.Normal,
+            style = FontStyle.Italic,
+        ),
+        Font(
+            resource = Res.font.space_mono_bold,
+            weight = FontWeight.Bold,
+        ),
+        Font(
+            resource = Res.font.space_mono_bold_italic,
+            weight = FontWeight.Bold,
+            style = FontStyle.Italic,
+        ),
+    )
 
 // Set of Material typography styles to start with
 @Composable
-fun TypographyApp() = Typography(
-    bodySmall = TextStyle(
-        fontFamily = SpaceMono(),
-        fontWeight = FontWeight.Light,
-        fontSize = 12.sp,
-    ),
-    bodyMedium = TextStyle(
-        fontFamily = SpaceMono(),
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
-    ),
-    bodyLarge = TextStyle(
-        fontFamily = SpaceMono(),
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    labelMedium = TextStyle(
-        fontFamily = SpaceMono(),
-        fontWeight = FontWeight.Normal,
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = SpaceMono(),
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp
+fun TypographyApp() =
+    Typography(
+        bodySmall =
+            TextStyle(
+                fontFamily = SpaceMono(),
+                fontWeight = FontWeight.Light,
+                fontSize = 12.sp,
+            ),
+        bodyMedium =
+            TextStyle(
+                fontFamily = SpaceMono(),
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+            ),
+        bodyLarge =
+            TextStyle(
+                fontFamily = SpaceMono(),
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                letterSpacing = 0.5.sp,
+            ),
+        labelMedium =
+            TextStyle(
+                fontFamily = SpaceMono(),
+                fontWeight = FontWeight.Normal,
+            ),
+        headlineMedium =
+            TextStyle(
+                fontFamily = SpaceMono(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+            ),
     )
-)

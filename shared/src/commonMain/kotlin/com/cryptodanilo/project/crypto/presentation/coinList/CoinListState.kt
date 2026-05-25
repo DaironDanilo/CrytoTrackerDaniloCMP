@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_list
+package com.cryptodanilo.project.crypto.presentation.coinlist
 
 import androidx.compose.runtime.Immutable
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
@@ -7,5 +7,5 @@ import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 data class CoinListState(
     val isLoading: Boolean = false,
     val coins: List<CoinUi> = emptyList(),
-    val selectedCoinUi: CoinUi? = null
+    val selectedCoinUi: CoinUi? = null,
 )

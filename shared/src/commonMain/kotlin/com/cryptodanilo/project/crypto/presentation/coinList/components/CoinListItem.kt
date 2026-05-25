@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_list.components
+package com.cryptodanilo.project.crypto.presentation.coinlist.components
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -29,7 +29,6 @@ import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
 import org.jetbrains.compose.resources.painterResource
 
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CoinListItem(
@@ -37,51 +36,54 @@ fun SharedTransitionScope.CoinListItem(
     coin: CoinUi,
     shouldExistSharedElementTransition: Boolean,
     onItemClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val contentColor = if (isSystemInDarkTheme()) {
-        Color.White
-    } else {
-        Color.Black
-    }
+    val contentColor =
+        if (isSystemInDarkTheme()) {
+            Color.White
+        } else {
+            Color.Black
+        }
     Row(
-        modifier = modifier
-            .clickable { onItemClick() }
-            .padding(16.dp),
+        modifier =
+            modifier
+                .clickable { onItemClick() }
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Icon(
             painter = painterResource(coin.iconRes),
             contentDescription = coin.name,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .size(85.dp)
-                .conditional(
-                    condition = shouldExistSharedElementTransition,
-                    ifTrue = {
-                        sharedElement(
-                            sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                            animatedVisibilityScope = animatedPaneScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 1000)
-                            }
-                        )
-                    }
-                )
+            modifier =
+                Modifier
+                    .size(85.dp)
+                    .conditional(
+                        condition = shouldExistSharedElementTransition,
+                        ifTrue = {
+                            sharedElement(
+                                sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                animatedVisibilityScope = animatedPaneScope,
+                                boundsTransform = { _, _ ->
+                                    tween(durationMillis = 1000)
+                                },
+                            )
+                        },
+                    ),
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = coin.symbol,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = contentColor
+                color = contentColor,
             )
             Text(
                 text = coin.name,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Light,
-                color = contentColor
+                color = contentColor,
             )
         }
         Column(horizontalAlignment = Alignment.End) {
@@ -89,7 +91,7 @@ fun SharedTransitionScope.CoinListItem(
                 text = "$ ${coin.priceUsd.formatted}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = contentColor
+                color = contentColor,
             )
             Spacer(modifier = Modifier.height(8.dp))
             PriceChange(change = coin.changePercent24Hr)
@@ -97,10 +99,10 @@ fun SharedTransitionScope.CoinListItem(
     }
 }
 
-//@OptIn(ExperimentalSharedTransitionApi::class)
-//@PreviewLightDark
-//@Composable
-//fun CoinListItemPreview() {
+// @OptIn(ExperimentalSharedTransitionApi::class)
+// @PreviewLightDark
+// @Composable
+// fun CoinListItemPreview() {
 //    CryptoTrackerTheme {
 //        SharedTransitionLayout {
 //            AnimatedVisibility(visible = true) {
@@ -113,17 +115,18 @@ fun SharedTransitionScope.CoinListItem(
 //            }
 //        }
 //    }
-//}
+// }
 
-internal val previewCoin = Coin(
-    id = "bitcoin",
-    rank = 1,
-    symbol = "BTC",
-    name = "Bitcoin",
-    marketCapUsd = 1241273958896.68,
-    priceUsd = 62828.54,
-    changePercent24Hr = 0.1
-).toCoinUi()
+internal val previewCoin =
+    Coin(
+        id = "bitcoin",
+        rank = 1,
+        symbol = "BTC",
+        name = "Bitcoin",
+        marketCapUsd = 1241273958896.68,
+        priceUsd = 62828.54,
+        changePercent24Hr = 0.1,
+    ).toCoinUi()
 
 @Composable
 expect fun getScreenSize(): IntSize
@@ -132,11 +135,12 @@ inline fun Modifier.conditional(
     condition: Boolean,
     ifTrue: Modifier.() -> Modifier,
     ifFalse: Modifier.() -> Modifier = { this },
-): Modifier = if (condition) {
-    then(ifTrue(Modifier))
-} else {
-    then(ifFalse(Modifier))
-}
+): Modifier =
+    if (condition) {
+        then(ifTrue(Modifier))
+    } else {
+        then(ifFalse(Modifier))
+    }
 
 @Composable
 fun currentModeIsPortrait(): Boolean {

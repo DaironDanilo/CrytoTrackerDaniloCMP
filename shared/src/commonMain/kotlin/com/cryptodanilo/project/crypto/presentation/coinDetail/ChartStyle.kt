@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_detail
+package com.cryptodanilo.project.crypto.presentation.coinDetail
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp

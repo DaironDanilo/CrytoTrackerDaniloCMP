@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_list.components
+package com.cryptodanilo.project.crypto.presentation.coinlist.components
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListAction
-import com.cryptodanilo.project.crypto.presentation.coin_list.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListAction
+import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -24,19 +24,19 @@ fun SharedTransitionScope.CoinListScreen(
     state: CoinListState,
     shouldExistSharedElementTransition: Boolean,
     onAction: (CoinListAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (state.isLoading) {
         Box(
             modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator()
         }
     } else {
         LazyColumn(
             modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(state.coins, key = { coin -> coin.id }) { coin ->
                 CoinListItem(
@@ -44,7 +44,7 @@ fun SharedTransitionScope.CoinListScreen(
                     coin = coin,
                     shouldExistSharedElementTransition = shouldExistSharedElementTransition,
                     onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
-                    modifier = Modifier.fillParentMaxWidth()
+                    modifier = Modifier.fillParentMaxWidth(),
                 )
                 HorizontalDivider()
             }
@@ -52,9 +52,9 @@ fun SharedTransitionScope.CoinListScreen(
     }
 }
 
-//@PreviewLightDark
-//@Composable
-//fun CoinListScreenPreview() {
+// @PreviewLightDark
+// @Composable
+// fun CoinListScreenPreview() {
 //    CryptoTrackerTheme {
 //        CoinListScreen(
 //            state = CoinListState(
@@ -66,4 +66,4 @@ fun SharedTransitionScope.CoinListScreen(
 //            onAction = {}
 //        )
 //    }
-//}
+// }

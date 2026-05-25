@@ -21,23 +21,22 @@ import kotlinx.datetime.toInstant
 import kotlin.time.ExperimentalTime
 
 class RemoteCoinDataSource(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) : CoinDataSource {
-    override suspend fun getCoins(): Result<List<Coin>, NetworkError> {
-        return safeCall<CoinsResponseDto> {
+    override suspend fun getCoins(): Result<List<Coin>, NetworkError> =
+        safeCall<CoinsResponseDto> {
             httpClient.get(
-                urlString = constructUrl("/assets")
+                urlString = constructUrl("/assets"),
             )
         }.map { response ->
             response.data.map { it.toCoin() }
         }
-    }
 
     @OptIn(ExperimentalTime::class)
     override suspend fun getCoinHistory(
         coinId: String,
         start: LocalDateTime,
-        end: LocalDateTime
+        end: LocalDateTime,
     ): Result<List<CoinPrice>, NetworkError> {
         val startMillis = start.toInstant(TimeZone.UTC).toEpochMilliseconds()
         val endMillis = end.toInstant(TimeZone.UTC).toEpochMilliseconds()

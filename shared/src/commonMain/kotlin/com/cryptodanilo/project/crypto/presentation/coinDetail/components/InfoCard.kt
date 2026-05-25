@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coin_detail.components
+package com.cryptodanilo.project.crypto.presentation.coinDetail.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
@@ -32,72 +32,77 @@ fun InfoCard(
     icon: DrawableResource,
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    formattedTextStyle: TextStyle = LocalTextStyle.current.copy(
-        color = contentColor,
-        textAlign = TextAlign.Center,
-        fontSize = 18.sp
-    ),
+    formattedTextStyle: TextStyle =
+        LocalTextStyle.current.copy(
+            color = contentColor,
+            textAlign = TextAlign.Center,
+            fontSize = 18.sp,
+        ),
 ) {
     Card(
-        modifier = modifier
-            .padding(8.dp)
-            .shadow(
-                elevation = 15.dp,
-                shape = RectangleShape,
-                ambientColor = MaterialTheme.colorScheme.primary,
-                spotColor = MaterialTheme.colorScheme.primary
-            ),
+        modifier =
+            modifier
+                .padding(8.dp)
+                .shadow(
+                    elevation = 15.dp,
+                    shape = RectangleShape,
+                    ambientColor = MaterialTheme.colorScheme.primary,
+                    spotColor = MaterialTheme.colorScheme.primary,
+                ),
         shape = RectangleShape,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = contentColor
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = contentColor,
+            ),
     ) {
         AnimatedContent(
             targetState = icon,
             label = "iconAnimation",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         ) { icon ->
             Icon(
                 painter = painterResource(icon),
                 contentDescription = title,
                 tint = contentColor,
-                modifier = Modifier
-                    .size(75.dp)
-                    .padding(top = 16.dp)
+                modifier =
+                    Modifier
+                        .size(75.dp)
+                        .padding(top = 16.dp),
             )
         }
         Spacer(modifier = Modifier.size(8.dp))
         AnimatedContent(
             targetState = formattedValue,
             label = "valueAnimation",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         ) { formattedValue ->
             Text(
                 text = formattedValue,
                 style = formattedTextStyle,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             text = title,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
-            color = contentColor
+            color = contentColor,
         )
     }
 }
 
-//@PreviewLightDark
-//@Composable
-//fun InfoCardPreview() {
+// @PreviewLightDark
+// @Composable
+// fun InfoCardPreview() {
 //    CryptoTrackerTheme {
 //        InfoCard(
 //            title = "Market Cap",
@@ -105,4 +110,4 @@ fun InfoCard(
 //            icon = ImageVector.vectorResource(id = R.drawable.dollar),
 //        )
 //    }
-//}
+// }
