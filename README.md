@@ -42,13 +42,13 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 | Layer | Library |
 |---|---|
 | UI | [Compose Multiplatform 1.11.0](https://github.com/JetBrains/compose-multiplatform) · Material 3 |
-| Navigation | [Navigation Compose (multiplatform)](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-navigation-routing.html) · Adaptive layout |
-| Networking | [Ktor 3.4.3](https://ktor.io/) (OkHttp on Android/Desktop · Darwin on iOS · JS on Web) |
+| Navigation | [Navigation 3 1.0.0-alpha05 (multiplatform)](https://developer.android.com/guide/navigation/navigation-3) · Material 3 Adaptive 1.3.0-beta01 |
+| Networking | [Ktor 3.5.0](https://ktor.io/) (OkHttp on Android/Desktop · Darwin on iOS · JS on Web) |
 | Serialization | [kotlinx.serialization 1.11.0](https://github.com/Kotlin/kotlinx.serialization) |
 | Image loading | [Coil 3.4.0](https://coil-kt.github.io/coil/) |
 | DI | [Koin 4.2.1](https://insert-koin.io/) |
 | Date/time | [kotlinx-datetime 0.8.0](https://github.com/Kotlin/kotlinx-datetime) |
-| Build secrets | [BuildKonfig 0.20.0](https://github.com/yshrsmz/BuildKonfig) |
+| Build secrets | [BuildKonfig 0.21.2](https://github.com/yshrsmz/BuildKonfig) |
 
 ---
 
