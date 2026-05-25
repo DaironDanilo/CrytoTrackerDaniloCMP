@@ -388,29 +388,31 @@ private fun getSelectedDataPointIndex(
 @Composable
 private fun LineChartPreview() {
     CryptoTrackerTheme(darkTheme = false) {
-        val previewDataPoints = remember {
-            (1..20).map { i ->
-                DataPoint(
-                    x = i.toFloat(),
-                    y = 30000f + i * 1000f + (i % 5) * 500f,
-                    xLabel = "${i % 12 + 1}h\n5/$i",
-                )
+        val previewDataPoints =
+            remember {
+                (1..20).map { i ->
+                    DataPoint(
+                        x = i.toFloat(),
+                        y = 30000f + i * 1000f + (i % 5) * 500f,
+                        xLabel = "${i % 12 + 1}h\n5/$i",
+                    )
+                }
             }
-        }
         LineChart(
             dataPoints = previewDataPoints,
-            style = ChartStyle(
-                charLineColor = Color(0xFF6650A4),
-                unselectedColor = Color(0xFF7C7C7C),
-                selectedColor = Color(0xFF6650A4),
-                helperLinesThicknessPx = 5f,
-                axisLinesThicknessPx = 5f,
-                labelFontSize = 14.sp,
-                minYLabelSpacing = 25.dp,
-                verticalPadding = 8.dp,
-                horizontalPadding = 8.dp,
-                xAxisLabelSpacing = 8.dp,
-            ),
+            style =
+                ChartStyle(
+                    charLineColor = Color(0xFF6650A4),
+                    unselectedColor = Color(0xFF7C7C7C),
+                    selectedColor = Color(0xFF6650A4),
+                    helperLinesThicknessPx = 5f,
+                    axisLinesThicknessPx = 5f,
+                    labelFontSize = 14.sp,
+                    minYLabelSpacing = 25.dp,
+                    verticalPadding = 8.dp,
+                    horizontalPadding = 8.dp,
+                    xAxisLabelSpacing = 8.dp,
+                ),
             visibleDataPointsIndices = 0..previewDataPoints.lastIndex,
             unit = "$",
             selectedDataPoint = previewDataPoints[2],

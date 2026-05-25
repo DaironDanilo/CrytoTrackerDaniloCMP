@@ -77,10 +77,11 @@ private fun CoinListScreenLoadedPreview() {
     CryptoTrackerTheme(darkTheme = false) {
         SharedTransitionLayout {
             CoinListScreen(
-                state = CoinListState(
-                    isLoading = false,
-                    coins = (0..4).map { previewCoin.copy(id = it.toString()) },
-                ),
+                state =
+                    CoinListState(
+                        isLoading = false,
+                        coins = (0..4).map { previewCoin.copy(id = it.toString()) },
+                    ),
                 shouldExistSharedElementTransition = false,
                 onAction = {},
             )

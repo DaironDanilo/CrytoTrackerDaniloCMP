@@ -125,9 +125,10 @@ private fun CoinListItemDarkPreview() {
     CryptoTrackerTheme(darkTheme = true) {
         SharedTransitionLayout {
             CoinListItem(
-                coin = previewCoin.copy(
-                    changePercent24Hr = DisplayableNumber(-3.45, "-3.45"),
-                ),
+                coin =
+                    previewCoin.copy(
+                        changePercent24Hr = DisplayableNumber(-3.45, "-3.45"),
+                    ),
                 shouldExistSharedElementTransition = false,
                 onItemClick = {},
             )
@@ -159,9 +160,3 @@ inline fun Modifier.conditional(
     } else {
         then(ifFalse(Modifier))
     }
-
-@Composable
-fun currentModeIsPortrait(): Boolean {
-    val windowSize = getScreenSize()
-    return windowSize.height > windowSize.width
-}
