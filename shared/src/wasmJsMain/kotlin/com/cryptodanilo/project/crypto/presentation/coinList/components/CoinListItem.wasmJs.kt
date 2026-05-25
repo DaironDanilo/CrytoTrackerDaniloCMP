@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coinlist.components
+package com.cryptodanilo.project.crypto.presentation.coinList.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi

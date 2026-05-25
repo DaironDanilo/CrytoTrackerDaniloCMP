@@ -1,6 +1,7 @@
-package com.cryptodanilo.project.crypto.presentation.coinlist.components
+package com.cryptodanilo.project.crypto.presentation.coinList.components
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -21,18 +22,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
+import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
+import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CoinListItem(
-    animatedPaneScope: AnimatedPaneScope,
+    animatedPaneScope: AnimatedPaneScope? = null,
     coin: CoinUi,
     shouldExistSharedElementTransition: Boolean,
     onItemClick: () -> Unit,
@@ -60,11 +64,11 @@ fun SharedTransitionScope.CoinListItem(
                 Modifier
                     .size(85.dp)
                     .conditional(
-                        condition = shouldExistSharedElementTransition,
+                        condition = shouldExistSharedElementTransition && animatedPaneScope != null,
                         ifTrue = {
                             sharedElement(
                                 sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                animatedVisibilityScope = animatedPaneScope,
+                                animatedVisibilityScope = animatedPaneScope!!,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = 1000)
                                 },
@@ -99,23 +103,37 @@ fun SharedTransitionScope.CoinListItem(
     }
 }
 
-// @OptIn(ExperimentalSharedTransitionApi::class)
-// @PreviewLightDark
-// @Composable
-// fun CoinListItemPreview() {
-//    CryptoTrackerTheme {
-//        SharedTransitionLayout {
-//            AnimatedVisibility(visible = true) {
-//                CoinListItem(
-//                    animatedPaneScope = this as AnimatedPaneScope,
-//                    coin = previewCoin,
-//                    onItemClick = {},
-//                    modifier = Modifier.background(MaterialTheme.colorScheme.background)
-//                )
-//            }
-//        }
-//    }
-// }
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, name = "Light")
+@Composable
+private fun CoinListItemLightPreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        SharedTransitionLayout {
+            CoinListItem(
+                coin = previewCoin,
+                shouldExistSharedElementTransition = false,
+                onItemClick = {},
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - Negative change")
+@Composable
+private fun CoinListItemDarkPreview() {
+    CryptoTrackerTheme(darkTheme = true) {
+        SharedTransitionLayout {
+            CoinListItem(
+                coin = previewCoin.copy(
+                    changePercent24Hr = DisplayableNumber(-3.45, "-3.45"),
+                ),
+                shouldExistSharedElementTransition = false,
+                onItemClick = {},
+            )
+        }
+    }
+}
 
 internal val previewCoin =
     Coin(

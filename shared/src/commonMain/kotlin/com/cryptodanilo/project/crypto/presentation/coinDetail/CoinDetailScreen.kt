@@ -2,6 +2,7 @@ package com.cryptodanilo.project.crypto.presentation.coinDetail
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -40,10 +41,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListState
-import com.cryptodanilo.project.crypto.presentation.coinlist.components.conditional
-import com.cryptodanilo.project.crypto.presentation.coinlist.components.getScreenSize
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinList.components.previewCoin
+import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.crypto.presentation.coinList.components.conditional
+import com.cryptodanilo.project.crypto.presentation.coinList.components.getScreenSize
 import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.shared.generated.resources.Res
@@ -61,7 +65,7 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SharedTransitionScope.CoinDetailScreen(
-    animatedPaneScope: AnimatedPaneScope,
+    animatedPaneScope: AnimatedPaneScope? = null,
     state: CoinListState,
     shouldShowBackNavigationIcon: Boolean,
     shouldExistSharedElementTransition: Boolean,
@@ -100,11 +104,11 @@ fun SharedTransitionScope.CoinDetailScreen(
                         Modifier
                             .size(100.dp)
                             .conditional(
-                                condition = shouldExistSharedElementTransition,
+                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
                                 ifTrue = {
                                     sharedElement(
                                         sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                        animatedVisibilityScope = animatedPaneScope,
+                                        animatedVisibilityScope = animatedPaneScope!!,
                                         boundsTransform = { _, _ ->
                                             tween(durationMillis = 1000)
                                         },
@@ -231,15 +235,34 @@ fun calculateAspectRatio(screenSize: IntSize): Float {
     }
 }
 
-// @PreviewLightDark()
-// @Composable
-// fun CoinDetailScreenPreview() {
-//    CryptoTrackerTheme {
-//        CoinDetailScreen(
-//            state = CoinListState(
-//                selectedCoinUi = previewCoin
-//            ),
-//            modifier = Modifier.background(MaterialTheme.colorScheme.background)
-//        )
-//    }
-// }
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, name = "Light - With selected coin")
+@Composable
+private fun CoinDetailScreenLightPreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        SharedTransitionLayout {
+            CoinDetailScreen(
+                state = CoinListState(selectedCoinUi = previewCoin),
+                shouldShowBackNavigationIcon = true,
+                shouldExistSharedElementTransition = false,
+                onBack = {},
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - With selected coin")
+@Composable
+private fun CoinDetailScreenDarkPreview() {
+    CryptoTrackerTheme(darkTheme = true) {
+        SharedTransitionLayout {
+            CoinDetailScreen(
+                state = CoinListState(selectedCoinUi = previewCoin),
+                shouldShowBackNavigationIcon = false,
+                shouldExistSharedElementTransition = false,
+                onBack = {},
+            )
+        }
+    }
+}

@@ -20,8 +20,12 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.dollar
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -100,14 +104,26 @@ fun InfoCard(
     }
 }
 
-// @PreviewLightDark
-// @Composable
-// fun InfoCardPreview() {
-//    CryptoTrackerTheme {
-//        InfoCard(
-//            title = "Market Cap",
-//            formattedValue = "$ 63,000.000",
-//            icon = ImageVector.vectorResource(id = R.drawable.dollar),
-//        )
-//    }
-// }
+@Preview(showBackground = true, name = "Light")
+@Composable
+private fun InfoCardLightPreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        InfoCard(
+            title = "Market Cap",
+            formattedValue = "$ 1,241,273,958,896.68",
+            icon = Res.drawable.dollar,
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - Error color")
+@Composable
+private fun InfoCardDarkPreview() {
+    CryptoTrackerTheme(darkTheme = true) {
+        InfoCard(
+            title = "Change (24h)",
+            formattedValue = "-3.45",
+            icon = Res.drawable.dollar,
+        )
+    }
+}

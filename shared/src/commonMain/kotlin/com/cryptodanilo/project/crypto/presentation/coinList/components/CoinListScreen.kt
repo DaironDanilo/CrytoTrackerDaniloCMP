@@ -1,6 +1,7 @@
-package com.cryptodanilo.project.crypto.presentation.coinlist.components
+package com.cryptodanilo.project.crypto.presentation.coinList.components
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,14 +14,16 @@ import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListAction
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
+import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CoinListScreen(
-    animatedPaneScope: AnimatedPaneScope,
+    animatedPaneScope: AnimatedPaneScope? = null,
     state: CoinListState,
     shouldExistSharedElementTransition: Boolean,
     onAction: (CoinListAction) -> Unit,
@@ -52,18 +55,35 @@ fun SharedTransitionScope.CoinListScreen(
     }
 }
 
-// @PreviewLightDark
-// @Composable
-// fun CoinListScreenPreview() {
-//    CryptoTrackerTheme {
-//        CoinListScreen(
-//            state = CoinListState(
-//                coins = (0..10).map {
-//                    previewCoin.copy(id = it.toString())
-//                }
-//            ),
-//            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-//            onAction = {}
-//        )
-//    }
-// }
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, name = "Loading")
+@Composable
+private fun CoinListScreenLoadingPreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        SharedTransitionLayout {
+            CoinListScreen(
+                state = CoinListState(isLoading = true),
+                shouldExistSharedElementTransition = false,
+                onAction = {},
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, name = "Loaded with coins")
+@Composable
+private fun CoinListScreenLoadedPreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        SharedTransitionLayout {
+            CoinListScreen(
+                state = CoinListState(
+                    isLoading = false,
+                    coins = (0..4).map { previewCoin.copy(id = it.toString()) },
+                ),
+                shouldExistSharedElementTransition = false,
+                onAction = {},
+            )
+        }
+    }
+}

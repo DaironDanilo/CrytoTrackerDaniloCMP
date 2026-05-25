@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coinlist
+package com.cryptodanilo.project.crypto.presentation.coinList
 
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 

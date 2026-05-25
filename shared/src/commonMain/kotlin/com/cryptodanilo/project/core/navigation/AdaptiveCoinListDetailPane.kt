@@ -21,10 +21,10 @@ import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
 import com.cryptodanilo.project.crypto.presentation.coinDetail.CoinDetailScreen
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListAction
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListEvent
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListViewModel
-import com.cryptodanilo.project.crypto.presentation.coinlist.components.CoinListScreen
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListEvent
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListViewModel
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListScreen
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 

@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coinlist.components
+package com.cryptodanilo.project.crypto.presentation.coinList.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -17,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
+import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.greenBackground
 
 @Composable
@@ -67,12 +69,18 @@ fun PriceChange(
     }
 }
 
-// @PreviewLightDark
-// @Composable
-// fun PriceChangePreview() {
-//    CryptoTrackerTheme {
-//        PriceChange(
-//            change = DisplayableNumber(0.12, "0.12"),
-//        )
-//    }
-// }
+@Preview(showBackground = true, name = "Light - Positive")
+@Composable
+private fun PriceChangePositivePreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        PriceChange(change = DisplayableNumber(0.54, "0.54"))
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - Negative")
+@Composable
+private fun PriceChangeNegativePreview() {
+    CryptoTrackerTheme(darkTheme = true) {
+        PriceChange(change = DisplayableNumber(-2.10, "-2.10"))
+    }
+}

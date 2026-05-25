@@ -1,4 +1,4 @@
-package com.cryptodanilo.project.crypto.presentation.coinlist
+package com.cryptodanilo.project.crypto.presentation.coinList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

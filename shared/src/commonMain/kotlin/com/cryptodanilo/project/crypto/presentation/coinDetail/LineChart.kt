@@ -21,6 +21,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -380,55 +384,36 @@ private fun getSelectedDataPointIndex(
     }
 }
 
-// @Preview(widthDp = 1000)
-// @Composable
-// fun LineChartPreview() {
-//    CryptoTrackerTheme {
-//
-//    }
-//    val coinHistoryRandomized = remember {
-//        (1..20).map {
-//            CoinPrice(
-//                priceUsd = Random.nextFloat() * 1000.0,
-//                dateTime = ZonedDateTime.now().plusHours(it.toLong())
-//            )
-//        }
-//    }
-//    val style = ChartStyle(
-//        charLineColor = Color.Black,
-//        unselectedColor = Color(0xFF7C7C7C),
-//        selectedColor = Color.Black,
-//        helperLinesThicknessPx = 1f,
-//        axisLinesThicknessPx = 5f,
-//        labelFontSize = 14.sp,
-//        minYLabelSpacing = 25.dp,
-//        verticalPadding = 8.dp,
-//        horizontalPadding = 8.dp,
-//        xAxisLabelSpacing = 8.dp,
-//    )
-//    val dataPoints = remember {
-//        coinHistoryRandomized.map { coinPrice ->
-//            DataPoint(
-//                x = coinPrice.dateTime.hour.toFloat(),
-//                y = coinPrice.priceUsd.toFloat(),
-//                xLabel = DateTimeFormatter
-//                    .ofPattern("ha\nM/d")
-//                    .format(coinPrice.dateTime)
-//            )
-//        }
-//    }
-//    LineChart(
-//        dataPoints = dataPoints,
-//        style = style,
-//        visibleDataPointsIndices = 0..19,
-//        unit = "$",
-//        selectedDataPoint = dataPoints[1],
-//        onSelectedDataPoint = {},
-//        onXLabelWidthChange = {},
-//        showHelperLines = true,
-//        modifier = Modifier
-//            .width(700.dp)
-//            .height(300.dp)
-//            .background(Color.White)
-//    )
-// }
+@Preview(showBackground = true, widthDp = 400, heightDp = 300, name = "Line Chart")
+@Composable
+private fun LineChartPreview() {
+    CryptoTrackerTheme(darkTheme = false) {
+        val previewDataPoints = remember {
+            (1..20).map { i ->
+                DataPoint(
+                    x = i.toFloat(),
+                    y = 30000f + i * 1000f + (i % 5) * 500f,
+                    xLabel = "${i % 12 + 1}h\n5/$i",
+                )
+            }
+        }
+        LineChart(
+            dataPoints = previewDataPoints,
+            style = ChartStyle(
+                charLineColor = Color(0xFF6650A4),
+                unselectedColor = Color(0xFF7C7C7C),
+                selectedColor = Color(0xFF6650A4),
+                helperLinesThicknessPx = 5f,
+                axisLinesThicknessPx = 5f,
+                labelFontSize = 14.sp,
+                minYLabelSpacing = 25.dp,
+                verticalPadding = 8.dp,
+                horizontalPadding = 8.dp,
+                xAxisLabelSpacing = 8.dp,
+            ),
+            visibleDataPointsIndices = 0..previewDataPoints.lastIndex,
+            unit = "$",
+            selectedDataPoint = previewDataPoints[2],
+        )
+    }
+}

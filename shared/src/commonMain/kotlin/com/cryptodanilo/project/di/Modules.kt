@@ -3,7 +3,7 @@ package com.cryptodanilo.project.di
 import com.cryptodanilo.project.core.data.networking.HttpClientFactory
 import com.cryptodanilo.project.crypto.data.networking.RemoteCoinDataSource
 import com.cryptodanilo.project.crypto.domain.CoinDataSource
-import com.cryptodanilo.project.crypto.presentation.coinlist.CoinListViewModel
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
