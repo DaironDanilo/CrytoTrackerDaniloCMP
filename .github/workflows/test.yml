@@ -50,11 +50,8 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
-      - name: Clear Kotlin/Native cache
-        run: rm -rf ~/.konan/kotlin-native-prebuilt-macos-aarch64-*/klib/cache
-
       - name: Run iOS simulator tests
-        run: ./gradlew :shared:iosSimulatorArm64Test -Pkotlin.native.cacheKind.iosSimulatorArm64=none
+        run: ./gradlew :shared:iosSimulatorArm64Test
 
       - name: Upload test reports
         if: always()
