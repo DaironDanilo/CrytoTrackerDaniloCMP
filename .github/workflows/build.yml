@@ -54,6 +54,7 @@ jobs:
             -scheme iosApp \
             -sdk iphonesimulator \
             -derivedDataPath ./build \
+            ARCHS=arm64 \
             -verbose
 
       - name: Upload app folder
