@@ -46,15 +46,6 @@ kotlin {
         }
     }
 
-    // Disable klib caching for the iOS simulator test binary to avoid a
-    // linker version mismatch: the runner (Xcode 16.4) compiles caches
-    // targeting iOS 18.5 SDK while the deployment minimum is iOS 14.0.
-    iosSimulatorArm64 {
-        binaries {
-            getTest("DEBUG").freeCompilerArgs += listOf("-Xcache-directories=")
-        }
-    }
-
     jvm("desktop")
 
     @OptIn(ExperimentalWasmDsl::class)

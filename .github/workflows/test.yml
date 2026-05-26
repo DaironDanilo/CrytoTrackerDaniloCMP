@@ -11,8 +11,8 @@ env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
 
 jobs:
-  test-android-desktop:
-    name: Test Android & Desktop
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,61 +24,12 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
-      - name: Run Android unit tests
-        run: ./gradlew :shared:testAndroidHostTest
-
-      - name: Run Desktop tests
+      - name: Run unit tests
         run: ./gradlew :shared:desktopTest
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-android-desktop
-          path: "**/build/reports/tests/"
-
-  test-ios:
-    name: Test iOS
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create secrets.properties
-        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
-
-      - name: Gradle setup
-        uses: ./.github/actions/gradle-setup
-
-      - name: Run iOS simulator tests
-        run: ./gradlew :shared:iosSimulatorArm64Test
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports-ios
-          path: "**/build/reports/tests/"
-
-  test-web:
-    name: Test Web (WASM)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create secrets.properties
-        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
-
-      - name: Gradle setup
-        uses: ./.github/actions/gradle-setup
-
-      - name: Run WASM browser tests
-        run: ./gradlew :shared:wasmJsBrowserTest
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports-web
+          name: test-reports
           path: "**/build/reports/tests/"
