@@ -148,10 +148,10 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build WASM distribution
-        run: ./gradlew :webApp:wasmJsBrowserDistribution
+        run: ./gradlew :webApp:wasmJsBrowserDevelopmentDistribution
 
       - name: Upload web distribution
         uses: actions/upload-artifact@v4
         with:
           name: web-wasm-dist
-          path: webApp/build/dist/wasmJs/productionExecutable/
+          path: webApp/build/dist/wasmJs/developmentExecutable/
