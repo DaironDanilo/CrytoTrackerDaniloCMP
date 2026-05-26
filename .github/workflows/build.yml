@@ -1,0 +1,154 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
+
+jobs:
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build Android debug APK
+        run: ./gradlew :androidApp:assembleDebug
+
+      - name: Upload Android debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: androidApp/build/outputs/apk/debug/*.apk
+
+  build-ios:
+    name: Build iOS simulator app
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build iOS simulator app
+        run: |
+          xcodebuild build \
+            -project iosApp/iosApp.xcodeproj \
+            -configuration Debug \
+            -scheme iosApp \
+            -sdk iphonesimulator \
+            -derivedDataPath ./build \
+            -verbose
+
+      - name: Upload app folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: iphonesimulator-app
+          path: build/Build/Products/Debug-iphonesimulator/*
+
+  build-desktop-macos:
+    name: Build Desktop macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build macOS DMG
+        run: ./gradlew :desktopApp:packageDmg
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-macos-dmg
+          path: desktopApp/build/compose/binaries/main/dmg/*.dmg
+
+  build-desktop-windows:
+    name: Build Desktop Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build Windows MSI
+        run: ./gradlew :desktopApp:packageMsi
+
+      - name: Upload Windows MSI
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows-msi
+          path: desktopApp/build/compose/binaries/main/msi/*.msi
+
+  build-desktop-linux:
+    name: Build Desktop Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build Linux DEB
+        run: ./gradlew :desktopApp:packageDeb
+
+      - name: Upload Linux DEB
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-linux-deb
+          path: desktopApp/build/compose/binaries/main/deb/*.deb
+
+  build-web:
+    name: Build Web (WASM)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build WASM distribution
+        run: ./gradlew :webApp:wasmJsBrowserDistribution
+
+      - name: Upload web distribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-wasm-dist
+          path: webApp/build/dist/wasmJs/productionExecutable/
