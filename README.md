@@ -1,5 +1,8 @@
 # CryptoTracker — Kotlin Multiplatform
 
+[![Build](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/build.yml/badge.svg)](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/build.yml)
+[![Test](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/test.yml/badge.svg)](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/test.yml)
+
 A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targeting Android, iOS, Desktop (JVM), and Web (Wasm). It displays live coin prices and historical charts sourced from the [CoinCap](https://pro.coincap.io/api-docs) REST API.
 
 <table>
