@@ -215,6 +215,12 @@ UI (Compose) ──► Action ──► ViewModel ──► UseCase / DataSource
 
 ---
 
+## Credits
+
+Originally inspired by Phillip Lackner's [Android CryptoTracker](https://github.com/philipplackner/CryptoTracker) course. Migrated to Compose Multiplatform with added features including shared element transitions, Desktop, Web (Wasm), and iOS targets.
+
+---
+
 ## License
 
 This project is open source. See [LICENSE](LICENSE) for details.
