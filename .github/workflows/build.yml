@@ -55,7 +55,8 @@ jobs:
             -sdk iphonesimulator \
             -derivedDataPath ./build \
             ARCHS=arm64 \
-            IPHONEOS_DEPLOYMENT_TARGET=18.0 \
+            IPHONEOS_DEPLOYMENT_TARGET=18.5 \
+            OTHER_LDFLAGS="-Wl,-undefined,dynamic_lookup" \
             -verbose
 
       - name: Upload app folder
