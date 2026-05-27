@@ -16,7 +16,15 @@ subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         filter {
-            exclude("**/generated/**")
+            exclude { it.file.path.contains("/generated/") }
         }
+    }
+
+    afterEvaluate {
+        tasks.matching { it.name.startsWith("runKtlintCheckOver") || it.name.startsWith("runKtlintFormatOver") }
+            .configureEach {
+                (this as? SourceTask)
+                    ?.exclude { element -> element.file.path.contains("/generated/") }
+            }
     }
 }
