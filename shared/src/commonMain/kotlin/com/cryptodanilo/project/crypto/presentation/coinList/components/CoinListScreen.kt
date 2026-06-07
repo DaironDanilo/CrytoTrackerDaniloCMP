@@ -42,6 +42,7 @@ fun SharedTransitionScope.CoinListScreen(
     shouldExistSharedElementTransition: Boolean,
     onAction: (CoinListAction) -> Unit,
     modifier: Modifier = Modifier,
+    isSearchBarFocusable: Boolean = true,
 ) {
     when {
         state.isLoading -> {
@@ -88,6 +89,7 @@ fun SharedTransitionScope.CoinListScreen(
                     query = state.searchQuery,
                     onQueryChange = { onAction(CoinListAction.OnSearchQueryChange(it)) },
                     modifier = Modifier.fillMaxWidth(),
+                    isFocusable = isSearchBarFocusable,
                 )
                 LazyColumn(
                     modifier = Modifier.weight(1f),
