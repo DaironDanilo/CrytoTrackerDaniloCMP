@@ -11,6 +11,7 @@
     <string name="change_last_24h">Change last 24h</string>
     <string name="go_back">Go back</string>
     <string name="search_assets">Search Assets...</string>
+    <string name="clear_search">Clear search</string>
     <string name="market_trades">trades</string>
     <string name="market_vol">vol</string>
     <string name="markets_retry">Retry</string>
