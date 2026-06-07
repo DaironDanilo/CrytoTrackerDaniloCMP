@@ -28,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
@@ -47,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
@@ -58,6 +56,7 @@ import com.cryptodanilo.project.crypto.presentation.coinList.components.getScree
 import com.cryptodanilo.project.crypto.presentation.coinList.components.previewCoin
 import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.change_last_24h
@@ -103,16 +102,16 @@ fun SharedTransitionScope.CoinDetailScreen(
                     Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
+                        .padding(CryptoTrackerTheme.spacing.medium),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
                     painter = painterResource(coin.iconRes),
                     contentDescription = coin.name,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = CryptoTrackerTheme.colors.primary,
                     modifier =
                         Modifier
-                            .size(80.dp)
+                            .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
                             .conditional(
                                 condition = shouldExistSharedElementTransition && animatedPaneScope != null,
                                 ifTrue = {
@@ -162,7 +161,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                         if (isPositiveChange) {
                             if (isSystemInDarkTheme()) Color.Green else greenBackground
                         } else {
-                            MaterialTheme.colorScheme.error
+                            CryptoTrackerTheme.colors.error
                         }
                     InfoCard(
                         title = stringResource(Res.string.change_last_24h),
@@ -178,13 +177,13 @@ fun SharedTransitionScope.CoinDetailScreen(
                 }
 
                 // Chart | Markets tab switcher
-                val tabShape = RoundedCornerShape(4.dp)
+                val tabShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerSmall)
                 Row(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .border(1.dp, MaterialTheme.colorScheme.outline, tabShape)
+                            .padding(vertical = CryptoTrackerTheme.spacing.small)
+                            .border(CryptoTrackerTheme.sizing.borderThin, CryptoTrackerTheme.colors.outline, tabShape)
                             .clip(tabShape),
                 ) {
                     listOf(DetailTab.Chart, DetailTab.Markets).forEach { tab ->
@@ -194,20 +193,20 @@ fun SharedTransitionScope.CoinDetailScreen(
                                 Modifier
                                     .weight(1f)
                                     .background(
-                                        if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                        if (isSelected) CryptoTrackerTheme.colors.primary else Color.Transparent,
                                     ).clickable { onAction(CoinListAction.OnDetailTabSelected(tab)) }
-                                    .padding(vertical = 12.dp),
+                                    .padding(vertical = CryptoTrackerTheme.sizing.tabVerticalPadding),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
                                 text = tab.name,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = CryptoTrackerTheme.typography.bodyMedium,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                 color =
                                     if (isSelected) {
-                                        MaterialTheme.colorScheme.onPrimary
+                                        CryptoTrackerTheme.colors.onPrimary
                                     } else {
-                                        MaterialTheme.colorScheme.onSurface
+                                        CryptoTrackerTheme.colors.onSurface
                                     },
                             )
                         }
@@ -228,8 +227,8 @@ fun SharedTransitionScope.CoinDetailScreen(
                     modifier =
                         Modifier
                             .clickable { onBack() }
-                            .padding(24.dp)
-                            .size(36.dp),
+                            .padding(CryptoTrackerTheme.spacing.large)
+                            .size(CryptoTrackerTheme.sizing.backIconSize),
                 )
             }
         }
@@ -263,16 +262,16 @@ private fun DetailTabContent(
                     dataPoints = coinPriceHistory,
                     style =
                         ChartStyle(
-                            charLineColor = MaterialTheme.colorScheme.primary,
-                            unselectedColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                            selectedColor = MaterialTheme.colorScheme.primary,
+                            charLineColor = CryptoTrackerTheme.colors.primary,
+                            unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
+                            selectedColor = CryptoTrackerTheme.colors.primary,
                             helperLinesThicknessPx = 5f,
                             axisLinesThicknessPx = 5f,
                             labelFontSize = 14.sp,
-                            minYLabelSpacing = 25.dp,
-                            verticalPadding = 8.dp,
-                            horizontalPadding = 8.dp,
-                            xAxisLabelSpacing = 8.dp,
+                            minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                            verticalPadding = CryptoTrackerTheme.spacing.small,
+                            horizontalPadding = CryptoTrackerTheme.spacing.small,
+                            xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
                         ),
                     visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
                     unit = "$",
@@ -314,7 +313,7 @@ fun calculateAspectRatio(screenSize: IntSize): Float {
 @Preview(showBackground = true, name = "Light - With selected coin")
 @Composable
 private fun CoinDetailScreenLightPreview() {
-    CryptoTrackerTheme(darkTheme = false) {
+    CryptoTrackerThemeProvider(darkTheme = false) {
         SharedTransitionLayout {
             CoinDetailScreen(
                 state = CoinListState(selectedCoinUi = previewCoin),
@@ -330,7 +329,7 @@ private fun CoinDetailScreenLightPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - With selected coin")
 @Composable
 private fun CoinDetailScreenDarkPreview() {
-    CryptoTrackerTheme(darkTheme = true) {
+    CryptoTrackerThemeProvider(darkTheme = true) {
         SharedTransitionLayout {
             CoinDetailScreen(
                 state = CoinListState(selectedCoinUi = previewCoin),

@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,10 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.markets_empty
 import cryptotrackerdanilo.shared.generated.resources.markets_retry
@@ -46,20 +45,20 @@ fun MarketsList(
 
         state.marketsError != null -> {
             Column(
-                modifier = modifier.fillMaxSize().padding(16.dp),
+                modifier = modifier.fillMaxSize().padding(CryptoTrackerTheme.spacing.medium),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = state.marketsError.asString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
+                    style = CryptoTrackerTheme.typography.bodyMedium,
+                    color = CryptoTrackerTheme.colors.error,
                     textAlign = TextAlign.Center,
                 )
                 TextButton(onClick = { onAction(CoinListAction.OnRetryMarkets) }) {
                     Text(
                         text = stringResource(Res.string.markets_retry),
-                        color = MaterialTheme.colorScheme.primary,
+                        color = CryptoTrackerTheme.colors.primary,
                     )
                 }
             }
@@ -72,8 +71,8 @@ fun MarketsList(
             ) {
                 Text(
                     text = stringResource(Res.string.markets_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = CryptoTrackerTheme.typography.bodyMedium,
+                    color = CryptoTrackerTheme.colors.onSurfaceVariant,
                 )
             }
         }
@@ -93,12 +92,12 @@ private fun MarketsContent(
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val isCompact = maxWidth < 600.dp
+        val isCompact = maxWidth < CryptoTrackerTheme.sizing.marketsListCompactBreakpoint
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             if (!isCompact) {
                 item {
                     MarketsColumnHeader()
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    HorizontalDivider(color = CryptoTrackerTheme.colors.outlineVariant)
                 }
             }
             items(
@@ -109,7 +108,7 @@ private fun MarketsContent(
                     market = market,
                     isCompact = isCompact,
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                HorizontalDivider(color = CryptoTrackerTheme.colors.outlineVariant)
             }
         }
     }
@@ -118,7 +117,7 @@ private fun MarketsContent(
 @Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Loading")
 @Composable
 private fun MarketsListLoadingPreview() {
-    CryptoTrackerTheme(darkTheme = true) {
+    CryptoTrackerThemeProvider(darkTheme = true) {
         MarketsList(
             state = CoinListState(isMarketsLoading = true),
             onAction = {},
@@ -129,7 +128,7 @@ private fun MarketsListLoadingPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "With markets")
 @Composable
 private fun MarketsListPreview() {
-    CryptoTrackerTheme(darkTheme = true) {
+    CryptoTrackerThemeProvider(darkTheme = true) {
         MarketsList(
             state =
                 CoinListState(

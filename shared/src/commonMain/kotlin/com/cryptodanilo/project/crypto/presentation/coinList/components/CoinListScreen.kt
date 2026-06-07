@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
@@ -24,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.coin_list_error
 import cryptotrackerdanilo.shared.generated.resources.coins_all_loaded
@@ -56,17 +55,17 @@ fun SharedTransitionScope.CoinListScreen(
 
         state.isError -> {
             Column(
-                modifier = modifier.fillMaxSize().padding(16.dp),
+                modifier = modifier.fillMaxSize().padding(CryptoTrackerTheme.spacing.medium),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = stringResource(Res.string.coin_list_error),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
+                    style = CryptoTrackerTheme.typography.bodyMedium,
+                    color = CryptoTrackerTheme.colors.error,
                     textAlign = TextAlign.Center,
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(CryptoTrackerTheme.sizing.errorRetrySpacing))
                 Button(onClick = { onAction(CoinListAction.OnRefresh) }) {
                     Text(stringResource(Res.string.retry))
                 }
@@ -92,7 +91,7 @@ fun SharedTransitionScope.CoinListScreen(
                 )
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.small),
                 ) {
                     items(
                         items = displayedCoins,
@@ -113,7 +112,7 @@ fun SharedTransitionScope.CoinListScreen(
                             when {
                                 state.isLoadingMore -> {
                                     Box(
-                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         CircularProgressIndicator()
@@ -122,20 +121,20 @@ fun SharedTransitionScope.CoinListScreen(
 
                                 !state.hasMoreCoins -> {
                                     Box(
-                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Text(
                                             text = stringResource(Res.string.coins_all_loaded),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            style = CryptoTrackerTheme.typography.bodySmall,
+                                            color = CryptoTrackerTheme.colors.onSurfaceVariant,
                                         )
                                     }
                                 }
 
                                 else -> {
                                     Box(
-                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
                                         contentAlignment = Alignment.Center,
                                     ) {
                                         Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
@@ -156,7 +155,7 @@ fun SharedTransitionScope.CoinListScreen(
 @Preview(showBackground = true, name = "Loading")
 @Composable
 private fun CoinListScreenLoadingPreview() {
-    CryptoTrackerTheme(darkTheme = false) {
+    CryptoTrackerThemeProvider(darkTheme = false) {
         SharedTransitionLayout {
             CoinListScreen(
                 state = CoinListState(isLoading = true),
@@ -171,7 +170,7 @@ private fun CoinListScreenLoadingPreview() {
 @Preview(showBackground = true, name = "Loaded with coins")
 @Composable
 private fun CoinListScreenLoadedPreview() {
-    CryptoTrackerTheme(darkTheme = false) {
+    CryptoTrackerThemeProvider(darkTheme = false) {
         SharedTransitionLayout {
             CoinListScreen(
                 state =

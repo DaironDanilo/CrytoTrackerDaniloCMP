@@ -22,9 +22,9 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import kotlin.math.roundToInt
 
 @Composable
@@ -387,7 +387,7 @@ private fun getSelectedDataPointIndex(
 @Preview(showBackground = true, widthDp = 400, heightDp = 300, name = "Line Chart")
 @Composable
 private fun LineChartPreview() {
-    CryptoTrackerTheme(darkTheme = false) {
+    CryptoTrackerThemeProvider(darkTheme = false) {
         val previewDataPoints =
             remember {
                 (1..20).map { i ->
@@ -408,10 +408,10 @@ private fun LineChartPreview() {
                     helperLinesThicknessPx = 5f,
                     axisLinesThicknessPx = 5f,
                     labelFontSize = 14.sp,
-                    minYLabelSpacing = 25.dp,
-                    verticalPadding = 8.dp,
-                    horizontalPadding = 8.dp,
-                    xAxisLabelSpacing = 8.dp,
+                    minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                    verticalPadding = CryptoTrackerTheme.spacing.small,
+                    horizontalPadding = CryptoTrackerTheme.spacing.small,
+                    xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
                 ),
             visibleDataPointsIndices = 0..previewDataPoints.lastIndex,
             unit = "$",

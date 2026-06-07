@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
@@ -24,13 +23,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -52,17 +51,17 @@ fun SharedTransitionScope.CoinListItem(
         modifier =
             modifier
                 .clickable { onItemClick() }
-                .padding(16.dp),
+                .padding(CryptoTrackerTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.medium),
     ) {
         Icon(
             painter = painterResource(coin.iconRes),
             contentDescription = coin.name,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = CryptoTrackerTheme.colors.primary,
             modifier =
                 Modifier
-                    .size(85.dp)
+                    .size(CryptoTrackerTheme.sizing.coinIconListSize)
                     .conditional(
                         condition = shouldExistSharedElementTransition && animatedPaneScope != null,
                         ifTrue = {
@@ -97,7 +96,7 @@ fun SharedTransitionScope.CoinListItem(
                 fontWeight = FontWeight.SemiBold,
                 color = contentColor,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
             PriceChange(change = coin.changePercent24Hr)
         }
     }
@@ -107,7 +106,7 @@ fun SharedTransitionScope.CoinListItem(
 @Preview(showBackground = true, name = "Light")
 @Composable
 private fun CoinListItemLightPreview() {
-    CryptoTrackerTheme(darkTheme = false) {
+    CryptoTrackerThemeProvider(darkTheme = false) {
         SharedTransitionLayout {
             CoinListItem(
                 coin = previewCoin,
@@ -122,7 +121,7 @@ private fun CoinListItemLightPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - Negative change")
 @Composable
 private fun CoinListItemDarkPreview() {
-    CryptoTrackerTheme(darkTheme = true) {
+    CryptoTrackerThemeProvider(darkTheme = true) {
         SharedTransitionLayout {
             CoinListItem(
                 coin =

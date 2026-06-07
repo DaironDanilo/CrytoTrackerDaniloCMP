@@ -15,7 +15,7 @@ import cryptotrackerdanilo.shared.generated.resources.space_mono_regular
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun SpaceMono() =
+fun spaceMono() =
     FontFamily(
         Font(
             resource = Res.font.space_mono_regular,
@@ -39,23 +39,23 @@ fun SpaceMono() =
 
 // Set of Material typography styles to start with
 @Composable
-fun TypographyApp() =
+fun typographyApp() =
     Typography(
         bodySmall =
             TextStyle(
-                fontFamily = SpaceMono(),
+                fontFamily = spaceMono(),
                 fontWeight = FontWeight.Light,
                 fontSize = 12.sp,
             ),
         bodyMedium =
             TextStyle(
-                fontFamily = SpaceMono(),
+                fontFamily = spaceMono(),
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
             ),
         bodyLarge =
             TextStyle(
-                fontFamily = SpaceMono(),
+                fontFamily = spaceMono(),
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
@@ -63,12 +63,12 @@ fun TypographyApp() =
             ),
         labelMedium =
             TextStyle(
-                fontFamily = SpaceMono(),
+                fontFamily = spaceMono(),
                 fontWeight = FontWeight.Normal,
             ),
         headlineMedium =
             TextStyle(
-                fontFamily = SpaceMono(),
+                fontFamily = spaceMono(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
             ),

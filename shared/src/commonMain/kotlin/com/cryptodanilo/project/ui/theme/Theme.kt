@@ -1,10 +1,13 @@
 package com.cryptodanilo.project.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 private val lightScheme =
     lightColorScheme(
@@ -85,7 +88,7 @@ private val darkScheme =
     )
 
 @Composable
-fun CryptoTrackerTheme(
+fun CryptoTrackerThemeProvider(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
@@ -95,9 +98,32 @@ fun CryptoTrackerTheme(
             else -> lightScheme
         }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = TypographyApp(),
-        content = content,
-    )
+    CompositionLocalProvider(
+        LocalSpacing provides Spacing(),
+        LocalSizing provides Sizing(),
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = typographyApp(),
+            content = content,
+        )
+    }
+}
+
+object CryptoTrackerTheme {
+    val spacing: Spacing
+        @Composable
+        get() = LocalSpacing.current
+
+    val sizing: Sizing
+        @Composable
+        get() = LocalSizing.current
+
+    val colors: ColorScheme
+        @Composable
+        get() = MaterialTheme.colorScheme
+
+    val typography: Typography
+        @Composable
+        get() = MaterialTheme.typography
 }

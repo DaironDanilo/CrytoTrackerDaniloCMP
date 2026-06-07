@@ -9,7 +9,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,9 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.dollar
 import org.jetbrains.compose.resources.DrawableResource
@@ -35,7 +34,7 @@ fun InfoCard(
     formattedValue: String,
     icon: DrawableResource,
     modifier: Modifier = Modifier,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    contentColor: Color = CryptoTrackerTheme.colors.onSurface,
     formattedTextStyle: TextStyle =
         LocalTextStyle.current.copy(
             color = contentColor,
@@ -46,18 +45,18 @@ fun InfoCard(
     Card(
         modifier =
             modifier
-                .padding(8.dp)
+                .padding(CryptoTrackerTheme.spacing.small)
                 .shadow(
-                    elevation = 15.dp,
+                    elevation = CryptoTrackerTheme.sizing.cardElevation,
                     shape = RectangleShape,
-                    ambientColor = MaterialTheme.colorScheme.primary,
-                    spotColor = MaterialTheme.colorScheme.primary,
+                    ambientColor = CryptoTrackerTheme.colors.primary,
+                    spotColor = CryptoTrackerTheme.colors.primary,
                 ),
         shape = RectangleShape,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        border = BorderStroke(CryptoTrackerTheme.sizing.borderThin, CryptoTrackerTheme.colors.primary),
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                containerColor = CryptoTrackerTheme.colors.surfaceContainer,
                 contentColor = contentColor,
             ),
     ) {
@@ -72,11 +71,11 @@ fun InfoCard(
                 tint = contentColor,
                 modifier =
                     Modifier
-                        .size(56.dp)
-                        .padding(top = 12.dp),
+                        .size(CryptoTrackerTheme.sizing.infoCardIconSize)
+                        .padding(top = CryptoTrackerTheme.sizing.infoCardInnerPadding),
             )
         }
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
         AnimatedContent(
             targetState = formattedValue,
             label = "valueAnimation",
@@ -85,18 +84,18 @@ fun InfoCard(
             Text(
                 text = formattedValue,
                 style = formattedTextStyle,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = CryptoTrackerTheme.spacing.medium),
             )
         }
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
         Text(
             text = title,
             textAlign = TextAlign.Center,
             modifier =
                 Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 12.dp),
+                    .padding(horizontal = CryptoTrackerTheme.spacing.medium)
+                    .padding(bottom = CryptoTrackerTheme.sizing.infoCardInnerPadding),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             color = contentColor,
@@ -107,7 +106,7 @@ fun InfoCard(
 @Preview(showBackground = true, name = "Light")
 @Composable
 private fun InfoCardLightPreview() {
-    CryptoTrackerTheme(darkTheme = false) {
+    CryptoTrackerThemeProvider(darkTheme = false) {
         InfoCard(
             title = "Market Cap",
             formattedValue = "$ 1,241,273,958,896.68",
@@ -119,7 +118,7 @@ private fun InfoCardLightPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - Error color")
 @Composable
 private fun InfoCardDarkPreview() {
-    CryptoTrackerTheme(darkTheme = true) {
+    CryptoTrackerThemeProvider(darkTheme = true) {
         InfoCard(
             title = "Change (24h)",
             formattedValue = "-3.45",

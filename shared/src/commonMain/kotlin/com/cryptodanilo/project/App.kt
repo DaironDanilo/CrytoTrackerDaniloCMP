@@ -7,12 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.core.navigation.AdaptiveCoinListDetailPane
-import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 
 @Composable
 @Preview
 fun App() {
-    CryptoTrackerTheme {
+    CryptoTrackerThemeProvider {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             AdaptiveCoinListDetailPane(modifier = Modifier.padding(innerPadding))
         }
