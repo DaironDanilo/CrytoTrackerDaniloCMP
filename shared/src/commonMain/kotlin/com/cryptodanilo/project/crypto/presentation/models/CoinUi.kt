@@ -52,3 +52,5 @@ fun Double.toDisplayableNumber(): DisplayableNumber {
 
     return DisplayableNumber(value = this, formatted = formatted)
 }
+
+fun DisplayableNumber.asDollarString(): String = "$ $formatted"

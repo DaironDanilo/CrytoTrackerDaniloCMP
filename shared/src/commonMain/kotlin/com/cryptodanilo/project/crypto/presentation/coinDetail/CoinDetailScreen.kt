@@ -5,6 +5,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +14,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,8 +39,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +50,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
+import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
+import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.crypto.presentation.coinList.components.conditional
 import com.cryptodanilo.project.crypto.presentation.coinList.components.getScreenSize
@@ -71,6 +80,7 @@ fun SharedTransitionScope.CoinDetailScreen(
     shouldExistSharedElementTransition: Boolean,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
+    onAction: (CoinListAction) -> Unit = {},
 ) {
     val contentColor =
         if (isSystemInDarkTheme()) {
@@ -102,7 +112,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier =
                         Modifier
-                            .size(100.dp)
+                            .size(80.dp)
                             .conditional(
                                 condition = shouldExistSharedElementTransition && animatedPaneScope != null,
                                 ifTrue = {
@@ -119,7 +129,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                 )
                 Text(
                     text = coin.name,
-                    fontSize = 40.sp,
+                    fontSize = 32.sp,
                     fontWeight = FontWeight.Black,
                     textAlign = TextAlign.Center,
                     color = contentColor,
@@ -166,48 +176,49 @@ fun SharedTransitionScope.CoinDetailScreen(
                         contentColor = contentColorInfoCard,
                     )
                 }
-                AnimatedVisibility(visible = coin.coinPriceHistory.isNotEmpty()) {
-                    var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
-                    var labelWidth by remember { mutableFloatStateOf(0f) }
-                    var totalChartWidth by remember { mutableFloatStateOf(0f) }
-                    val amountOfVisibleDataPoints =
-                        if (labelWidth > 0) {
-                            ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
-                        } else {
-                            0
+
+                // Chart | Markets tab switcher
+                val tabShape = RoundedCornerShape(4.dp)
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, tabShape)
+                            .clip(tabShape),
+                ) {
+                    listOf(DetailTab.Chart, DetailTab.Markets).forEach { tab ->
+                        val isSelected = state.selectedDetailTab == tab
+                        Box(
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .background(
+                                        if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    ).clickable { onAction(CoinListAction.OnDetailTabSelected(tab)) }
+                                    .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = tab.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                color =
+                                    if (isSelected) {
+                                        MaterialTheme.colorScheme.onPrimary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurface
+                                    },
+                            )
                         }
-                    val startIndex =
-                        (coin.coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
-                            .coerceAtLeast(0)
-                    val screenSize = getScreenSize()
-                    val aspectRatio = remember(screenSize) { calculateAspectRatio(screenSize) }
-                    LineChart(
-                        dataPoints = coin.coinPriceHistory,
-                        style =
-                            ChartStyle(
-                                charLineColor = MaterialTheme.colorScheme.primary,
-                                unselectedColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                                selectedColor = MaterialTheme.colorScheme.primary,
-                                helperLinesThicknessPx = 5f,
-                                axisLinesThicknessPx = 5f,
-                                labelFontSize = 14.sp,
-                                minYLabelSpacing = 25.dp,
-                                verticalPadding = 8.dp,
-                                horizontalPadding = 8.dp,
-                                xAxisLabelSpacing = 8.dp,
-                            ),
-                        visibleDataPointsIndices = startIndex..coin.coinPriceHistory.lastIndex,
-                        unit = "$",
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(aspectRatio)
-                                .onSizeChanged { totalChartWidth = it.width.toFloat() },
-                        selectedDataPoint = selectedDataPoint,
-                        onSelectedDataPoint = { selectedDataPoint = it },
-                        onXLabelWidthChange = { labelWidth = it },
-                    )
+                    }
                 }
+
+                DetailTabContent(
+                    state = state,
+                    coinPriceHistory = coin.coinPriceHistory,
+                    onAction = onAction,
+                )
             }
             if (shouldShowBackNavigationIcon) {
                 Icon(
@@ -221,6 +232,70 @@ fun SharedTransitionScope.CoinDetailScreen(
                             .size(36.dp),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun DetailTabContent(
+    state: CoinListState,
+    coinPriceHistory: List<DataPoint>,
+    onAction: (CoinListAction) -> Unit,
+) {
+    when (state.selectedDetailTab) {
+        DetailTab.Chart -> {
+            AnimatedVisibility(visible = coinPriceHistory.isNotEmpty()) {
+                var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
+                var labelWidth by remember { mutableFloatStateOf(0f) }
+                var totalChartWidth by remember { mutableFloatStateOf(0f) }
+                val amountOfVisibleDataPoints =
+                    if (labelWidth > 0) {
+                        ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
+                    } else {
+                        0
+                    }
+                val startIndex =
+                    (coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
+                        .coerceAtLeast(0)
+                val screenSize = getScreenSize()
+                val aspectRatio = remember(screenSize) { calculateAspectRatio(screenSize) }
+                LineChart(
+                    dataPoints = coinPriceHistory,
+                    style =
+                        ChartStyle(
+                            charLineColor = MaterialTheme.colorScheme.primary,
+                            unselectedColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
+                            selectedColor = MaterialTheme.colorScheme.primary,
+                            helperLinesThicknessPx = 5f,
+                            axisLinesThicknessPx = 5f,
+                            labelFontSize = 14.sp,
+                            minYLabelSpacing = 25.dp,
+                            verticalPadding = 8.dp,
+                            horizontalPadding = 8.dp,
+                            xAxisLabelSpacing = 8.dp,
+                        ),
+                    visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
+                    unit = "$",
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(aspectRatio)
+                            .onSizeChanged { totalChartWidth = it.width.toFloat() },
+                    selectedDataPoint = selectedDataPoint,
+                    onSelectedDataPoint = { selectedDataPoint = it },
+                    onXLabelWidthChange = { labelWidth = it },
+                )
+            }
+        }
+
+        DetailTab.Markets -> {
+            val screenSize = getScreenSize()
+            val marketsHeight = with(LocalDensity.current) { (screenSize.height * 0.85f).toDp() }
+            MarketsList(
+                state = state,
+                onAction = onAction,
+                modifier = Modifier.fillMaxWidth().height(marketsHeight),
+            )
         }
     }
 }

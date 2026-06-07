@@ -7,11 +7,14 @@ import com.cryptodanilo.project.core.domain.util.Result
 import com.cryptodanilo.project.core.domain.util.map
 import com.cryptodanilo.project.crypto.data.mappers.toCoin
 import com.cryptodanilo.project.crypto.data.mappers.toCoinPrice
+import com.cryptodanilo.project.crypto.data.mappers.toMarket
 import com.cryptodanilo.project.crypto.data.networking.dto.CoinHistoryDto
 import com.cryptodanilo.project.crypto.data.networking.dto.CoinsResponseDto
+import com.cryptodanilo.project.crypto.data.networking.dto.MarketsResponseDto
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.domain.CoinDataSource
 import com.cryptodanilo.project.crypto.domain.CoinPrice
+import com.cryptodanilo.project.crypto.domain.Market
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -52,4 +55,17 @@ class RemoteCoinDataSource(
             response.data.map { it.toCoinPrice() }
         }
     }
+
+    override suspend fun getCoinMarkets(coinId: String): Result<List<Market>, NetworkError> =
+        safeCall<MarketsResponseDto> {
+            httpClient.get(
+                urlString = constructUrl("/markets"),
+            ) {
+                parameter("baseId", coinId)
+                parameter("limit", 100)
+                parameter("offset", 0)
+            }
+        }.map { response ->
+            response.data.map { it.toMarket() }
+        }
 }

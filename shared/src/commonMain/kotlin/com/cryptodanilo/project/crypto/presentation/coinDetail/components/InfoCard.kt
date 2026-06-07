@@ -40,7 +40,7 @@ fun InfoCard(
         LocalTextStyle.current.copy(
             color = contentColor,
             textAlign = TextAlign.Center,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
         ),
 ) {
     Card(
@@ -72,8 +72,8 @@ fun InfoCard(
                 tint = contentColor,
                 modifier =
                     Modifier
-                        .size(75.dp)
-                        .padding(top = 16.dp),
+                        .size(56.dp)
+                        .padding(top = 12.dp),
             )
         }
         Spacer(modifier = Modifier.size(8.dp))
@@ -96,7 +96,7 @@ fun InfoCard(
                 Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 12.dp),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             color = contentColor,

@@ -93,6 +93,7 @@ fun AdaptiveCoinListDetailPane(
                                 }
 
                                 CoinListAction.OnRefresh -> TODO()
+                                else -> Unit
                             }
                         },
                     )
@@ -110,6 +111,7 @@ fun AdaptiveCoinListDetailPane(
                                 navigator.navigateBack()
                             }
                         },
+                        onAction = { action -> viewModel.onAction(action) },
                     )
                 }
             },

@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cryptodanilo.project.core.domain.util.onError
 import com.cryptodanilo.project.core.domain.util.onSuccess
+import com.cryptodanilo.project.core.presentation.util.toUiString
 import com.cryptodanilo.project.crypto.domain.CoinDataSource
 import com.cryptodanilo.project.crypto.presentation.coinDetail.DataPoint
+import com.cryptodanilo.project.crypto.presentation.coinDetail.DetailTab
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
+import com.cryptodanilo.project.crypto.presentation.models.MarketUi
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
+import com.cryptodanilo.project.crypto.presentation.models.toMarketUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +37,9 @@ class CoinListViewModel(
     private val _events = Channel<CoinListEvent>()
     val events = _events.receiveAsFlow()
 
+    private var allCoins: List<CoinUi> = emptyList()
+    private val marketsCache = HashMap<String, List<MarketUi>>()
+
     init {
         getCoins()
     }
@@ -40,16 +47,68 @@ class CoinListViewModel(
     fun onAction(action: CoinListAction) {
         when (action) {
             CoinListAction.OnRefresh -> getCoins()
-            is CoinListAction.OnCoinClicked -> {
-//                _state.update { it.copy(selectedCoinUi = action.coinUi) }
-                selectCoin(action.coinUi)
-            }
+            is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
+            is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
+            CoinListAction.OnRetryMarkets -> loadMarketsForSelectedCoin()
+            is CoinListAction.OnSearchQueryChange -> onSearchQueryChange(action.query)
         }
+    }
+
+    private fun onDetailTabSelected(tab: DetailTab) {
+        _state.update { it.copy(selectedDetailTab = tab) }
+        if (tab == DetailTab.Markets) {
+            loadMarketsForSelectedCoin()
+        }
+    }
+
+    private fun loadMarketsForSelectedCoin() {
+        val coinId = _state.value.selectedCoinUi?.id ?: return
+        val cached = marketsCache[coinId]
+        if (cached != null) {
+            _state.update { it.copy(markets = cached, isMarketsLoading = false, marketsError = null) }
+            return
+        }
+        _state.update { it.copy(isMarketsLoading = true, marketsError = null) }
+        viewModelScope.launch {
+            coinDataSource
+                .getCoinMarkets(coinId)
+                .onSuccess { markets ->
+                    val marketUis =
+                        markets
+                            .sortedByDescending { it.volumeUsd24Hr }
+                            .map { it.toMarketUi() }
+                    marketsCache[coinId] = marketUis
+                    _state.update { it.copy(isMarketsLoading = false, markets = marketUis) }
+                }.onError { error ->
+                    _state.update { it.copy(isMarketsLoading = false, marketsError = error.toUiString()) }
+                }
+        }
+    }
+
+    private fun onSearchQueryChange(query: String) {
+        val filtered =
+            if (query.isBlank()) {
+                allCoins
+            } else {
+                allCoins.filter { coin ->
+                    coin.symbol.contains(query, ignoreCase = true) ||
+                        coin.name.contains(query, ignoreCase = true)
+                }
+            }
+        _state.update { it.copy(searchQuery = query, coins = filtered) }
     }
 
     @OptIn(ExperimentalTime::class)
     private fun selectCoin(coinUi: CoinUi) {
-        _state.update { it.copy(selectedCoinUi = coinUi) }
+        _state.update {
+            it.copy(
+                selectedCoinUi = coinUi,
+                selectedDetailTab = DetailTab.Chart,
+                markets = emptyList(),
+                isMarketsLoading = false,
+                marketsError = null,
+            )
+        }
         viewModelScope.launch {
             coinDataSource
                 .getCoinHistory(
@@ -84,10 +143,21 @@ class CoinListViewModel(
             coinDataSource
                 .getCoins()
                 .onSuccess { coins ->
+                    allCoins = coins.map { coin -> coin.toCoinUi() }
+                    val query = _state.value.searchQuery
+                    val filtered =
+                        if (query.isBlank()) {
+                            allCoins
+                        } else {
+                            allCoins.filter { coin ->
+                                coin.symbol.contains(query, ignoreCase = true) ||
+                                    coin.name.contains(query, ignoreCase = true)
+                            }
+                        }
                     _state.update { coinListState ->
                         coinListState.copy(
                             isLoading = false,
-                            coins = coins.map { coin -> coin.toCoinUi() },
+                            coins = filtered,
                         )
                     }
                 }.onError { networkError ->
