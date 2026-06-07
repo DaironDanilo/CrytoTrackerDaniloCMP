@@ -26,11 +26,15 @@ import kotlin.time.ExperimentalTime
 class RemoteCoinDataSource(
     private val httpClient: HttpClient,
 ) : CoinDataSource {
-    override suspend fun getCoins(): Result<List<Coin>, NetworkError> =
+    override suspend fun getCoins(
+        limit: Int,
+        offset: Int,
+    ): Result<List<Coin>, NetworkError> =
         safeCall<CoinsResponseDto> {
-            httpClient.get(
-                urlString = constructUrl("/assets"),
-            )
+            httpClient.get(constructUrl("/assets")) {
+                parameter("limit", limit)
+                parameter("offset", offset)
+            }
         }.map { response ->
             response.data.map { it.toCoin() }
         }

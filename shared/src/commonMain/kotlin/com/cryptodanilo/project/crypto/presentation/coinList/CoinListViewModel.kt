@@ -37,20 +37,70 @@ class CoinListViewModel(
     private val _events = Channel<CoinListEvent>()
     val events = _events.receiveAsFlow()
 
-    private var allCoins: List<CoinUi> = emptyList()
+    private var currentOffset = 0
     private val marketsCache = HashMap<String, List<MarketUi>>()
 
     init {
-        getCoins()
+        loadCoins()
     }
 
     fun onAction(action: CoinListAction) {
         when (action) {
-            CoinListAction.OnRefresh -> getCoins()
+            CoinListAction.OnRefresh -> refresh()
             is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
             is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
             CoinListAction.OnRetryMarkets -> loadMarketsForSelectedCoin()
-            is CoinListAction.OnSearchQueryChange -> onSearchQueryChange(action.query)
+            is CoinListAction.OnSearchQueryChange -> _state.update { it.copy(searchQuery = action.query) }
+            CoinListAction.OnLoadMore -> loadMore()
+        }
+    }
+
+    private fun loadCoins() {
+        _state.update { it.copy(isLoading = true, isError = false) }
+        viewModelScope.launch {
+            coinDataSource
+                .getCoins(limit = PAGE_SIZE, offset = 0)
+                .onSuccess { coins ->
+                    currentOffset = PAGE_SIZE
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            coins = coins.map { coin -> coin.toCoinUi() },
+                            hasMoreCoins = coins.size >= PAGE_SIZE,
+                        )
+                    }
+                }.onError { error ->
+                    _state.update { it.copy(isLoading = false, isError = true) }
+                    _events.send(CoinListEvent.Error(error))
+                }
+        }
+    }
+
+    private fun refresh() {
+        currentOffset = 0
+        _state.update { it.copy(coins = emptyList(), hasMoreCoins = true) }
+        loadCoins()
+    }
+
+    private fun loadMore() {
+        if (_state.value.isLoadingMore || !_state.value.hasMoreCoins) return
+        _state.update { it.copy(isLoadingMore = true) }
+        viewModelScope.launch {
+            coinDataSource
+                .getCoins(limit = PAGE_SIZE, offset = currentOffset)
+                .onSuccess { coins ->
+                    currentOffset += PAGE_SIZE
+                    _state.update {
+                        it.copy(
+                            isLoadingMore = false,
+                            coins = it.coins + coins.map { coin -> coin.toCoinUi() },
+                            hasMoreCoins = coins.size >= PAGE_SIZE,
+                        )
+                    }
+                }.onError { error ->
+                    _state.update { it.copy(isLoadingMore = false) }
+                    _events.send(CoinListEvent.Error(error))
+                }
         }
     }
 
@@ -85,19 +135,6 @@ class CoinListViewModel(
         }
     }
 
-    private fun onSearchQueryChange(query: String) {
-        val filtered =
-            if (query.isBlank()) {
-                allCoins
-            } else {
-                allCoins.filter { coin ->
-                    coin.symbol.contains(query, ignoreCase = true) ||
-                        coin.name.contains(query, ignoreCase = true)
-                }
-            }
-        _state.update { it.copy(searchQuery = query, coins = filtered) }
-    }
-
     @OptIn(ExperimentalTime::class)
     private fun selectCoin(coinUi: CoinUi) {
         _state.update {
@@ -116,7 +153,7 @@ class CoinListViewModel(
                     start =
                         Clock.System
                             .now()
-                            .minus(7.days)
+                            .minus(COIN_HISTORY_DAYS.days)
                             .toLocalDateTime(TimeZone.currentSystemDefault()),
                     end = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                 ).onSuccess { history ->
@@ -137,34 +174,9 @@ class CoinListViewModel(
         }
     }
 
-    private fun getCoins() {
-        _state.update { it.copy(isLoading = true) }
-        viewModelScope.launch {
-            coinDataSource
-                .getCoins()
-                .onSuccess { coins ->
-                    allCoins = coins.map { coin -> coin.toCoinUi() }
-                    val query = _state.value.searchQuery
-                    val filtered =
-                        if (query.isBlank()) {
-                            allCoins
-                        } else {
-                            allCoins.filter { coin ->
-                                coin.symbol.contains(query, ignoreCase = true) ||
-                                    coin.name.contains(query, ignoreCase = true)
-                            }
-                        }
-                    _state.update { coinListState ->
-                        coinListState.copy(
-                            isLoading = false,
-                            coins = filtered,
-                        )
-                    }
-                }.onError { networkError ->
-                    _state.update { it.copy(isLoading = false) }
-                    _events.send(CoinListEvent.Error(networkError))
-                }
-        }
+    companion object {
+        private const val PAGE_SIZE = 20
+        private const val COIN_HISTORY_DAYS = 7
     }
 }
 

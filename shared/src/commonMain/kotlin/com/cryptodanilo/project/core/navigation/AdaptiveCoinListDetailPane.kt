@@ -92,7 +92,7 @@ fun AdaptiveCoinListDetailPane(
                                     }
                                 }
 
-                                CoinListAction.OnRefresh -> TODO()
+                                CoinListAction.OnRefresh -> Unit
                                 else -> Unit
                             }
                         },

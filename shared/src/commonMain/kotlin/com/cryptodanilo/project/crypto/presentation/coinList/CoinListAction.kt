@@ -19,4 +19,6 @@ sealed interface CoinListAction {
     data class OnSearchQueryChange(
         val query: String,
     ) : CoinListAction
+
+    data object OnLoadMore : CoinListAction
 }

@@ -5,7 +5,10 @@ import com.cryptodanilo.project.core.domain.util.Result
 import kotlinx.datetime.LocalDateTime
 
 interface CoinDataSource {
-    suspend fun getCoins(): Result<List<Coin>, NetworkError>
+    suspend fun getCoins(
+        limit: Int,
+        offset: Int,
+    ): Result<List<Coin>, NetworkError>
 
     suspend fun getCoinHistory(
         coinId: String,

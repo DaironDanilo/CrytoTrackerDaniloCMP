@@ -9,6 +9,9 @@ import com.cryptodanilo.project.crypto.presentation.models.MarketUi
 @Immutable
 data class CoinListState(
     val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val hasMoreCoins: Boolean = true,
+    val isError: Boolean = false,
     val coins: List<CoinUi> = emptyList(),
     val selectedCoinUi: CoinUi? = null,
     val searchQuery: String = "",
