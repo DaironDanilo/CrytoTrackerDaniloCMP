@@ -12,6 +12,7 @@ import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +65,14 @@ fun AdaptiveCoinListDetailPane(
     // calculates if the coin details pane is hidden
     val isCoinDetailPaneHidden =
         navigator.scaffoldValue[ThreePaneScaffoldRole.Primary] == PaneAdaptedValue.Hidden
+
+    val isDualPane = !isListOfCoinsPaneHidden && !isCoinDetailPaneHidden
+
+    LaunchedEffect(isDualPane, state.coins) {
+        if (isDualPane && state.coins.isNotEmpty()) {
+            viewModel.onAction(CoinListAction.OnCoinsLoaded)
+        }
+    }
 
     val shouldExistSharedElementTransition =
         !isListOfCoinsPaneHidden && isCoinDetailPaneHidden || isListOfCoinsPaneHidden && !isCoinDetailPaneHidden

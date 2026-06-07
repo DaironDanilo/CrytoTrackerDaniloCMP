@@ -62,8 +62,7 @@ fun SharedTransitionScope.CoinListItem(
                     } else {
                         Modifier
                     },
-                )
-                .clickable { onItemClick() }
+                ).clickable { onItemClick() }
                 .padding(CryptoTrackerTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.medium),

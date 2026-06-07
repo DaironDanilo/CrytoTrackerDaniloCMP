@@ -52,6 +52,11 @@ class CoinListViewModel(
             CoinListAction.OnRetryMarkets -> loadMarketsForSelectedCoin()
             is CoinListAction.OnSearchQueryChange -> _state.update { it.copy(searchQuery = action.query) }
             CoinListAction.OnLoadMore -> loadMore()
+            CoinListAction.OnCoinsLoaded -> {
+                if (_state.value.selectedCoinUi == null && _state.value.coins.isNotEmpty()) {
+                    selectCoin(_state.value.coins.first())
+                }
+            }
         }
     }
 
@@ -62,10 +67,11 @@ class CoinListViewModel(
                 .getCoins(limit = PAGE_SIZE, offset = 0)
                 .onSuccess { coins ->
                     currentOffset = PAGE_SIZE
+                    val coinUis = coins.map { it.toCoinUi() }
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            coins = coins.map { coin -> coin.toCoinUi() },
+                            coins = coinUis,
                             hasMoreCoins = coins.size >= PAGE_SIZE,
                         )
                     }
