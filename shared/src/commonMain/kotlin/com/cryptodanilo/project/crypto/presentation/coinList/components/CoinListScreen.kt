@@ -93,20 +93,22 @@ fun SharedTransitionScope.CoinListScreen(
                 )
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.small),
                 ) {
                     items(
                         items = displayedCoins,
                         key = { coin -> coin.id },
                     ) { coin ->
-                        CoinListItem(
-                            animatedPaneScope = animatedPaneScope,
-                            coin = coin,
-                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                            onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
-                            modifier = Modifier.fillParentMaxWidth(),
-                        )
-                        HorizontalDivider()
+                        Column {
+                            CoinListItem(
+                                animatedPaneScope = animatedPaneScope,
+                                coin = coin,
+                                isSelected = coin.id == state.selectedCoinUi?.id,
+                                shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                                onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                            HorizontalDivider()
+                        }
                     }
 
                     if (state.searchQuery.isBlank()) {

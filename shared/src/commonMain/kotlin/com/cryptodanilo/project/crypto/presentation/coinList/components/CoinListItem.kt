@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +14,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +40,7 @@ import org.jetbrains.compose.resources.painterResource
 fun SharedTransitionScope.CoinListItem(
     animatedPaneScope: AnimatedPaneScope? = null,
     coin: CoinUi,
+    isSelected: Boolean = false,
     shouldExistSharedElementTransition: Boolean,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -50,6 +54,15 @@ fun SharedTransitionScope.CoinListItem(
     Row(
         modifier =
             modifier
+                .then(
+                    if (isSelected) {
+                        Modifier
+                            .background(CryptoTrackerTheme.colors.surfaceVariant)
+                            .clip(RoundedCornerShape(CryptoTrackerTheme.spacing.small))
+                    } else {
+                        Modifier
+                    },
+                )
                 .clickable { onItemClick() }
                 .padding(CryptoTrackerTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
@@ -98,6 +111,22 @@ fun SharedTransitionScope.CoinListItem(
             )
             Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
             PriceChange(change = coin.changePercent24Hr)
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview(showBackground = true, backgroundColor = 0xFF1C1B1FL, name = "Dark - Selected")
+@Composable
+private fun CoinListItemSelectedPreview() {
+    CryptoTrackerThemeProvider(darkTheme = true) {
+        SharedTransitionLayout {
+            CoinListItem(
+                coin = previewCoin,
+                isSelected = true,
+                shouldExistSharedElementTransition = false,
+                onItemClick = {},
+            )
         }
     }
 }
