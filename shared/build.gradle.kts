@@ -73,7 +73,6 @@ kotlin {
         desktopMain.dependsOn(nonWasmMain)
 
         nonWasmMain.dependencies {
-            implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
         }
 
@@ -83,6 +82,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
+            implementation(libs.androidx.room.runtime)
             implementation(libs.runtime)
             implementation(libs.foundation)
             implementation(libs.material3)
@@ -111,6 +111,9 @@ kotlin {
 
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.js)
+            implementation(libs.androidx.sqlite.web)
+            implementation(npm("@sqlite.org/sqlite-wasm", "3.50.1-build1"))
+            implementation(npm("sqlite-wasm-worker", project.file("sqlite-wasm-worker")))
         }
 
         desktopMain.dependencies {
@@ -133,9 +136,10 @@ dependencies {
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspDesktop", libs.androidx.room.compiler)
+    add("kspWasmJs", libs.androidx.room.compiler)
 }
 
-room {
+room3 {
     schemaDirectory("$projectDir/schemas")
 }
 

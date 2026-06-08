@@ -1,7 +1,7 @@
 package com.cryptodanilo.project.core.database
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 import com.cryptodanilo.project.core.database.CoinEntity.Companion.TABLE_NAME
 
 @Entity(tableName = TABLE_NAME)
