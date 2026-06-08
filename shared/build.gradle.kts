@@ -10,10 +10,15 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
     alias(libs.plugins.buildKonfigPlugin)
 }
 
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     android {
         namespace = "com.cryptodanilo.project.shared"
         compileSdk =
@@ -53,9 +58,24 @@ kotlin {
         browser()
     }
 
+    // Explicit dependsOn() calls below require this; otherwise they silently disable the template.
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         val desktopMain by getting
         val wasmJsMain by getting
+
+        val nonWasmMain by creating {
+            dependsOn(commonMain.get())
+        }
+        androidMain.get().dependsOn(nonWasmMain)
+        iosMain.get().dependsOn(nonWasmMain)
+        desktopMain.dependsOn(nonWasmMain)
+
+        nonWasmMain.dependencies {
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+        }
 
         androidMain.dependencies {
             implementation(libs.koin.android)
@@ -109,6 +129,14 @@ kotlin {
 
 dependencies {
     "androidRuntimeClasspath"(libs.ui.tooling)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 buildkonfig {
