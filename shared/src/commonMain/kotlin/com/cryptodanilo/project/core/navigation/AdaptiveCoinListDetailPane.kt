@@ -95,7 +95,7 @@ fun AdaptiveCoinListDetailPane(
     val navState = rememberNavigationEventState(NavigationEventInfo.None)
     NavigationBackHandler(
         state = navState,
-        isBackEnabled = true,
+        isBackEnabled = navigator.canNavigateBack(),
         onBackCompleted = { navigateBack() },
     )
     SharedTransitionLayout {
