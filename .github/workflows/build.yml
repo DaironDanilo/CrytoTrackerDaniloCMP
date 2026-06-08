@@ -32,6 +32,7 @@ jobs:
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/debug/*.apk
+          retention-days: 7
 
   build-ios:
     name: Build iOS simulator app
@@ -64,6 +65,7 @@ jobs:
         with:
           name: iphonesimulator-app
           path: build/Build/Products/Debug-iphonesimulator/*
+          retention-days: 7
 
   build-desktop-macos:
     name: Build Desktop macOS
@@ -86,6 +88,7 @@ jobs:
         with:
           name: desktop-macos-dmg
           path: desktopApp/build/compose/binaries/main/dmg/*.dmg
+          retention-days: 7
 
   build-desktop-windows:
     name: Build Desktop Windows
@@ -111,6 +114,7 @@ jobs:
         with:
           name: desktop-windows-msi
           path: desktopApp/build/compose/binaries/main/msi/*.msi
+          retention-days: 7
 
   build-desktop-linux:
     name: Build Desktop Linux
@@ -133,6 +137,7 @@ jobs:
         with:
           name: desktop-linux-deb
           path: desktopApp/build/compose/binaries/main/deb/*.deb
+          retention-days: 7
 
   build-web:
     name: Build Web (WASM)
@@ -155,3 +160,4 @@ jobs:
         with:
           name: web-wasm-dist
           path: webApp/build/dist/wasmJs/developmentExecutable/
+          retention-days: 7
