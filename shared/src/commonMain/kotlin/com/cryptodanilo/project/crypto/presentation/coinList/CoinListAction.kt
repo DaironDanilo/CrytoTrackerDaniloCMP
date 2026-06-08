@@ -22,5 +22,7 @@ sealed interface CoinListAction {
 
     data object OnLoadMore : CoinListAction
 
+    data object OnLoadMoreMarkets : CoinListAction
+
     data object OnCoinsLoaded : CoinListAction
 }

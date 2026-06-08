@@ -9,7 +9,6 @@ import com.cryptodanilo.project.crypto.domain.CoinDataSource
 import com.cryptodanilo.project.crypto.presentation.coinDetail.DataPoint
 import com.cryptodanilo.project.crypto.presentation.coinDetail.DetailTab
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
-import com.cryptodanilo.project.crypto.presentation.models.MarketUi
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
 import com.cryptodanilo.project.crypto.presentation.models.toMarketUi
 import kotlinx.coroutines.channels.Channel
@@ -38,7 +37,7 @@ class CoinListViewModel(
     val events = _events.receiveAsFlow()
 
     private var currentOffset = 0
-    private val marketsCache = HashMap<String, List<MarketUi>>()
+    private var currentMarketsOffset = 0
 
     init {
         loadCoins()
@@ -49,7 +48,8 @@ class CoinListViewModel(
             CoinListAction.OnRefresh -> refresh()
             is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
             is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
-            CoinListAction.OnRetryMarkets -> loadMarketsForSelectedCoin()
+            CoinListAction.OnRetryMarkets -> loadInitialMarkets()
+            CoinListAction.OnLoadMoreMarkets -> loadMoreMarkets()
             is CoinListAction.OnSearchQueryChange -> _state.update { it.copy(searchQuery = action.query) }
             CoinListAction.OnLoadMore -> loadMore()
             CoinListAction.OnCoinsLoaded -> {
@@ -112,43 +112,75 @@ class CoinListViewModel(
 
     private fun onDetailTabSelected(tab: DetailTab) {
         _state.update { it.copy(selectedDetailTab = tab) }
-        if (tab == DetailTab.Markets) {
-            loadMarketsForSelectedCoin()
+        if (tab == DetailTab.Markets && _state.value.markets.isEmpty()) {
+            loadInitialMarkets()
         }
     }
 
-    private fun loadMarketsForSelectedCoin() {
+    private fun loadInitialMarkets() {
         val coinId = _state.value.selectedCoinUi?.id ?: return
-        val cached = marketsCache[coinId]
-        if (cached != null) {
-            _state.update { it.copy(markets = cached, isMarketsLoading = false, marketsError = null) }
-            return
+        currentMarketsOffset = 0
+        _state.update {
+            it.copy(
+                isMarketsLoading = true,
+                isLoadingMoreMarkets = false,
+                markets = emptyList(),
+                hasMoreMarkets = true,
+                marketsError = null,
+            )
         }
-        _state.update { it.copy(isMarketsLoading = true, marketsError = null) }
         viewModelScope.launch {
             coinDataSource
-                .getCoinMarkets(coinId)
+                .getMarkets(assetId = coinId, limit = PAGE_SIZE, offset = 0)
                 .onSuccess { markets ->
-                    val marketUis =
-                        markets
-                            .sortedByDescending { it.volumeUsd24Hr }
-                            .map { it.toMarketUi() }
-                    marketsCache[coinId] = marketUis
-                    _state.update { it.copy(isMarketsLoading = false, markets = marketUis) }
+                    currentMarketsOffset = PAGE_SIZE
+                    val marketUis = markets.map { it.toMarketUi() }
+                    _state.update {
+                        it.copy(
+                            isMarketsLoading = false,
+                            markets = marketUis,
+                            hasMoreMarkets = markets.size >= PAGE_SIZE,
+                        )
+                    }
                 }.onError { error ->
                     _state.update { it.copy(isMarketsLoading = false, marketsError = error.toUiString()) }
                 }
         }
     }
 
+    private fun loadMoreMarkets() {
+        if (_state.value.isLoadingMoreMarkets || !_state.value.hasMoreMarkets) return
+        val coinId = _state.value.selectedCoinUi?.id ?: return
+        _state.update { it.copy(isLoadingMoreMarkets = true, marketsError = null) }
+        viewModelScope.launch {
+            coinDataSource
+                .getMarkets(assetId = coinId, limit = PAGE_SIZE, offset = currentMarketsOffset)
+                .onSuccess { markets ->
+                    currentMarketsOffset += PAGE_SIZE
+                    _state.update {
+                        it.copy(
+                            isLoadingMoreMarkets = false,
+                            markets = it.markets + markets.map { market -> market.toMarketUi() },
+                            hasMoreMarkets = markets.size >= PAGE_SIZE,
+                        )
+                    }
+                }.onError { error ->
+                    _state.update { it.copy(isLoadingMoreMarkets = false, marketsError = error.toUiString()) }
+                }
+        }
+    }
+
     @OptIn(ExperimentalTime::class)
     private fun selectCoin(coinUi: CoinUi) {
+        currentMarketsOffset = 0
         _state.update {
             it.copy(
                 selectedCoinUi = coinUi,
                 selectedDetailTab = DetailTab.Chart,
                 markets = emptyList(),
                 isMarketsLoading = false,
+                isLoadingMoreMarkets = false,
+                hasMoreMarkets = true,
                 marketsError = null,
             )
         }

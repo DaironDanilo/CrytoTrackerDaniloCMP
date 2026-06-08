@@ -60,14 +60,16 @@ class RemoteCoinDataSource(
         }
     }
 
-    override suspend fun getCoinMarkets(coinId: String): Result<List<Market>, NetworkError> =
+    override suspend fun getMarkets(
+        assetId: String,
+        limit: Int,
+        offset: Int,
+    ): Result<List<Market>, NetworkError> =
         safeCall<MarketsResponseDto> {
-            httpClient.get(
-                urlString = constructUrl("/markets"),
-            ) {
-                parameter("baseId", coinId)
-                parameter("limit", 100)
-                parameter("offset", 0)
+            httpClient.get(constructUrl("/markets")) {
+                parameter("assetId", assetId)
+                parameter("limit", limit)
+                parameter("offset", offset)
             }
         }.map { response ->
             response.data.map { it.toMarket() }

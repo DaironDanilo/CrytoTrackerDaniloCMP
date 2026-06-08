@@ -1,5 +1,6 @@
 package com.cryptodanilo.project.crypto.presentation.coinDetail.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ fun MarketsColumnHeader(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .fillMaxWidth()
+                .background(CryptoTrackerTheme.colors.surface)
                 .padding(
                     horizontal = CryptoTrackerTheme.spacing.medium,
                     vertical = CryptoTrackerTheme.spacing.small,

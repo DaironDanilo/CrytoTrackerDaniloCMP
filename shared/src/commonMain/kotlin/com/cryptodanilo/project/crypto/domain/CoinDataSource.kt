@@ -16,5 +16,9 @@ interface CoinDataSource {
         end: LocalDateTime,
     ): Result<List<CoinPrice>, NetworkError>
 
-    suspend fun getCoinMarkets(coinId: String): Result<List<Market>, NetworkError>
+    suspend fun getMarkets(
+        assetId: String,
+        limit: Int,
+        offset: Int,
+    ): Result<List<Market>, NetworkError>
 }

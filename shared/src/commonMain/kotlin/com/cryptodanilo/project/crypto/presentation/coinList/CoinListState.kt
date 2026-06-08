@@ -18,5 +18,7 @@ data class CoinListState(
     val selectedDetailTab: DetailTab = DetailTab.Chart,
     val markets: List<MarketUi> = emptyList(),
     val isMarketsLoading: Boolean = false,
+    val isLoadingMoreMarkets: Boolean = false,
+    val hasMoreMarkets: Boolean = true,
     val marketsError: UiText? = null,
 )

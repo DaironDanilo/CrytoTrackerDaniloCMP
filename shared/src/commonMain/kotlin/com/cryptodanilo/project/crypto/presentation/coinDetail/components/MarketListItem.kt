@@ -38,19 +38,21 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MarketListItem(
+    rank: Int,
     market: MarketUi,
     isCompact: Boolean,
     modifier: Modifier = Modifier,
 ) {
     if (isCompact) {
-        CompactMarketListItem(market = market, modifier = modifier)
+        CompactMarketListItem(rank = rank, market = market, modifier = modifier)
     } else {
-        WideMarketListItem(market = market, modifier = modifier)
+        WideMarketListItem(rank = rank, market = market, modifier = modifier)
     }
 }
 
 @Composable
 private fun CompactMarketListItem(
+    rank: Int,
     market: MarketUi,
     modifier: Modifier = Modifier,
 ) {
@@ -71,7 +73,7 @@ private fun CompactMarketListItem(
                 horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.small),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                RankBadge(rank = market.rank)
+                RankBadge(rank = rank)
                 Text(
                     text = market.exchangeId.uppercase(),
                     style = CryptoTrackerTheme.typography.bodyMedium,
@@ -115,6 +117,7 @@ private fun CompactMarketListItem(
 
 @Composable
 private fun WideMarketListItem(
+    rank: Int,
     market: MarketUi,
     modifier: Modifier = Modifier,
 ) {
@@ -129,7 +132,7 @@ private fun WideMarketListItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "${market.rank}",
+            text = "$rank",
             style = CryptoTrackerTheme.typography.bodySmall,
             color = CryptoTrackerTheme.colors.onSurfaceVariant,
             modifier = Modifier.width(CryptoTrackerTheme.sizing.rankColumnWidth),
@@ -263,7 +266,7 @@ internal val previewMarket =
 @Composable
 private fun MarketListItemCompactPreview() {
     CryptoTrackerThemeProvider(darkTheme = true) {
-        MarketListItem(market = previewMarket, isCompact = true)
+        MarketListItem(rank = 1, market = previewMarket, isCompact = true)
     }
 }
 
@@ -271,6 +274,6 @@ private fun MarketListItemCompactPreview() {
 @Composable
 private fun MarketListItemWidePreview() {
     CryptoTrackerThemeProvider(darkTheme = true) {
-        MarketListItem(market = previewMarket, isCompact = false)
+        MarketListItem(rank = 1, market = previewMarket, isCompact = false)
     }
 }

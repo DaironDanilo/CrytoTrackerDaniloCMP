@@ -20,4 +20,6 @@
     <string name="coin_list_error">Could not load coins. Please try again.</string>
     <string name="coins_all_loaded">All coins loaded</string>
     <string name="load_more">Load more</string>
+    <string name="markets_all_loaded">All markets loaded</string>
+    <string name="markets_load_more_error">Failed to load more markets</string>
 </resources>

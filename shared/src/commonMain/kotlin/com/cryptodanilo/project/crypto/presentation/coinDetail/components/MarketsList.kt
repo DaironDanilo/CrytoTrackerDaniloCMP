@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -23,7 +26,10 @@ import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.load_more
+import cryptotrackerdanilo.shared.generated.resources.markets_all_loaded
 import cryptotrackerdanilo.shared.generated.resources.markets_empty
+import cryptotrackerdanilo.shared.generated.resources.markets_load_more_error
 import cryptotrackerdanilo.shared.generated.resources.markets_retry
 import org.jetbrains.compose.resources.stringResource
 
@@ -43,7 +49,7 @@ fun MarketsList(
             }
         }
 
-        state.marketsError != null -> {
+        state.marketsError != null && state.markets.isEmpty() -> {
             Column(
                 modifier = modifier.fillMaxSize().padding(CryptoTrackerTheme.spacing.medium),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,6 +86,7 @@ fun MarketsList(
         else -> {
             MarketsContent(
                 state = state,
+                onAction = onAction,
                 modifier = modifier,
             )
         }
@@ -89,26 +96,95 @@ fun MarketsList(
 @Composable
 private fun MarketsContent(
     state: CoinListState,
+    onAction: (CoinListAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val isCompact = maxWidth < CryptoTrackerTheme.sizing.marketsListCompactBreakpoint
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             if (!isCompact) {
-                item {
+                stickyHeader {
                     MarketsColumnHeader()
                     HorizontalDivider(color = CryptoTrackerTheme.colors.outlineVariant)
                 }
             }
-            items(
+            itemsIndexed(
                 items = state.markets,
-                key = { market -> "${market.exchangeId}_${market.pair}" },
-            ) { market ->
+                key = { _, market -> "${market.exchangeId}_${market.pair}" },
+            ) { index, market ->
                 MarketListItem(
+                    rank = index + 1,
                     market = market,
                     isCompact = isCompact,
                 )
                 HorizontalDivider(color = CryptoTrackerTheme.colors.outlineVariant)
+            }
+            item {
+                when {
+                    state.isLoadingMoreMarkets -> {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(CryptoTrackerTheme.spacing.medium),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator(
+                                color = CryptoTrackerTheme.colors.primary,
+                            )
+                        }
+                    }
+
+                    state.marketsError != null && state.markets.isNotEmpty() -> {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(CryptoTrackerTheme.spacing.medium),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.markets_load_more_error),
+                                style = CryptoTrackerTheme.typography.bodySmall,
+                                color = CryptoTrackerTheme.colors.error,
+                            )
+                            Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+                            Button(onClick = { onAction(CoinListAction.OnLoadMoreMarkets) }) {
+                                Text(stringResource(Res.string.markets_retry))
+                            }
+                        }
+                    }
+
+                    !state.hasMoreMarkets -> {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(CryptoTrackerTheme.spacing.medium),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.markets_all_loaded),
+                                style = CryptoTrackerTheme.typography.bodySmall,
+                                color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                            )
+                        }
+                    }
+
+                    state.hasMoreMarkets && !state.isLoadingMoreMarkets -> {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(CryptoTrackerTheme.spacing.medium),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Button(onClick = { onAction(CoinListAction.OnLoadMoreMarkets) }) {
+                                Text(stringResource(Res.string.load_more))
+                            }
+                        }
+                    }
+                }
             }
         }
     }
