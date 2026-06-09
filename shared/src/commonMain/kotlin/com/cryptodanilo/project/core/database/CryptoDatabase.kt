@@ -17,6 +17,7 @@ abstract class CryptoDatabase : RoomDatabase() {
     companion object {
         const val DB_NAME = "crypto_tracker.db"
         const val DB_FOLDER = ".cryptotracker"
+        const val CACHE_TTL_MS = 5L * 60 * 1000
     }
 }
 

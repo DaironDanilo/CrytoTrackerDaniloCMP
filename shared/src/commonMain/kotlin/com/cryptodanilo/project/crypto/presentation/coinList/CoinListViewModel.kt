@@ -63,8 +63,9 @@ class CoinListViewModel(
     private fun loadCoins() {
         _state.update { it.copy(isLoading = true, isError = false) }
         viewModelScope.launch {
-            coinDataSource
-                .getCoins(limit = PAGE_SIZE, offset = 0)
+            val result = coinDataSource.getCoins(limit = PAGE_SIZE, offset = 0)
+            val lastCachedAt = coinDataSource.getLastCachedAt()
+            result
                 .onSuccess { coins ->
                     currentOffset = PAGE_SIZE
                     val coinUis = coins.map { it.toCoinUi() }
@@ -73,6 +74,7 @@ class CoinListViewModel(
                             isLoading = false,
                             coins = coinUis,
                             hasMoreCoins = coins.size >= PAGE_SIZE,
+                            lastUpdatedMs = lastCachedAt,
                         )
                     }
                 }.onError { error ->
@@ -92,8 +94,9 @@ class CoinListViewModel(
         if (_state.value.isLoadingMore || !_state.value.hasMoreCoins) return
         _state.update { it.copy(isLoadingMore = true) }
         viewModelScope.launch {
-            coinDataSource
-                .getCoins(limit = PAGE_SIZE, offset = currentOffset)
+            val result = coinDataSource.getCoins(limit = PAGE_SIZE, offset = currentOffset)
+            val lastCachedAt = coinDataSource.getLastCachedAt()
+            result
                 .onSuccess { coins ->
                     currentOffset += PAGE_SIZE
                     _state.update {
@@ -101,6 +104,7 @@ class CoinListViewModel(
                             isLoadingMore = false,
                             coins = it.coins + coins.map { coin -> coin.toCoinUi() },
                             hasMoreCoins = coins.size >= PAGE_SIZE,
+                            lastUpdatedMs = lastCachedAt ?: it.lastUpdatedMs,
                         )
                     }
                 }.onError { error ->

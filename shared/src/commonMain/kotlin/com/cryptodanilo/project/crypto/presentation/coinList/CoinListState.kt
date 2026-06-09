@@ -21,4 +21,5 @@ data class CoinListState(
     val isLoadingMoreMarkets: Boolean = false,
     val hasMoreMarkets: Boolean = true,
     val marketsError: UiText? = null,
+    val lastUpdatedMs: Long? = null,
 )

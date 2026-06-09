@@ -10,6 +10,10 @@ interface CoinDataSource {
         offset: Int,
     ): Result<List<Coin>, NetworkError>
 
+    suspend fun getLastCachedAt(): Long?
+
+    suspend fun forceRefresh(limit: Int): Result<List<Coin>, NetworkError>
+
     suspend fun getCoinHistory(
         coinId: String,
         start: LocalDateTime,

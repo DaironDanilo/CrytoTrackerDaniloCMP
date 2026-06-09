@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.cryptodanilo.project.core.presentation.util.toRelativeTimeString
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
@@ -91,6 +92,20 @@ fun SharedTransitionScope.CoinListScreen(
                     modifier = Modifier.fillMaxWidth(),
                     isFocusable = isSearchBarFocusable,
                 )
+                state.lastUpdatedMs?.let { updatedAt ->
+                    Text(
+                        text = "Updated ${updatedAt.toRelativeTimeString()}",
+                        style = CryptoTrackerTheme.typography.bodySmall,
+                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = CryptoTrackerTheme.spacing.medium,
+                                    vertical = CryptoTrackerTheme.spacing.extraSmall,
+                                ),
+                    )
+                }
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                 ) {

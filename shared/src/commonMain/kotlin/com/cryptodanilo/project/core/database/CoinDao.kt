@@ -24,4 +24,7 @@ interface CoinDao {
 
     @Query("SELECT COUNT(*) FROM ${CoinEntity.TABLE_NAME}")
     suspend fun getCount(): Int
+
+    @Query("SELECT cachedAt FROM ${CoinEntity.TABLE_NAME} ORDER BY cachedAt DESC LIMIT 1")
+    suspend fun getLastCachedAt(): Long?
 }
