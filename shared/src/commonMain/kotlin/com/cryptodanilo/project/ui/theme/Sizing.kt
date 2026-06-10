@@ -38,6 +38,7 @@ data class Sizing(
     val rankColumnWidth: Dp = 32.dp,
     val rankExchangeSpacing: Dp = 12.dp,
     val marketsListCompactBreakpoint: Dp = 600.dp,
+    val statusDotSize: Dp = 8.dp,
 )
 
 val LocalSizing = staticCompositionLocalOf { Sizing() }

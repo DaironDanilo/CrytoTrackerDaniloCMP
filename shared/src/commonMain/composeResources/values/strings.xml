@@ -23,4 +23,7 @@
     <string name="markets_all_loaded">All markets loaded</string>
     <string name="markets_load_more_error">Failed to load more markets</string>
     <string name="updated_timestamp">Updated %1$s</string>
+    <string name="updated_just_now">UPDATED JUST NOW</string>
+    <string name="updated_minutes_ago">UPDATED %1$dm AGO</string>
+    <string name="updated_hours_ago">UPDATED %1$dh AGO</string>
 </resources>
