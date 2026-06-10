@@ -35,22 +35,18 @@ fun Coin.toCoinUi(): CoinUi =
     )
 
 fun Double.toDisplayableNumber(): DisplayableNumber {
-    // Manually formatting the number using string interpolation
-    val formatted =
-        this.let { number ->
-            val integerPart =
-                number
-                    .toLong()
-                    .toString()
-                    .reversed()
-                    .chunked(3)
-                    .joinToString(",")
-                    .reversed()
-            val fractionalPart = ((number - number.toLong()) * 100).toInt().toString().padStart(2, '0')
-            "$integerPart.$fractionalPart"
-        }
-
-    return DisplayableNumber(value = this, formatted = formatted)
+    val sign = if (this < 0) "-" else ""
+    val abs = kotlin.math.abs(this)
+    val integerPart =
+        abs
+            .toLong()
+            .toString()
+            .reversed()
+            .chunked(3)
+            .joinToString(",")
+            .reversed()
+    val fractionalPart = ((abs - abs.toLong()) * 100).toLong().toString().padStart(2, '0')
+    return DisplayableNumber(value = this, formatted = "$sign$integerPart.$fractionalPart")
 }
 
 fun DisplayableNumber.asDollarString(): String = "$ $formatted"

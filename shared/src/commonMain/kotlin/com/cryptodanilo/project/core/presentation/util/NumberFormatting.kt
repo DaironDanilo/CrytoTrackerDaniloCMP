@@ -8,7 +8,7 @@ fun Double.toAbbreviatedDollarString(): String {
             this >= 1_000 -> 1_000.0 to "K"
             else -> return "$ ${this.toLong()}"
         }
-    val divided = this / divisor
+    val divided = kotlin.math.abs(this / divisor)
     val intPart = divided.toLong()
     val fracPart = ((divided - intPart) * 10).toInt()
     return "$ $intPart.${fracPart}$suffix"
@@ -32,7 +32,9 @@ fun Long.toAbbreviatedString(): String =
     }
 
 fun Double.toPercentString(): String {
-    val intPart = this.toLong()
-    val fracPart = ((this - intPart) * 10).toInt()
-    return "$intPart.$fracPart%"
+    val abs = kotlin.math.abs(this)
+    val intPart = abs.toLong()
+    val fracPart = ((abs - intPart) * 10).toInt()
+    val sign = if (this < 0) "-" else ""
+    return "$sign$intPart.$fracPart%"
 }
