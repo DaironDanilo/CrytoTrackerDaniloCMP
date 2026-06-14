@@ -161,3 +161,40 @@ jobs:
           name: web-wasm-dist
           path: webApp/build/dist/wasmJs/developmentExecutable/
           retention-days: 7
+
+  deploy-web:
+    name: Deploy Web to Netlify
+    runs-on: ubuntu-latest
+    needs: [build-web]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build WASM production distribution
+        run: ./gradlew :webApp:wasmJsBrowserDistribution
+
+      - name: Add COOP/COEP security headers
+        run: |
+          cat > webApp/build/dist/wasmJs/productionExecutable/_headers << 'EOF'
+          /*
+            Cross-Origin-Opener-Policy: same-origin
+            Cross-Origin-Embedder-Policy: require-corp
+          EOF
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: webApp/build/dist/wasmJs/productionExecutable
+          production-branch: main
+          production-deploy: true
+          deploy-message: "Deploy from GitHub Actions - ${{ github.sha }}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
