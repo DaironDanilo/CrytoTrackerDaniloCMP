@@ -31,5 +31,5 @@ kotlin {
 // wasm-opt version_125 segfaults on Linux CI runners with full optimization.
 // -O0 keeps the production build pipeline intact while skipping the passes that crash.
 tasks.withType<BinaryenExec>().configureEach {
-    binaryenArguments = mutableListOf("-O0")
+    binaryenArguments = mutableListOf("--enable-reference-types", "--enable-gc", "-O0")
 }
