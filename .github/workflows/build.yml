@@ -177,12 +177,12 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
-      - name: Build WASM production distribution
-        run: ./gradlew :webApp:wasmJsBrowserDistribution
+      - name: Build WASM distribution
+        run: ./gradlew :webApp:wasmJsBrowserDevelopmentExecutableDistribution
 
       - name: Add COOP/COEP security headers
         run: |
-          cat > webApp/build/dist/wasmJs/productionExecutable/_headers << 'EOF'
+          cat > webApp/build/dist/wasmJs/developmentExecutable/_headers << 'EOF'
           /*
             Cross-Origin-Opener-Policy: same-origin
             Cross-Origin-Embedder-Policy: require-corp
@@ -191,7 +191,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
-          publish-dir: webApp/build/dist/wasmJs/productionExecutable
+          publish-dir: webApp/build/dist/wasmJs/developmentExecutable
           production-branch: main
           production-deploy: true
           deploy-message: "Deploy from GitHub Actions - ${{ github.sha }}"
