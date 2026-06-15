@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -25,4 +26,10 @@ kotlin {
             implementation(libs.ui)
         }
     }
+}
+
+// wasm-opt version_125 segfaults on Linux CI runners with full optimization.
+// -O0 keeps the production build pipeline intact while skipping the passes that crash.
+tasks.withType<BinaryenExec>().configureEach {
+    binaryenArguments = mutableListOf("-O0")
 }
