@@ -2,6 +2,18 @@
 
 [![Build](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/build.yml/badge.svg)](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/build.yml)
 [![Test](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/test.yml/badge.svg)](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/test.yml)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8411f938-65bc-4add-8a0e-689e5765bd9e/deploy-status)](https://app.netlify.com/sites/majestic-flan-8cb7a7/deploys)
+
+## 🌐 Live Demo
+
+**[► Try it in your browser →](https://majestic-flan-8cb7a7.netlify.app/)**
+
+> Runs on any device · No install required · Built with Compose Multiplatform + Kotlin/Wasm
+
+<!-- Replace with your own screenshot taken from https://YOUR_APP.netlify.app -->
+[![Web Demo](assets/web_screenshot.png)](https://majestic-flan-8cb7a7.netlify.app)
+
+---
 
 A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targeting Android, iOS, Desktop (JVM), and Web (Wasm). It displays live coin prices and historical charts sourced from the [CoinCap](https://pro.coincap.io/api-docs) REST API.
 
@@ -26,6 +38,25 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
   <tr>
     <td colspan="2"><video src="https://github.com/user-attachments/assets/48bc0159-ca51-45b8-b8b4-b79aa8e8f44b"></td>
   </tr>
+  <tr>
+    <th colspan="2">Web — Live on Netlify</th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <a href="https://majestic-flan-8cb7a7.netlify.app">
+        <img
+          src="assets/web_screenshot.png"
+          alt="CryptoTracker running live on Netlify via Kotlin/Wasm"
+          width="800"
+        />
+      </a>
+      <div style="text-align: center">
+        <a href="https://majestic-flan-8cb7a7.netlify.app">
+            <strong>► Open live demo</strong>
+        </a>
+      </div>
+    </td>
+  </tr>
 </table>
 
 ---
@@ -37,6 +68,8 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 - Adaptive two-pane layout on large screens (tablet / desktop)
 - Shared UI and business logic across all four platforms
 - Native iOS text input (introduced in CMP 1.11.0)
+- Local database cache via Room KMP across all four platforms (Android, iOS, Desktop, Web/OPFS)
+- **[Live web demo](https://majestic-flan-8cb7a7.netlify.app/)** — runs in any browser via Kotlin/Wasm, no install required
 
 ---
 
@@ -52,6 +85,7 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 | DI | [Koin 4.2.1](https://insert-koin.io/) |
 | Date/time | [kotlinx-datetime 0.8.0](https://github.com/Kotlin/kotlinx-datetime) |
 | Build secrets | [BuildKonfig 0.21.2](https://github.com/yshrsmz/BuildKonfig) |
+| Hosting | [Netlify](https://netlify.com) — automatic web deploy on every push to main |
 
 ---
 
@@ -206,6 +240,7 @@ UI (Compose) ──► Action ──► ViewModel ──► UseCase / DataSource
 | `./gradlew :webApp:wasmJsBrowserDevelopmentRun` | Run Web app in browser |
 | `./gradlew :desktopApp:packageDistributionForCurrentOS` | Package Desktop distributable |
 | `./gradlew build` | Build all targets |
+| `./gradlew :webApp:wasmJsBrowserDistribution` | Build production Web bundle (deployed to Netlify) |
 
 ---
 
