@@ -26,4 +26,6 @@
     <string name="updated_just_now">UPDATED JUST NOW</string>
     <string name="updated_minutes_ago">UPDATED %1$dm AGO</string>
     <string name="updated_hours_ago">UPDATED %1$dh AGO</string>
+    <string name="built_with">Built with</string>
+    <string name="compose_multiplatform_name">Compose Multiplatform</string>
 </resources>
