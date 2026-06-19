@@ -2,16 +2,16 @@
 
 [![Build](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/build.yml/badge.svg)](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/build.yml)
 [![Test](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/test.yml/badge.svg)](https://github.com/DaironDanilo/CrytoTrackerDaniloCMP/actions/workflows/test.yml)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/8411f938-65bc-4add-8a0e-689e5765bd9e/deploy-status)](https://app.netlify.com/sites/majestic-flan-8cb7a7/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8411f938-65bc-4add-8a0e-689e5765bd9e/deploy-status)](https://app.netlify.com/sites/danilo-cryptotracker-kmp/deploys)
 
 ## 🌐 Live Demo
 
-**<a href="https://majestic-flan-8cb7a7.netlify.app/" target="_blank" rel="noopener noreferrer">► Try it in your browser →</a>**
+**<a href="https://danilo-cryptotracker-kmp.netlify.app/" target="_blank" rel="noopener noreferrer">► Try it in your browser →</a>**
 
 > Runs on any device · No install required · Built with Compose Multiplatform + Kotlin/Wasm
 
 <!-- Replace with your own screenshot taken from https://YOUR_APP.netlify.app -->
-<a href="https://majestic-flan-8cb7a7.netlify.app" target="_blank" rel="noopener noreferrer"><img src="assets/web_screenshot.png" alt="Web Demo" /></a>
+<a href="https://danilo-cryptotracker-kmp.netlify.app" target="_blank" rel="noopener noreferrer"><img src="assets/web_screenshot.png" alt="Web Demo" /></a>
 
 ---
 
@@ -43,7 +43,7 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
   </tr>
   <tr>
     <td colspan="2">
-      <a href="https://majestic-flan-8cb7a7.netlify.app" target="_blank" rel="noopener noreferrer">
+      <a href="https://danilo-cryptotracker-kmp.netlify.app" target="_blank" rel="noopener noreferrer">
         <img
           src="assets/web_screenshot.png"
           alt="CryptoTracker running live on Netlify via Kotlin/Wasm"
@@ -51,7 +51,7 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
         />
       </a>
       <div style="text-align: center">
-        <a href="https://majestic-flan-8cb7a7.netlify.app" target="_blank" rel="noopener noreferrer">
+        <a href="https://danilo-cryptotracker-kmp.netlify.app" target="_blank" rel="noopener noreferrer">
             <strong>► Open live demo</strong>
         </a>
       </div>
@@ -69,7 +69,7 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 - Shared UI and business logic across all four platforms
 - Native iOS text input (introduced in CMP 1.11.0)
 - Local database cache via Room KMP across all four platforms (Android, iOS, Desktop, Web/OPFS)
-- **<a href="https://majestic-flan-8cb7a7.netlify.app/" target="_blank" rel="noopener noreferrer">Live web demo</a>** — runs in any browser via Kotlin/Wasm, no install required
+- **<a href="https://danilo-cryptotracker-kmp.netlify.app/" target="_blank" rel="noopener noreferrer">Live web demo</a>** — runs in any browser via Kotlin/Wasm, no install required
 
 ---
 
