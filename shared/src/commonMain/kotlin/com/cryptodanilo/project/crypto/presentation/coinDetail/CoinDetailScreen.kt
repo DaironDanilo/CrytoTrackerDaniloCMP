@@ -11,11 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,7 +45,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
@@ -96,7 +97,11 @@ fun SharedTransitionScope.CoinDetailScreen(
         }
     } else if (state.selectedCoinUi != null) {
         val coin = state.selectedCoinUi
-        Box {
+        // Captured here, above the verticalScroll Column below, because a scrollable
+        // Column measures its children with unbounded height — maxHeight read from
+        // inside it would be infinite and useless for capping the chart's height.
+        BoxWithConstraints {
+            val availablePaneHeight = maxHeight
             Column(
                 modifier =
                     Modifier
@@ -216,6 +221,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                 DetailTabContent(
                     state = state,
                     coinPriceHistory = coin.coinPriceHistory,
+                    availablePaneHeight = availablePaneHeight,
                     onAction = onAction,
                 )
             }
@@ -235,10 +241,14 @@ fun SharedTransitionScope.CoinDetailScreen(
     }
 }
 
+private val CHART_MIN_HEIGHT = 200.dp
+private const val CHART_HEIGHT_FRACTION_OF_PANE = 0.6f
+
 @Composable
 private fun DetailTabContent(
     state: CoinListState,
     coinPriceHistory: List<DataPoint>,
+    availablePaneHeight: Dp,
     onAction: (CoinListAction) -> Unit,
 ) {
     when (state.selectedDetailTab) {
@@ -256,8 +266,14 @@ private fun DetailTabContent(
                 val startIndex =
                     (coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
                         .coerceAtLeast(0)
-                val screenSize = getScreenSize()
-                val aspectRatio = remember(screenSize) { calculateAspectRatio(screenSize) }
+                // Sized from a fraction of the real (un-scrolled) pane height captured
+                // above, rather than from a fixed bucket, so a tall screen gets a taller
+                // chart instead of leaving dead space below it. LineChart itself keeps
+                // its grid rows roughly as tall as its columns are wide regardless of
+                // the height it's given, so cells stay square at any size.
+                val chartHeight =
+                    (availablePaneHeight * CHART_HEIGHT_FRACTION_OF_PANE)
+                        .coerceAtLeast(CHART_MIN_HEIGHT)
                 LineChart(
                     dataPoints = coinPriceHistory,
                     style =
@@ -278,7 +294,7 @@ private fun DetailTabContent(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .aspectRatio(aspectRatio)
+                            .height(chartHeight)
                             .onSizeChanged { totalChartWidth = it.width.toFloat() },
                     selectedDataPoint = selectedDataPoint,
                     onSelectedDataPoint = { selectedDataPoint = it },
@@ -296,16 +312,6 @@ private fun DetailTabContent(
                 modifier = Modifier.fillMaxWidth().height(marketsHeight),
             )
         }
-    }
-}
-
-fun calculateAspectRatio(screenSize: IntSize): Float {
-    val aspectRatio = screenSize.height.toFloat() / screenSize.width.toFloat()
-
-    return when {
-        aspectRatio > 1.42 -> 14f / 9f // Mobile devices (portrait mode)
-        aspectRatio in 0.5..1.42 -> 20f / 9f // Tablets
-        else -> 26f / 9f // Desktop or landscape-oriented screens
     }
 }
 
