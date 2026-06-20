@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -55,6 +57,7 @@ import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.crypto.presentation.coinList.components.conditional
 import com.cryptodanilo.project.crypto.presentation.coinList.components.getScreenSize
 import com.cryptodanilo.project.crypto.presentation.coinList.components.previewCoin
+import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
@@ -78,6 +81,7 @@ fun SharedTransitionScope.CoinDetailScreen(
     state: CoinListState,
     shouldShowBackNavigationIcon: Boolean,
     shouldExistSharedElementTransition: Boolean,
+    isDualPane: Boolean = false,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     onAction: (CoinListAction) -> Unit = {},
@@ -97,133 +101,70 @@ fun SharedTransitionScope.CoinDetailScreen(
         }
     } else if (state.selectedCoinUi != null) {
         val coin = state.selectedCoinUi
-        // Captured here, above the verticalScroll Column below, because a scrollable
-        // Column measures its children with unbounded height — maxHeight read from
-        // inside it would be infinite and useless for capping the chart's height.
-        BoxWithConstraints {
-            val availablePaneHeight = maxHeight
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(CryptoTrackerTheme.spacing.medium),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    painter = painterResource(coin.iconRes),
-                    contentDescription = coin.name,
-                    tint = CryptoTrackerTheme.colors.primary,
-                    modifier =
-                        Modifier
-                            .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
-                            .conditional(
-                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
-                                ifTrue = {
-                                    sharedElement(
-                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                        animatedVisibilityScope = animatedPaneScope!!,
-                                        boundsTransform = { _, _ ->
-                                            tween(durationMillis = 1000)
-                                        },
-                                        renderInOverlayDuringTransition = false,
-                                    )
-                                },
-                            ),
-                )
-                Text(
-                    text = coin.name,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Black,
-                    textAlign = TextAlign.Center,
-                    color = contentColor,
-                )
-                Text(
-                    text = coin.symbol,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Light,
-                    textAlign = TextAlign.Center,
-                    color = contentColor,
-                )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    InfoCard(
-                        title = stringResource(Res.string.market_cap),
-                        formattedValue = "$ ${coin.marketCapUsd.formatted}",
-                        icon = Res.drawable.stock,
-                    )
-                    InfoCard(
-                        title = stringResource(Res.string.price),
-                        formattedValue = "$ ${coin.priceUsd.formatted}",
-                        icon = Res.drawable.dollar,
-                    )
-                    val absoluteChangeFormatted =
-                        ((coin.priceUsd.value) * (coin.changePercent24Hr.value / 100)).toDisplayableNumber()
-                    val isPositiveChange = coin.changePercent24Hr.value > 0.0
-                    val contentColorInfoCard =
-                        if (isPositiveChange) {
-                            if (isSystemInDarkTheme()) Color.Green else greenBackground
-                        } else {
-                            CryptoTrackerTheme.colors.error
-                        }
-                    InfoCard(
-                        title = stringResource(Res.string.change_last_24h),
-                        formattedValue = absoluteChangeFormatted.formatted,
-                        icon =
-                            if (isPositiveChange) {
-                                Res.drawable.trending
-                            } else {
-                                Res.drawable.trending_down
-                            },
-                        contentColor = contentColorInfoCard,
-                    )
-                }
-
-                // Chart | Markets tab switcher
-                val tabShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerSmall)
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = CryptoTrackerTheme.spacing.small)
-                            .border(CryptoTrackerTheme.sizing.borderThin, CryptoTrackerTheme.colors.outline, tabShape)
-                            .clip(tabShape),
-                ) {
-                    listOf(DetailTab.Chart, DetailTab.Markets).forEach { tab ->
-                        val isSelected = state.selectedDetailTab == tab
-                        Box(
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .background(
-                                        if (isSelected) CryptoTrackerTheme.colors.primary else Color.Transparent,
-                                    ).clickable { onAction(CoinListAction.OnDetailTabSelected(tab)) }
-                                    .padding(vertical = CryptoTrackerTheme.sizing.tabVerticalPadding),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = tab.name,
-                                style = CryptoTrackerTheme.typography.bodyMedium,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                color =
-                                    if (isSelected) {
-                                        CryptoTrackerTheme.colors.onPrimary
-                                    } else {
-                                        CryptoTrackerTheme.colors.onSurface
-                                    },
-                            )
-                        }
+        Box {
+            if (isDualPane) {
+                // Captured here, above the verticalScroll Column below, because a
+                // scrollable Column measures its children with unbounded height —
+                // maxHeight read from inside it would be infinite and useless for
+                // capping the chart's height. The dual-pane (desktop/web) detail pane
+                // keeps scrolling since its content can legitimately exceed the pane.
+                BoxWithConstraints {
+                    val availablePaneHeight = maxHeight
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(CryptoTrackerTheme.spacing.medium),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        CoinDetailHeaderAndTabs(
+                            coin = coin,
+                            state = state,
+                            contentColor = contentColor,
+                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                            animatedPaneScope = animatedPaneScope,
+                            onAction = onAction,
+                        )
+                        DetailTabContent(
+                            state = state,
+                            coinPriceHistory = coin.coinPriceHistory,
+                            isDualPane = true,
+                            availablePaneHeight = availablePaneHeight,
+                            onAction = onAction,
+                        )
                     }
                 }
-
-                DetailTabContent(
-                    state = state,
-                    coinPriceHistory = coin.coinPriceHistory,
-                    availablePaneHeight = availablePaneHeight,
-                    onAction = onAction,
-                )
+            } else {
+                // Single pane (mobile): no scrolling — the chart must always be fully
+                // visible at once, so it takes exactly the space left over after the
+                // header/cards/tabs via weight(1f), which a scrollable Column can't do
+                // (a scrollable Column measures children with unbounded height, so
+                // weight() has nothing finite to distribute).
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(CryptoTrackerTheme.spacing.medium),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CoinDetailHeaderAndTabs(
+                        coin = coin,
+                        state = state,
+                        contentColor = contentColor,
+                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                        animatedPaneScope = animatedPaneScope,
+                        onAction = onAction,
+                    )
+                    DetailTabContent(
+                        state = state,
+                        coinPriceHistory = coin.coinPriceHistory,
+                        isDualPane = false,
+                        availablePaneHeight = 0.dp,
+                        remainingSpaceModifier = Modifier.weight(1f),
+                        onAction = onAction,
+                    )
+                }
             }
             if (shouldShowBackNavigationIcon) {
                 Icon(
@@ -241,6 +182,124 @@ fun SharedTransitionScope.CoinDetailScreen(
     }
 }
 
+@Composable
+private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
+    coin: CoinUi,
+    state: CoinListState,
+    contentColor: Color,
+    shouldExistSharedElementTransition: Boolean,
+    animatedPaneScope: AnimatedPaneScope?,
+    onAction: (CoinListAction) -> Unit,
+) {
+    Icon(
+        painter = painterResource(coin.iconRes),
+        contentDescription = coin.name,
+        tint = CryptoTrackerTheme.colors.primary,
+        modifier =
+            Modifier
+                .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
+                .conditional(
+                    condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                    ifTrue = {
+                        sharedElement(
+                            sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                            animatedVisibilityScope = animatedPaneScope!!,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            },
+                            renderInOverlayDuringTransition = false,
+                        )
+                    },
+                ),
+    )
+    Text(
+        text = coin.name,
+        fontSize = 32.sp,
+        fontWeight = FontWeight.Black,
+        textAlign = TextAlign.Center,
+        color = contentColor,
+    )
+    Text(
+        text = coin.symbol,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Light,
+        textAlign = TextAlign.Center,
+        color = contentColor,
+    )
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        InfoCard(
+            title = stringResource(Res.string.market_cap),
+            formattedValue = "$ ${coin.marketCapUsd.formatted}",
+            icon = Res.drawable.stock,
+        )
+        InfoCard(
+            title = stringResource(Res.string.price),
+            formattedValue = "$ ${coin.priceUsd.formatted}",
+            icon = Res.drawable.dollar,
+        )
+        val absoluteChangeFormatted =
+            ((coin.priceUsd.value) * (coin.changePercent24Hr.value / 100)).toDisplayableNumber()
+        val isPositiveChange = coin.changePercent24Hr.value > 0.0
+        val contentColorInfoCard =
+            if (isPositiveChange) {
+                if (isSystemInDarkTheme()) Color.Green else greenBackground
+            } else {
+                CryptoTrackerTheme.colors.error
+            }
+        InfoCard(
+            title = stringResource(Res.string.change_last_24h),
+            formattedValue = absoluteChangeFormatted.formatted,
+            icon =
+                if (isPositiveChange) {
+                    Res.drawable.trending
+                } else {
+                    Res.drawable.trending_down
+                },
+            contentColor = contentColorInfoCard,
+        )
+    }
+
+    // Chart | Markets tab switcher
+    val tabShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerSmall)
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = CryptoTrackerTheme.spacing.small)
+                .border(CryptoTrackerTheme.sizing.borderThin, CryptoTrackerTheme.colors.outline, tabShape)
+                .clip(tabShape),
+    ) {
+        listOf(DetailTab.Chart, DetailTab.Markets).forEach { tab ->
+            val isSelected = state.selectedDetailTab == tab
+            Box(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .background(
+                            if (isSelected) CryptoTrackerTheme.colors.primary else Color.Transparent,
+                        ).clickable { onAction(CoinListAction.OnDetailTabSelected(tab)) }
+                        .padding(vertical = CryptoTrackerTheme.sizing.tabVerticalPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = tab.name,
+                    style = CryptoTrackerTheme.typography.bodyMedium,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    color =
+                        if (isSelected) {
+                            CryptoTrackerTheme.colors.onPrimary
+                        } else {
+                            CryptoTrackerTheme.colors.onSurface
+                        },
+                )
+            }
+        }
+    }
+}
+
 private val CHART_MIN_HEIGHT = 200.dp
 private const val CHART_HEIGHT_FRACTION_OF_PANE = 0.6f
 
@@ -248,12 +307,20 @@ private const val CHART_HEIGHT_FRACTION_OF_PANE = 0.6f
 private fun DetailTabContent(
     state: CoinListState,
     coinPriceHistory: List<DataPoint>,
+    isDualPane: Boolean,
     availablePaneHeight: Dp,
     onAction: (CoinListAction) -> Unit,
+    // Only used in single-pane (mobile) mode — Modifier.weight(1f) from the
+    // non-scrollable parent Column, applied to whichever tab is currently active so
+    // it exactly fills the space left after the header/cards/tabs, no scrolling needed.
+    remainingSpaceModifier: Modifier = Modifier,
 ) {
     when (state.selectedDetailTab) {
         DetailTab.Chart -> {
-            AnimatedVisibility(visible = coinPriceHistory.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = coinPriceHistory.isNotEmpty(),
+                modifier = remainingSpaceModifier,
+            ) {
                 var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
                 var labelWidth by remember { mutableFloatStateOf(0f) }
                 var totalChartWidth by remember { mutableFloatStateOf(0f) }
@@ -266,14 +333,21 @@ private fun DetailTabContent(
                 val startIndex =
                     (coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
                         .coerceAtLeast(0)
-                // Sized from a fraction of the real (un-scrolled) pane height captured
-                // above, rather than from a fixed bucket, so a tall screen gets a taller
-                // chart instead of leaving dead space below it. LineChart itself keeps
-                // its grid rows roughly as tall as its columns are wide regardless of
-                // the height it's given, so cells stay square at any size.
-                val chartHeight =
-                    (availablePaneHeight * CHART_HEIGHT_FRACTION_OF_PANE)
-                        .coerceAtLeast(CHART_MIN_HEIGHT)
+                // Dual-pane: sized from a fraction of the real (un-scrolled) pane height
+                // captured above, rather than from a fixed bucket, so a tall screen gets
+                // a taller chart instead of leaving dead space below it. Single-pane: the
+                // parent Column already gave this exactly the remaining height via
+                // weight(1f) above, so the chart just fills it (with a floor so it's never
+                // too small on a very short screen).
+                val chartSizeModifier =
+                    if (isDualPane) {
+                        Modifier.height(
+                            (availablePaneHeight * CHART_HEIGHT_FRACTION_OF_PANE)
+                                .coerceAtLeast(CHART_MIN_HEIGHT),
+                        )
+                    } else {
+                        Modifier.fillMaxHeight().heightIn(min = CHART_MIN_HEIGHT)
+                    }
                 LineChart(
                     dataPoints = coinPriceHistory,
                     style =
@@ -294,7 +368,7 @@ private fun DetailTabContent(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .height(chartHeight)
+                            .then(chartSizeModifier)
                             .onSizeChanged { totalChartWidth = it.width.toFloat() },
                     selectedDataPoint = selectedDataPoint,
                     onSelectedDataPoint = { selectedDataPoint = it },
@@ -304,12 +378,22 @@ private fun DetailTabContent(
         }
 
         DetailTab.Markets -> {
-            val screenSize = getScreenSize()
-            val marketsHeight = with(LocalDensity.current) { (screenSize.height * 0.85f).toDp() }
+            // Dual-pane keeps its existing screen-fraction height. Single-pane has no
+            // scrolling to fall back on, so it reuses the same weight(1f) the chart
+            // gets — MarketsList is backed by a LazyColumn that scrolls its own
+            // content internally, so this doesn't change anything about its content.
+            val marketsSizeModifier =
+                if (isDualPane) {
+                    val screenSize = getScreenSize()
+                    val marketsHeight = with(LocalDensity.current) { (screenSize.height * 0.85f).toDp() }
+                    Modifier.height(marketsHeight)
+                } else {
+                    remainingSpaceModifier
+                }
             MarketsList(
                 state = state,
                 onAction = onAction,
-                modifier = Modifier.fillMaxWidth().height(marketsHeight),
+                modifier = Modifier.fillMaxWidth().then(marketsSizeModifier),
             )
         }
     }
