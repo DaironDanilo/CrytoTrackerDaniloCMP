@@ -2,7 +2,9 @@ package com.cryptodanilo.project.crypto.presentation.coinDetail.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
@@ -45,7 +48,7 @@ fun InfoCard(
     Card(
         modifier =
             modifier
-                .padding(CryptoTrackerTheme.spacing.small)
+                .padding(CryptoTrackerTheme.spacing.extraSmall)
                 .shadow(
                     elevation = CryptoTrackerTheme.sizing.cardElevation,
                     shape = RectangleShape,
@@ -60,46 +63,47 @@ fun InfoCard(
                 contentColor = contentColor,
             ),
     ) {
-        AnimatedContent(
-            targetState = icon,
-            label = "iconAnimation",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        ) { icon ->
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = title,
-                tint = contentColor,
-                modifier =
-                    Modifier
-                        .size(CryptoTrackerTheme.sizing.infoCardIconSize)
-                        .padding(top = CryptoTrackerTheme.sizing.infoCardInnerPadding),
-            )
+        Row(
+            modifier = Modifier.padding(CryptoTrackerTheme.sizing.infoCardInnerPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
+        ) {
+            AnimatedContent(
+                targetState = icon,
+                label = "iconAnimation",
+            ) { icon ->
+                Icon(
+                    painter = painterResource(icon),
+                    contentDescription = title,
+                    tint = contentColor,
+                    modifier = Modifier.size(CryptoTrackerTheme.sizing.infoCardIconSize),
+                )
+            }
+            Column(
+                modifier = Modifier.padding(start = CryptoTrackerTheme.spacing.extraSmall),
+            ) {
+                AnimatedContent(
+                    targetState = formattedValue,
+                    label = "valueAnimation",
+                ) { formattedValue ->
+                    Text(
+                        text = formattedValue,
+                        style = formattedTextStyle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Start,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light,
+                    color = contentColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
-        Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
-        AnimatedContent(
-            targetState = formattedValue,
-            label = "valueAnimation",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        ) { formattedValue ->
-            Text(
-                text = formattedValue,
-                style = formattedTextStyle,
-                modifier = Modifier.padding(horizontal = CryptoTrackerTheme.spacing.medium),
-            )
-        }
-        Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
-        Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            modifier =
-                Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = CryptoTrackerTheme.spacing.medium)
-                    .padding(bottom = CryptoTrackerTheme.sizing.infoCardInnerPadding),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Light,
-            color = contentColor,
-        )
     }
 }
 

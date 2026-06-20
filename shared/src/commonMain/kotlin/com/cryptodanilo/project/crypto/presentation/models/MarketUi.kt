@@ -1,7 +1,9 @@
 package com.cryptodanilo.project.crypto.presentation.models
 
+import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.core.presentation.util.toAbbreviatedDollarString
 import com.cryptodanilo.project.core.presentation.util.toAbbreviatedString
+import com.cryptodanilo.project.core.presentation.util.toDisplayableNumber
 import com.cryptodanilo.project.core.presentation.util.toPercentString
 import com.cryptodanilo.project.core.presentation.util.toRelativeTimeString
 import com.cryptodanilo.project.crypto.domain.Market
