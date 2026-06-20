@@ -123,9 +123,16 @@ fun LineChart(
                 (maxXLabelHeight + 2 * verticalPaddingPx + xLabelLineHeight + xAxisLabelSpacingPx)
         val labelViewPortHeightPx = viewPortHeightPx + xLabelLineHeight
 
-        // Y Label calculations
+        // Y Label calculations.
+        // Target a row pitch as tall as a data column is wide, so grid cells stay
+        // roughly square instead of always packing rows at the legibility minimum
+        // (which is what made the grid flatten into wide rectangles on wide canvases).
+        // This is an approximation of the final per-column pixel width — it ignores
+        // the left-axis label gutter computed below — close enough to pick a row count.
+        val approxColumnWidthPx = size.width / visibleDataPoints.size.coerceAtLeast(1)
+        val targetRowPitchPx = maxOf(approxColumnWidthPx, xLabelLineHeight + minLabelSpacingYPx)
         val labelCountExcludingLastLabel =
-            (labelViewPortHeightPx / (xLabelLineHeight + minLabelSpacingYPx)).toInt()
+            (labelViewPortHeightPx / targetRowPitchPx).toInt().coerceAtLeast(1)
         val valueIncrement = (maxYValue - minYValue) / labelCountExcludingLastLabel
         val yLabels =
             (0..labelCountExcludingLastLabel).map { index ->

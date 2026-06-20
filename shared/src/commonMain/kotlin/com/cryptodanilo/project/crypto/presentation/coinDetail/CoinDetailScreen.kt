@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
@@ -96,7 +97,11 @@ fun SharedTransitionScope.CoinDetailScreen(
         }
     } else if (state.selectedCoinUi != null) {
         val coin = state.selectedCoinUi
-        Box {
+        // Captured here, above the verticalScroll Column below, because a scrollable
+        // Column measures its children with unbounded height — maxHeight read from
+        // inside it would be infinite and useless for capping the chart's height.
+        BoxWithConstraints {
+            val availablePaneHeight = maxHeight
             Column(
                 modifier =
                     Modifier
@@ -216,6 +221,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                 DetailTabContent(
                     state = state,
                     coinPriceHistory = coin.coinPriceHistory,
+                    availablePaneHeight = availablePaneHeight,
                     onAction = onAction,
                 )
             }
@@ -235,10 +241,14 @@ fun SharedTransitionScope.CoinDetailScreen(
     }
 }
 
+private val CHART_MIN_HEIGHT = 200.dp
+private const val CHART_HEIGHT_FRACTION_OF_PANE = 0.6f
+
 @Composable
 private fun DetailTabContent(
     state: CoinListState,
     coinPriceHistory: List<DataPoint>,
+    availablePaneHeight: Dp,
     onAction: (CoinListAction) -> Unit,
 ) {
     when (state.selectedDetailTab) {
@@ -256,45 +266,40 @@ private fun DetailTabContent(
                 val startIndex =
                     (coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
                         .coerceAtLeast(0)
-                // The Column hosting this content is verticalScroll, so its height is
-                // unbounded — only the chart's own width reflects the actual pane size
-                // (which is narrower than the full window in the dual-pane layout).
-                // The chart height is therefore derived from that local width rather
-                // than from the device/window size.
-                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                    val chartHeight =
-                        when {
-                            maxWidth > 900.dp -> 400.dp
-                            maxWidth > 500.dp -> 280.dp
-                            else -> 200.dp
-                        }
-                    LineChart(
-                        dataPoints = coinPriceHistory,
-                        style =
-                            ChartStyle(
-                                charLineColor = CryptoTrackerTheme.colors.primary,
-                                unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
-                                selectedColor = CryptoTrackerTheme.colors.primary,
-                                helperLinesThicknessPx = 5f,
-                                axisLinesThicknessPx = 5f,
-                                labelFontSize = 14.sp,
-                                minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
-                                verticalPadding = CryptoTrackerTheme.spacing.small,
-                                horizontalPadding = CryptoTrackerTheme.spacing.small,
-                                xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
-                            ),
-                        visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
-                        unit = "$",
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(chartHeight)
-                                .onSizeChanged { totalChartWidth = it.width.toFloat() },
-                        selectedDataPoint = selectedDataPoint,
-                        onSelectedDataPoint = { selectedDataPoint = it },
-                        onXLabelWidthChange = { labelWidth = it },
-                    )
-                }
+                // Sized from a fraction of the real (un-scrolled) pane height captured
+                // above, rather than from a fixed bucket, so a tall screen gets a taller
+                // chart instead of leaving dead space below it. LineChart itself keeps
+                // its grid rows roughly as tall as its columns are wide regardless of
+                // the height it's given, so cells stay square at any size.
+                val chartHeight =
+                    (availablePaneHeight * CHART_HEIGHT_FRACTION_OF_PANE)
+                        .coerceAtLeast(CHART_MIN_HEIGHT)
+                LineChart(
+                    dataPoints = coinPriceHistory,
+                    style =
+                        ChartStyle(
+                            charLineColor = CryptoTrackerTheme.colors.primary,
+                            unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
+                            selectedColor = CryptoTrackerTheme.colors.primary,
+                            helperLinesThicknessPx = 5f,
+                            axisLinesThicknessPx = 5f,
+                            labelFontSize = 14.sp,
+                            minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                            verticalPadding = CryptoTrackerTheme.spacing.small,
+                            horizontalPadding = CryptoTrackerTheme.spacing.small,
+                            xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
+                        ),
+                    visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
+                    unit = "$",
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(chartHeight)
+                            .onSizeChanged { totalChartWidth = it.width.toFloat() },
+                    selectedDataPoint = selectedDataPoint,
+                    onSelectedDataPoint = { selectedDataPoint = it },
+                    onXLabelWidthChange = { labelWidth = it },
+                )
             }
         }
 
