@@ -134,7 +134,6 @@ fun AdaptiveCoinListDetailPane(
                         state = state,
                         shouldShowBackNavigationIcon = isListOfCoinsPaneHidden,
                         shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                        isDualPane = isDualPane,
                         onBack = { navigateBack() },
                         onAction = { action -> viewModel.onAction(action) },
                     )
