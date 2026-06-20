@@ -11,11 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,7 +45,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
@@ -256,34 +256,45 @@ private fun DetailTabContent(
                 val startIndex =
                     (coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
                         .coerceAtLeast(0)
-                val screenSize = getScreenSize()
-                val aspectRatio = remember(screenSize) { calculateAspectRatio(screenSize) }
-                LineChart(
-                    dataPoints = coinPriceHistory,
-                    style =
-                        ChartStyle(
-                            charLineColor = CryptoTrackerTheme.colors.primary,
-                            unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
-                            selectedColor = CryptoTrackerTheme.colors.primary,
-                            helperLinesThicknessPx = 5f,
-                            axisLinesThicknessPx = 5f,
-                            labelFontSize = 14.sp,
-                            minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
-                            verticalPadding = CryptoTrackerTheme.spacing.small,
-                            horizontalPadding = CryptoTrackerTheme.spacing.small,
-                            xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
-                        ),
-                    visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
-                    unit = "$",
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(aspectRatio)
-                            .onSizeChanged { totalChartWidth = it.width.toFloat() },
-                    selectedDataPoint = selectedDataPoint,
-                    onSelectedDataPoint = { selectedDataPoint = it },
-                    onXLabelWidthChange = { labelWidth = it },
-                )
+                // The Column hosting this content is verticalScroll, so its height is
+                // unbounded — only the chart's own width reflects the actual pane size
+                // (which is narrower than the full window in the dual-pane layout).
+                // The chart height is therefore derived from that local width rather
+                // than from the device/window size.
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    val chartHeight =
+                        when {
+                            maxWidth > 900.dp -> 400.dp
+                            maxWidth > 500.dp -> 280.dp
+                            else -> 200.dp
+                        }
+                    LineChart(
+                        dataPoints = coinPriceHistory,
+                        style =
+                            ChartStyle(
+                                charLineColor = CryptoTrackerTheme.colors.primary,
+                                unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
+                                selectedColor = CryptoTrackerTheme.colors.primary,
+                                helperLinesThicknessPx = 5f,
+                                axisLinesThicknessPx = 5f,
+                                labelFontSize = 14.sp,
+                                minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                                verticalPadding = CryptoTrackerTheme.spacing.small,
+                                horizontalPadding = CryptoTrackerTheme.spacing.small,
+                                xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
+                            ),
+                        visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
+                        unit = "$",
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(chartHeight)
+                                .onSizeChanged { totalChartWidth = it.width.toFloat() },
+                        selectedDataPoint = selectedDataPoint,
+                        onSelectedDataPoint = { selectedDataPoint = it },
+                        onXLabelWidthChange = { labelWidth = it },
+                    )
+                }
             }
         }
 
@@ -296,16 +307,6 @@ private fun DetailTabContent(
                 modifier = Modifier.fillMaxWidth().height(marketsHeight),
             )
         }
-    }
-}
-
-fun calculateAspectRatio(screenSize: IntSize): Float {
-    val aspectRatio = screenSize.height.toFloat() / screenSize.width.toFloat()
-
-    return when {
-        aspectRatio > 1.42 -> 14f / 9f // Mobile devices (portrait mode)
-        aspectRatio in 0.5..1.42 -> 20f / 9f // Tablets
-        else -> 26f / 9f // Desktop or landscape-oriented screens
     }
 }
 

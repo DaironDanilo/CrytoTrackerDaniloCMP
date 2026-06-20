@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -63,6 +64,12 @@ fun LineChart(
     LaunchedEffect(key1 = xLabelWidth) {
         onXLabelWidthChange(xLabelWidth)
     }
+    // Actual on-screen distance between data points, stretched to always span the
+    // full viewport width — independent of xLabelWidth, which only reflects the
+    // minimum spacing needed to keep labels from overlapping.
+    var pointSpacingPx by remember {
+        mutableFloatStateOf(0f)
+    }
     val selectedDataPointIndex =
         remember(selectedDataPoint) {
             dataPoints.indexOf(selectedDataPoint)
@@ -76,12 +83,13 @@ fun LineChart(
         modifier =
             modifier
                 .fillMaxSize()
-                .pointerInput(drawPoints, xLabelWidth) {
+                .clipToBounds()
+                .pointerInput(drawPoints, pointSpacingPx) {
                     detectHorizontalDragGestures { change, _ ->
                         val newSelectedDataPointIndex =
                             getSelectedDataPointIndex(
                                 touchOffsetX = change.position.x,
-                                triggerWidth = xLabelWidth,
+                                triggerWidth = pointSpacingPx,
                                 drawPoints = drawPoints,
                             )
                         isShowingDataPoints =
@@ -151,15 +159,25 @@ fun LineChart(
 //            size = viewPort.size
 //        )
         xLabelWidth = maxXLabelWidth + xAxisLabelSpacingPx
+        // Stretch the visible data points to always span the full viewport width,
+        // so the chart never leaves empty grid space after the last data point
+        // when there are fewer points than the viewport could otherwise fit.
+        pointSpacingPx =
+            if (visibleDataPoints.size > 1) {
+                (viewPortRightX - viewPortLeftX) / (visibleDataPoints.size - 1)
+            } else {
+                viewPortRightX - viewPortLeftX
+            }
         xLabelTextLayoutResults.forEachIndexed { index, textLayoutResult ->
-            val x =
-                viewPortLeftX + xAxisLabelSpacingPx / 2f +
-                    xLabelWidth * index
+            val x = viewPortLeftX + pointSpacingPx * index
+            val textX =
+                (x - textLayoutResult.size.width / 2f)
+                    .coerceIn(0f, size.width - textLayoutResult.size.width)
             drawText(
                 textLayoutResult = textLayoutResult,
                 topLeft =
                     Offset(
-                        x = x,
+                        x = textX,
                         y = viewPortBottomY + xAxisLabelSpacingPx,
                     ),
                 color = if (index == selectedDataPointIndex) style.selectedColor else style.unselectedColor,
@@ -169,12 +187,12 @@ fun LineChart(
                     color = if (index == selectedDataPointIndex) style.selectedColor else style.unselectedColor,
                     start =
                         Offset(
-                            x = x + textLayoutResult.size.width / 2f,
+                            x = x,
                             y = viewPortBottomY,
                         ),
                     end =
                         Offset(
-                            x = x + textLayoutResult.size.width / 2f,
+                            x = x,
                             y = viewPortTopY,
                         ),
                     strokeWidth =
@@ -206,7 +224,7 @@ fun LineChart(
                     if (selectedDataPointIndex == visibleDataPointsIndices.last) {
                         x - valueResult.size.width
                     } else {
-                        x - valueResult.size.width / 2f + textLayoutResult.size.width / 2f
+                        x - valueResult.size.width / 2f
                     }
                 val isTextInVisibleRange =
                     (size.width - textPositionX).roundToInt() in 0..size.width.roundToInt()
@@ -264,7 +282,7 @@ fun LineChart(
         drawPoints =
             visibleDataPointsIndices.map {
                 val x =
-                    viewPortLeftX + (it - visibleDataPointsIndices.first) * xLabelWidth + xLabelWidth / 2f
+                    viewPortLeftX + (it - visibleDataPointsIndices.first) * pointSpacingPx
 
                 // [minYValue, maxYValue] -> [0, 1]
                 val ratio = (dataPoints[it].y - minYValue) / (maxYValue - minYValue)
