@@ -21,6 +21,15 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.cryptodanilo.project"
             packageVersion = "1.0.0"
+            macOS {
+                iconFile.set(project.file("icons/AppIcon.icns"))
+            }
+            windows {
+                iconFile.set(project.file("icons/AppIcon.ico"))
+            }
+            linux {
+                iconFile.set(project.file("icons/AppIcon.png"))
+            }
         }
     }
 }
