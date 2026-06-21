@@ -31,8 +31,8 @@ fun Market.toMarketUi(): MarketUi =
         updated = updated.toRelativeTimeString(),
     )
 
-// Formatting helpers used by the compact market row.
-// Labels are passed in so these remain pure (non-Composable) and testable.
-fun MarketUi.pairWithTradesLine(tradesLabel: String): String = "$pair · $tradesCount24Hr $tradesLabel"
-
-fun MarketUi.volumeWithPercentLine(volLabel: String): String = "$volumeUsd24Hr · $percentExchangeVolume $volLabel"
+// Formatting helper used by the compact market row.
+// The label is passed in so this remains pure (non-Composable) and testable.
+// Trades is omitted entirely when 0 — it adds no value and just clutters the row.
+fun MarketUi.pairLine(tradesLabel: String): String =
+    if (tradesCount24Hr == "0") pair else "$pair · $tradesCount24Hr $tradesLabel"

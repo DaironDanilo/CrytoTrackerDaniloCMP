@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.models.MarketUi
 import com.cryptodanilo.project.crypto.presentation.models.asDollarString
-import com.cryptodanilo.project.crypto.presentation.models.pairWithTradesLine
-import com.cryptodanilo.project.crypto.presentation.models.volumeWithPercentLine
+import com.cryptodanilo.project.crypto.presentation.models.pairLine
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import cryptotrackerdanilo.shared.generated.resources.Res
@@ -88,27 +87,66 @@ private fun CompactMarketListItem(
         Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.extraSmall))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // Pair is core information and must never be truncated, so it's measured at its
+            // natural width; the secondary cluster (vol/percent/updated) absorbs the remaining
+            // space and is the one allowed to wrap on narrow screens.
             Text(
-                text = market.pairWithTradesLine(stringResource(Res.string.market_trades)),
+                text = market.pairLine(stringResource(Res.string.market_trades)),
                 style = CryptoTrackerTheme.typography.bodySmall,
                 color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                maxLines = 1,
             )
-            Text(
-                text = market.volumeWithPercentLine(stringResource(Res.string.market_vol)),
-                style = CryptoTrackerTheme.typography.bodySmall,
-                color = CryptoTrackerTheme.colors.onSurfaceVariant,
+            Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
+            MarketSecondaryInfo(
+                market = market,
+                modifier = Modifier.weight(1f),
             )
         }
-        Spacer(modifier = Modifier.height(CryptoTrackerTheme.sizing.marketItemSubRowSpacing))
+    }
+}
+
+@Composable
+private fun MarketSecondaryInfo(
+    market: MarketUi,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "${stringResource(Res.string.market_vol).replaceFirstChar { it.uppercase() }}: ",
+            style = CryptoTrackerTheme.typography.bodySmall,
+            color = CryptoTrackerTheme.colors.onSurfaceVariant,
+        )
+        Text(
+            text = market.volumeUsd24Hr,
+            style = CryptoTrackerTheme.typography.bodySmall,
+            color = CryptoTrackerTheme.colors.onSurface,
+        )
+        Text(
+            text = " · ",
+            style = CryptoTrackerTheme.typography.bodySmall,
+            color = CryptoTrackerTheme.colors.onSurfaceVariant,
+        )
+        Text(
+            text = market.percentExchangeVolume,
+            style = CryptoTrackerTheme.typography.bodySmall,
+            color = CryptoTrackerTheme.colors.onSurface,
+        )
+        Text(
+            text = " · ",
+            style = CryptoTrackerTheme.typography.bodySmall,
+            color = CryptoTrackerTheme.colors.onSurfaceVariant,
+        )
         Text(
             text = market.updated,
             style = CryptoTrackerTheme.typography.bodySmall,
             color = CryptoTrackerTheme.colors.onSurfaceVariant.copy(alpha = 0.6f),
             fontStyle = FontStyle.Italic,
-            modifier = Modifier.align(Alignment.End),
         )
     }
 }
