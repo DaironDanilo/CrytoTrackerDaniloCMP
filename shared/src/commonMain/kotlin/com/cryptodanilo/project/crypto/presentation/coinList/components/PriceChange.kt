@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
+import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import com.cryptodanilo.project.ui.theme.greenBackground

@@ -14,7 +14,7 @@ data class Sizing(
     val coinIconListSize: Dp = 85.dp,
     val coinDetailIconSize: Dp = 80.dp,
     val priceChangeIconSize: Dp = 20.dp,
-    val infoCardIconSize: Dp = 56.dp,
+    val infoCardIconSize: Dp = 48.dp,
     val backIconSize: Dp = 36.dp,
     val exchangeChipSize: Dp = 28.dp,
     // Borders

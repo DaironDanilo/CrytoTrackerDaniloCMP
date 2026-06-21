@@ -18,13 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
+import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.models.MarketUi
 import com.cryptodanilo.project.crypto.presentation.models.asDollarString
 import com.cryptodanilo.project.crypto.presentation.models.pairWithTradesLine
@@ -61,7 +60,6 @@ private fun CompactMarketListItem(
             modifier
                 .fillMaxWidth()
                 .padding(horizontal = CryptoTrackerTheme.spacing.small, vertical = CryptoTrackerTheme.spacing.extraSmall)
-                .border(CryptoTrackerTheme.sizing.borderThin, CryptoTrackerTheme.colors.outlineVariant, RectangleShape)
                 .padding(CryptoTrackerTheme.sizing.marketItemInnerPadding),
     ) {
         Row(

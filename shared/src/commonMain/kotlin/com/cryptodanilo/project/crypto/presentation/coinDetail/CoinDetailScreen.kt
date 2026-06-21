@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,6 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.core.presentation.util.formatAbbreviatedPrice
+import com.cryptodanilo.project.core.presentation.util.formatPriceChange
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
@@ -51,7 +55,6 @@ import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
 import com.cryptodanilo.project.crypto.presentation.coinList.components.conditional
 import com.cryptodanilo.project.crypto.presentation.coinList.components.previewCoin
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
-import com.cryptodanilo.project.crypto.presentation.models.toDisplayableNumber
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import com.cryptodanilo.project.ui.theme.greenBackground
@@ -182,22 +185,22 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
         textAlign = TextAlign.Center,
         color = contentColor,
     )
+    Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.medium))
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
     ) {
         InfoCard(
             title = stringResource(Res.string.market_cap),
-            formattedValue = "$ ${coin.marketCapUsd.formatted}",
+            formattedValue = "$ ${coin.marketCapUsd.value.formatAbbreviatedPrice()}",
             icon = Res.drawable.stock,
         )
         InfoCard(
             title = stringResource(Res.string.price),
-            formattedValue = "$ ${coin.priceUsd.formatted}",
+            formattedValue = "$ ${coin.priceUsd.value.formatAbbreviatedPrice()}",
             icon = Res.drawable.dollar,
         )
-        val absoluteChangeFormatted =
-            ((coin.priceUsd.value) * (coin.changePercent24Hr.value / 100)).toDisplayableNumber()
+        val absoluteChangeValue = (coin.priceUsd.value) * (coin.changePercent24Hr.value / 100)
         val isPositiveChange = coin.changePercent24Hr.value > 0.0
         val contentColorInfoCard =
             if (isPositiveChange) {
@@ -207,7 +210,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
             }
         InfoCard(
             title = stringResource(Res.string.change_last_24h),
-            formattedValue = absoluteChangeFormatted.formatted,
+            formattedValue = absoluteChangeValue.formatPriceChange(),
             icon =
                 if (isPositiveChange) {
                     Res.drawable.trending
@@ -217,7 +220,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
             contentColor = contentColorInfoCard,
         )
     }
-
+    Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.medium))
     // Chart | Markets tab switcher
     val tabShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerSmall)
     Row(

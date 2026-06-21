@@ -151,7 +151,12 @@ fun LineChart(
         val maxYLabelWidth = yLabelTextLayoutResults.maxOfOrNull { it.size.width } ?: 0
 
         val viewPortTopY = verticalPaddingPx + xLabelLineHeight + 10f
-        val viewPortRightX = size.width
+        // Reserve space on the right for half the last label's width (plus a small
+        // buffer) so its centered position never needs to be edge-clamped into the
+        // previous label's box — clamping without this room is what caused the last
+        // x-axis label to overlap its neighbor.
+        val rightPaddingPx = maxXLabelWidth / 2f + xAxisLabelSpacingPx
+        val viewPortRightX = size.width - rightPaddingPx
         val viewPortBottomY = viewPortTopY + viewPortHeightPx
         val viewPortLeftX = 2f * horizontalPaddingPx + maxYLabelWidth
 //        val viewPort = Rect(

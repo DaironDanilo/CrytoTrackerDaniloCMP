@@ -27,9 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
+import com.cryptodanilo.project.core.presentation.util.formatFullPrice
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
-import com.cryptodanilo.project.crypto.presentation.models.DisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
@@ -103,7 +104,7 @@ fun SharedTransitionScope.CoinListItem(
         }
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                text = "$ ${coin.priceUsd.formatted}",
+                text = "$ ${coin.priceUsd.value.formatFullPrice()}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = contentColor,
