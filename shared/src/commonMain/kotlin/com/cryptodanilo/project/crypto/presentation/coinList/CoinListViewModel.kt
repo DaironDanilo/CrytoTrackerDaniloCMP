@@ -46,6 +46,7 @@ class CoinListViewModel(
     fun onAction(action: CoinListAction) {
         when (action) {
             CoinListAction.OnRefresh -> refresh()
+            CoinListAction.OnManualRefresh -> manualRefresh()
             is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
             is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
             CoinListAction.OnRetryMarkets -> loadInitialMarkets()
@@ -84,10 +85,47 @@ class CoinListViewModel(
         }
     }
 
+    // Pull-to-refresh gesture — drives PullToRefreshBox's indicator only.
     private fun refresh() {
-        currentOffset = 0
-        _state.update { it.copy(coins = emptyList(), hasMoreCoins = true) }
-        loadCoins()
+        viewModelScope.launch {
+            _state.update { it.copy(isRefreshing = true, isError = false) }
+            forceRefreshInternal()
+            _state.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    // Manual [↺] button tap — drives the button's own spinner only.
+    private fun manualRefresh() {
+        viewModelScope.launch {
+            _state.update { it.copy(isManualRefreshing = true, isError = false) }
+            forceRefreshInternal()
+            _state.update { it.copy(isManualRefreshing = false) }
+        }
+    }
+
+    // Shared by both refresh() and manualRefresh() — keeps the current list on screen
+    // while it refreshes (so neither trigger blanks the list behind the full-screen
+    // isLoading spinner) and uses forceRefresh() rather than getCoins() because
+    // getCoins() serves straight from the Room cache while it's still within
+    // CACHE_TTL_MS — a "refresh" must always hit the network.
+    private suspend fun forceRefreshInternal() {
+        val result = coinDataSource.forceRefresh(limit = PAGE_SIZE)
+        val lastCachedAt = coinDataSource.getLastCachedAt()
+        result
+            .onSuccess { coins ->
+                currentOffset = PAGE_SIZE
+                val coinUis = coins.map { it.toCoinUi() }
+                _state.update {
+                    it.copy(
+                        coins = coinUis,
+                        hasMoreCoins = coins.size >= PAGE_SIZE,
+                        lastUpdatedMs = lastCachedAt,
+                    )
+                }
+            }.onError { error ->
+                _state.update { it.copy(isError = true) }
+                _events.send(CoinListEvent.Error(error))
+            }
     }
 
     private fun loadMore() {

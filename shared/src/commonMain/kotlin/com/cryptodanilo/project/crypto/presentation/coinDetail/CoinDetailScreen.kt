@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -23,7 +24,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,33 +101,47 @@ fun SharedTransitionScope.CoinDetailScreen(
     } else if (state.selectedCoinUi != null) {
         val coin = state.selectedCoinUi
         Box {
-            // No scrolling — the chart (and Markets list) must always be fully visible
-            // at once, so it takes exactly the space left over after the header/cards/
-            // tabs via weight(1f). This applies whether this pane is the only one
-            // showing (mobile) or sits next to the coin list (desktop/web dual-pane):
-            // both are full-bleed panes with no extra chrome that would justify
-            // scrolling the whole screen to see the rest of the chart.
-            Column(
+            // The chart (and Markets list) normally take exactly the space left over
+            // after the header/cards/tabs, with no scrolling — true whether this pane
+            // is the only one showing (mobile) or sits next to the coin list
+            // (desktop/web dual-pane). But that remaining space can shrink to nothing
+            // on a very short window, so it's clamped to CHART_MIN_HEIGHT and the
+            // screen falls back to scrolling only when that minimum doesn't fit.
+            BoxWithConstraints(
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .padding(CryptoTrackerTheme.spacing.medium),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CoinDetailHeaderAndTabs(
-                    coin = coin,
-                    state = state,
-                    contentColor = contentColor,
-                    shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                    animatedPaneScope = animatedPaneScope,
-                    onAction = onAction,
-                )
-                DetailTabContent(
-                    state = state,
-                    coinPriceHistory = coin.coinPriceHistory,
-                    remainingSpaceModifier = Modifier.weight(1f),
-                    onAction = onAction,
-                )
+                val density = LocalDensity.current
+                var headerHeightPx by remember { mutableFloatStateOf(0f) }
+                val headerHeightDp = with(density) { headerHeightPx.toDp() }
+                val remainingSpaceHeight = (maxHeight - headerHeightDp).coerceAtLeast(CHART_MIN_HEIGHT)
+
+                Column(
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().onSizeChanged { headerHeightPx = it.height.toFloat() },
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        CoinDetailHeaderAndTabs(
+                            coin = coin,
+                            state = state,
+                            contentColor = contentColor,
+                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                            animatedPaneScope = animatedPaneScope,
+                            onAction = onAction,
+                        )
+                    }
+                    DetailTabContent(
+                        state = state,
+                        coinPriceHistory = coin.coinPriceHistory,
+                        remainingSpaceModifier = Modifier.height(remainingSpaceHeight),
+                        onAction = onAction,
+                    )
+                }
             }
             if (shouldShowBackNavigationIcon) {
                 Icon(

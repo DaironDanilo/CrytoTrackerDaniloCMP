@@ -10,6 +10,8 @@ sealed interface CoinListAction {
 
     data object OnRefresh : CoinListAction
 
+    data object OnManualRefresh : CoinListAction
+
     data class OnDetailTabSelected(
         val tab: DetailTab,
     ) : CoinListAction
