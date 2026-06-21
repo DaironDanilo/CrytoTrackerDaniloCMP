@@ -51,6 +51,9 @@ import cryptotrackerdanilo.shared.generated.resources.coin_list_error
 import cryptotrackerdanilo.shared.generated.resources.coins_all_loaded
 import cryptotrackerdanilo.shared.generated.resources.load_more
 import cryptotrackerdanilo.shared.generated.resources.retry
+import cryptotrackerdanilo.shared.generated.resources.search_no_results_hint
+import cryptotrackerdanilo.shared.generated.resources.search_no_results_title
+import cryptotrackerdanilo.shared.generated.resources.search_results_count
 import cryptotrackerdanilo.shared.generated.resources.updated_hours_ago
 import cryptotrackerdanilo.shared.generated.resources.updated_just_now
 import cryptotrackerdanilo.shared.generated.resources.updated_minutes_ago
@@ -133,58 +136,97 @@ fun SharedTransitionScope.CoinListScreen(
                                 ),
                     )
                 }
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                ) {
-                    items(
-                        items = displayedCoins,
-                        key = { coin -> coin.id },
-                    ) { coin ->
-                        Column {
-                            CoinListItem(
-                                animatedPaneScope = animatedPaneScope,
-                                coin = coin,
-                                isSelected = coin.id == state.selectedCoinUi?.id,
-                                shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                                onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                            HorizontalDivider()
-                        }
+
+                val isSearching = state.searchQuery.isNotBlank()
+                val hasNoResults = isSearching && displayedCoins.isEmpty()
+
+                if (isSearching && !hasNoResults) {
+                    Text(
+                        text = stringResource(Res.string.search_results_count, displayedCoins.size, state.searchQuery),
+                        style = CryptoTrackerTheme.typography.bodySmall,
+                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = CryptoTrackerTheme.spacing.medium,
+                                    vertical = CryptoTrackerTheme.spacing.extraSmall,
+                                ),
+                    )
+                }
+
+                if (hasNoResults) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.search_no_results_title),
+                            style = CryptoTrackerTheme.typography.headlineMedium,
+                            color = CryptoTrackerTheme.colors.onSurface,
+                        )
+                        Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+                        Text(
+                            text = stringResource(Res.string.search_no_results_hint),
+                            style = CryptoTrackerTheme.typography.bodyMedium,
+                            color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                        )
                     }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        items(
+                            items = displayedCoins,
+                            key = { coin -> coin.id },
+                        ) { coin ->
+                            Column {
+                                CoinListItem(
+                                    animatedPaneScope = animatedPaneScope,
+                                    coin = coin,
+                                    isSelected = coin.id == state.selectedCoinUi?.id,
+                                    shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                                    onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                                HorizontalDivider()
+                            }
+                        }
 
-                    if (state.searchQuery.isBlank()) {
-                        item {
-                            when {
-                                state.isLoadingMore -> {
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        CircularProgressIndicator()
+                        if (state.searchQuery.isBlank()) {
+                            item {
+                                when {
+                                    state.isLoadingMore -> {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            CircularProgressIndicator()
+                                        }
                                     }
-                                }
 
-                                !state.hasMoreCoins -> {
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Text(
-                                            text = stringResource(Res.string.coins_all_loaded),
-                                            style = CryptoTrackerTheme.typography.bodySmall,
-                                            color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                                        )
+                                    !state.hasMoreCoins -> {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            Text(
+                                                text = stringResource(Res.string.coins_all_loaded),
+                                                style = CryptoTrackerTheme.typography.bodySmall,
+                                                color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                                            )
+                                        }
                                     }
-                                }
 
-                                else -> {
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
-                                            Text(stringResource(Res.string.load_more))
+                                    else -> {
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
+                                                Text(stringResource(Res.string.load_more))
+                                            }
                                         }
                                     }
                                 }
