@@ -21,11 +21,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.models.MarketUi
 import com.cryptodanilo.project.crypto.presentation.models.asDollarString
+import com.cryptodanilo.project.crypto.presentation.models.asVolumeLabel
 import com.cryptodanilo.project.crypto.presentation.models.pairLine
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
@@ -33,6 +35,8 @@ import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.market_trades
 import cryptotrackerdanilo.shared.generated.resources.market_vol
 import org.jetbrains.compose.resources.stringResource
+
+private const val SEPARATOR = " · "
 
 @Composable
 fun MarketListItem(
@@ -118,7 +122,7 @@ private fun MarketSecondaryInfo(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "${stringResource(Res.string.market_vol).replaceFirstChar { it.uppercase() }}: ",
+            text = stringResource(Res.string.market_vol).asVolumeLabel(),
             style = CryptoTrackerTheme.typography.bodySmall,
             color = CryptoTrackerTheme.colors.onSurfaceVariant,
         )
@@ -128,7 +132,7 @@ private fun MarketSecondaryInfo(
             color = CryptoTrackerTheme.colors.onSurface,
         )
         Text(
-            text = " · ",
+            text = SEPARATOR,
             style = CryptoTrackerTheme.typography.bodySmall,
             color = CryptoTrackerTheme.colors.onSurfaceVariant,
         )
@@ -138,7 +142,7 @@ private fun MarketSecondaryInfo(
             color = CryptoTrackerTheme.colors.onSurface,
         )
         Text(
-            text = " · ",
+            text = SEPARATOR,
             style = CryptoTrackerTheme.typography.bodySmall,
             color = CryptoTrackerTheme.colors.onSurfaceVariant,
         )
@@ -186,6 +190,9 @@ private fun WideMarketListItem(
                 style = CryptoTrackerTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = CryptoTrackerTheme.colors.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
             )
         }
         Text(

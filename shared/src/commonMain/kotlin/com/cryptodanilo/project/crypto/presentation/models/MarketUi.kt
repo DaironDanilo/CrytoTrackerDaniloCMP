@@ -36,3 +36,6 @@ fun Market.toMarketUi(): MarketUi =
 // Trades is omitted entirely when 0 — it adds no value and just clutters the row.
 fun MarketUi.pairLine(tradesLabel: String): String =
     if (tradesCount24Hr == "0") pair else "$pair · $tradesCount24Hr $tradesLabel"
+
+// The label is passed in so this remains pure (non-Composable) and testable.
+fun String.asVolumeLabel(): String = "24H ${replaceFirstChar { it.uppercase() }}: "
