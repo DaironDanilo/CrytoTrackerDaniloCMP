@@ -184,7 +184,7 @@ fun LineChart(
             }
         // Cap how many x-axis labels are drawn so they stay evenly spaced and
         // readable regardless of how many data points are plotted.
-        val maxXAxisLabels = 6
+        val maxXAxisLabels = 3
         val xAxisLabelStep = (visibleDataPoints.size / maxXAxisLabels).coerceAtLeast(1)
         xLabelTextLayoutResults.forEachIndexed { index, textLayoutResult ->
             val x = viewPortLeftX + pointSpacingPx * index
