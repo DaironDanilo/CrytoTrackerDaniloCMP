@@ -1,6 +1,5 @@
 package com.cryptodanilo.project.crypto.presentation.coinDetail
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
@@ -52,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.core.presentation.util.formatAbbreviatedPrice
 import com.cryptodanilo.project.core.presentation.util.formatPriceChange
+import com.cryptodanilo.project.crypto.presentation.coinDetail.components.ChartTimeframeSelector
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
@@ -73,6 +73,7 @@ import cryptotrackerdanilo.shared.generated.resources.trending
 import cryptotrackerdanilo.shared.generated.resources.trending_down
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.ceil
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -291,49 +292,85 @@ private fun DetailTabContent(
 ) {
     when (state.selectedDetailTab) {
         DetailTab.Chart -> {
-            AnimatedVisibility(
-                visible = coinPriceHistory.isNotEmpty(),
-                modifier = remainingSpaceModifier,
-            ) {
-                var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
-                var labelWidth by remember { mutableFloatStateOf(0f) }
-                var totalChartWidth by remember { mutableFloatStateOf(0f) }
-                val amountOfVisibleDataPoints =
-                    if (labelWidth > 0) {
-                        ((totalChartWidth - 2.5 * labelWidth) / labelWidth).toInt()
-                    } else {
-                        0
-                    }
-                val startIndex =
-                    (coinPriceHistory.lastIndex - amountOfVisibleDataPoints)
-                        .coerceAtLeast(0)
-                LineChart(
-                    dataPoints = coinPriceHistory,
-                    style =
-                        ChartStyle(
-                            charLineColor = CryptoTrackerTheme.colors.primary,
-                            unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
-                            selectedColor = CryptoTrackerTheme.colors.primary,
-                            helperLinesThicknessPx = 5f,
-                            axisLinesThicknessPx = 5f,
-                            labelFontSize = 14.sp,
-                            minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
-                            verticalPadding = CryptoTrackerTheme.spacing.small,
-                            horizontalPadding = CryptoTrackerTheme.spacing.small,
-                            xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
-                        ),
-                    visibleDataPointsIndices = startIndex..coinPriceHistory.lastIndex,
-                    unit = "$",
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .heightIn(min = CHART_MIN_HEIGHT)
-                            .onSizeChanged { totalChartWidth = it.width.toFloat() },
-                    selectedDataPoint = selectedDataPoint,
-                    onSelectedDataPoint = { selectedDataPoint = it },
-                    onXLabelWidthChange = { labelWidth = it },
+            Column(modifier = remainingSpaceModifier) {
+                ChartTimeframeSelector(
+                    selectedTimeframe = state.selectedTimeframe,
+                    onTimeframeSelected = { onAction(CoinListAction.OnTimeframeSelected(it)) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
+                Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = coinPriceHistory.isNotEmpty(),
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
+                        var labelWidth by remember { mutableFloatStateOf(0f) }
+                        var totalChartWidth by remember { mutableFloatStateOf(0f) }
+                        // Always render the full range — a few years of daily data must
+                        // never be cropped down to whatever recent slice fits the
+                        // viewport. Label density is what adapts instead: only every
+                        // Nth point keeps a non-empty xLabel, evenly spaced so as many
+                        // labels as can fit without overlapping are shown.
+                        val maxLabelsThatFit =
+                            if (labelWidth > 0) {
+                                (totalChartWidth / labelWidth).toInt().coerceAtLeast(1)
+                            } else {
+                                1
+                            }
+                        val labelStep =
+                            if (coinPriceHistory.isEmpty()) {
+                                1
+                            } else {
+                                ceil(coinPriceHistory.size / maxLabelsThatFit.toFloat()).toInt().coerceAtLeast(1)
+                            }
+                        val thinnedDataPoints =
+                            remember(coinPriceHistory, labelStep) {
+                                coinPriceHistory.mapIndexed { index, point ->
+                                    if (index % labelStep == 0 || index == coinPriceHistory.lastIndex) {
+                                        point
+                                    } else {
+                                        point.copy(xLabel = "")
+                                    }
+                                }
+                            }
+                        LineChart(
+                            dataPoints = thinnedDataPoints,
+                            style =
+                                ChartStyle(
+                                    charLineColor = CryptoTrackerTheme.colors.primary,
+                                    unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
+                                    selectedColor = CryptoTrackerTheme.colors.primary,
+                                    helperLinesThicknessPx = 5f,
+                                    axisLinesThicknessPx = 5f,
+                                    labelFontSize = 14.sp,
+                                    minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                                    verticalPadding = CryptoTrackerTheme.spacing.small,
+                                    horizontalPadding = CryptoTrackerTheme.spacing.small,
+                                    xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
+                                ),
+                            visibleDataPointsIndices = thinnedDataPoints.indices,
+                            unit = "$",
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight()
+                                    .heightIn(min = CHART_MIN_HEIGHT)
+                                    .onSizeChanged { totalChartWidth = it.width.toFloat() },
+                            selectedDataPoint = selectedDataPoint,
+                            onSelectedDataPoint = { selectedDataPoint = it },
+                            onXLabelWidthChange = { labelWidth = it },
+                        )
+                    }
+                    if (state.isLoadingCoinHistory) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
             }
         }
 

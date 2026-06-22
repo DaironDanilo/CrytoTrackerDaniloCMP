@@ -18,6 +18,7 @@ interface CoinDataSource {
         coinId: String,
         start: LocalDateTime,
         end: LocalDateTime,
+        interval: String = "h6",
     ): Result<List<CoinPrice>, NetworkError>
 
     suspend fun getMarkets(
