@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.cryptodanilo.project.core.presentation.util.PullToRefreshWrapper
 import com.cryptodanilo.project.core.util.MILLIS_PER_HOUR
 import com.cryptodanilo.project.core.util.MILLIS_PER_MINUTE
 import com.cryptodanilo.project.core.util.getCurrentTimeMs
@@ -125,8 +126,8 @@ fun SharedTransitionScope.CoinListScreen(
                 state.lastUpdatedMs?.let { updatedAt ->
                     LastUpdatedRow(
                         updatedAt = updatedAt,
-                        isLoading = state.isLoading,
-                        onRefresh = { onAction(CoinListAction.OnRefresh) },
+                        isLoading = state.isManualRefreshing,
+                        onRefresh = { onAction(CoinListAction.OnManualRefresh) },
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -155,77 +156,83 @@ fun SharedTransitionScope.CoinListScreen(
                     )
                 }
 
-                if (hasNoResults) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.search_no_results_title),
-                            style = CryptoTrackerTheme.typography.headlineMedium,
-                            color = CryptoTrackerTheme.colors.onSurface,
-                        )
-                        Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
-                        Text(
-                            text = stringResource(Res.string.search_no_results_hint),
-                            style = CryptoTrackerTheme.typography.bodyMedium,
-                            color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        items(
-                            items = displayedCoins,
-                            key = { coin -> coin.id },
-                        ) { coin ->
-                            Column {
-                                CoinListItem(
-                                    animatedPaneScope = animatedPaneScope,
-                                    coin = coin,
-                                    isSelected = coin.id == state.selectedCoinUi?.id,
-                                    shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                                    onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
-                                HorizontalDivider()
-                            }
+                PullToRefreshWrapper(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { onAction(CoinListAction.OnRefresh) },
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                ) {
+                    if (hasNoResults) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.search_no_results_title),
+                                style = CryptoTrackerTheme.typography.headlineMedium,
+                                color = CryptoTrackerTheme.colors.onSurface,
+                            )
+                            Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+                            Text(
+                                text = stringResource(Res.string.search_no_results_hint),
+                                style = CryptoTrackerTheme.typography.bodyMedium,
+                                color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                            )
                         }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            items(
+                                items = displayedCoins,
+                                key = { coin -> coin.id },
+                            ) { coin ->
+                                Column {
+                                    CoinListItem(
+                                        animatedPaneScope = animatedPaneScope,
+                                        coin = coin,
+                                        isSelected = coin.id == state.selectedCoinUi?.id,
+                                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                                        onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                    HorizontalDivider()
+                                }
+                            }
 
-                        if (state.searchQuery.isBlank()) {
-                            item {
-                                when {
-                                    state.isLoadingMore -> {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            CircularProgressIndicator()
+                            if (state.searchQuery.isBlank()) {
+                                item {
+                                    when {
+                                        state.isLoadingMore -> {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                CircularProgressIndicator()
+                                            }
                                         }
-                                    }
 
-                                    !state.hasMoreCoins -> {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            Text(
-                                                text = stringResource(Res.string.coins_all_loaded),
-                                                style = CryptoTrackerTheme.typography.bodySmall,
-                                                color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                                            )
+                                        !state.hasMoreCoins -> {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                Text(
+                                                    text = stringResource(Res.string.coins_all_loaded),
+                                                    style = CryptoTrackerTheme.typography.bodySmall,
+                                                    color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                                                )
+                                            }
                                         }
-                                    }
 
-                                    else -> {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
-                                                Text(stringResource(Res.string.load_more))
+                                        else -> {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
+                                                    Text(stringResource(Res.string.load_more))
+                                                }
                                             }
                                         }
                                     }

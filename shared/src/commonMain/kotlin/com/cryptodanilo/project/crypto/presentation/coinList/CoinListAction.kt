@@ -1,5 +1,6 @@
 package com.cryptodanilo.project.crypto.presentation.coinList
 
+import com.cryptodanilo.project.crypto.presentation.coinDetail.ChartTimeframe
 import com.cryptodanilo.project.crypto.presentation.coinDetail.DetailTab
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 
@@ -10,8 +11,14 @@ sealed interface CoinListAction {
 
     data object OnRefresh : CoinListAction
 
+    data object OnManualRefresh : CoinListAction
+
     data class OnDetailTabSelected(
         val tab: DetailTab,
+    ) : CoinListAction
+
+    data class OnTimeframeSelected(
+        val timeframe: ChartTimeframe,
     ) : CoinListAction
 
     data object OnRetryMarkets : CoinListAction

@@ -94,6 +94,7 @@ class RemoteCoinDataSource(
         coinId: String,
         start: LocalDateTime,
         end: LocalDateTime,
+        interval: String,
     ): Result<List<CoinPrice>, NetworkError> {
         val startMillis = start.toInstant(TimeZone.UTC).toEpochMilliseconds()
         val endMillis = end.toInstant(TimeZone.UTC).toEpochMilliseconds()
@@ -101,7 +102,7 @@ class RemoteCoinDataSource(
             httpClient.get(
                 urlString = constructUrl("/assets/$coinId/history"),
             ) {
-                parameter("interval", "h6")
+                parameter("interval", interval)
                 parameter("start", startMillis)
                 parameter("end", endMillis)
             }
