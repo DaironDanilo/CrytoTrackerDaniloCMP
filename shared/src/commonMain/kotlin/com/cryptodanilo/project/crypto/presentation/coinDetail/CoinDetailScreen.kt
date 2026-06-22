@@ -73,7 +73,6 @@ import cryptotrackerdanilo.shared.generated.resources.trending
 import cryptotrackerdanilo.shared.generated.resources.trending_down
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.ceil
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -305,37 +304,11 @@ private fun DetailTabContent(
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
-                        var labelWidth by remember { mutableFloatStateOf(0f) }
-                        var totalChartWidth by remember { mutableFloatStateOf(0f) }
-                        // Always render the full range — a few years of daily data must
-                        // never be cropped down to whatever recent slice fits the
-                        // viewport. Label density is what adapts instead: only every
-                        // Nth point keeps a non-empty xLabel, evenly spaced so as many
-                        // labels as can fit without overlapping are shown.
-                        val maxLabelsThatFit =
-                            if (labelWidth > 0) {
-                                (totalChartWidth / labelWidth).toInt().coerceAtLeast(1)
-                            } else {
-                                1
-                            }
-                        val labelStep =
-                            if (coinPriceHistory.isEmpty()) {
-                                1
-                            } else {
-                                ceil(coinPriceHistory.size / maxLabelsThatFit.toFloat()).toInt().coerceAtLeast(1)
-                            }
-                        val thinnedDataPoints =
-                            remember(coinPriceHistory, labelStep) {
-                                coinPriceHistory.mapIndexed { index, point ->
-                                    if (index % labelStep == 0 || index == coinPriceHistory.lastIndex) {
-                                        point
-                                    } else {
-                                        point.copy(xLabel = "")
-                                    }
-                                }
-                            }
+                        // Full, untouched range and labels are always passed through —
+                        // LineChart caps how many x-axis labels it draws internally, and
+                        // the selected point's tooltip needs its real label intact.
                         LineChart(
-                            dataPoints = thinnedDataPoints,
+                            dataPoints = coinPriceHistory,
                             style =
                                 ChartStyle(
                                     charLineColor = CryptoTrackerTheme.colors.primary,
@@ -349,17 +322,15 @@ private fun DetailTabContent(
                                     horizontalPadding = CryptoTrackerTheme.spacing.small,
                                     xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
                                 ),
-                            visibleDataPointsIndices = thinnedDataPoints.indices,
+                            visibleDataPointsIndices = coinPriceHistory.indices,
                             unit = "$",
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight()
-                                    .heightIn(min = CHART_MIN_HEIGHT)
-                                    .onSizeChanged { totalChartWidth = it.width.toFloat() },
+                                    .heightIn(min = CHART_MIN_HEIGHT),
                             selectedDataPoint = selectedDataPoint,
                             onSelectedDataPoint = { selectedDataPoint = it },
-                            onXLabelWidthChange = { labelWidth = it },
                         )
                     }
                     if (state.isLoadingCoinHistory) {

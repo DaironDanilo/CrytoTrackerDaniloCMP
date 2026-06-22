@@ -14,8 +14,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
@@ -23,10 +25,10 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
-import kotlin.math.roundToInt
 
 @Composable
 fun LineChart(
@@ -180,23 +182,34 @@ fun LineChart(
             } else {
                 viewPortRightX - viewPortLeftX
             }
+        // Cap how many x-axis labels are drawn so they stay evenly spaced and
+        // readable regardless of how many data points are plotted.
+        val maxXAxisLabels = 6
+        val xAxisLabelStep = (visibleDataPoints.size / maxXAxisLabels).coerceAtLeast(1)
         xLabelTextLayoutResults.forEachIndexed { index, textLayoutResult ->
             val x = viewPortLeftX + pointSpacingPx * index
-            val textX =
-                (x - textLayoutResult.size.width / 2f)
-                    .coerceIn(0f, size.width - textLayoutResult.size.width)
-            drawText(
-                textLayoutResult = textLayoutResult,
-                topLeft =
-                    Offset(
-                        x = textX,
-                        y = viewPortBottomY + xAxisLabelSpacingPx,
-                    ),
-                color = if (index == selectedDataPointIndex) style.selectedColor else style.unselectedColor,
-            )
-            if (showHelperLines) {
+            if (index % xAxisLabelStep == 0 || index == visibleDataPoints.lastIndex) {
+                val textX =
+                    (x - textLayoutResult.size.width / 2f)
+                        .coerceIn(0f, size.width - textLayoutResult.size.width)
+                drawText(
+                    textLayoutResult = textLayoutResult,
+                    topLeft =
+                        Offset(
+                            x = textX,
+                            y = viewPortBottomY + xAxisLabelSpacingPx,
+                        ),
+                    // X-axis labels never change color on selection — only the
+                    // crosshair and tooltip below indicate the selected point.
+                    color = style.unselectedColor,
+                )
+            }
+            // Only draw a vertical line for the selected (tapped/dragged) point — drawing
+            // one per data point produced a dense barcode effect on long timeframes with
+            // hundreds of points. Horizontal grid lines below are unaffected.
+            if (showHelperLines && index == selectedDataPointIndex) {
                 drawLine(
-                    color = if (index == selectedDataPointIndex) style.selectedColor else style.unselectedColor,
+                    color = Color.White.copy(alpha = 0.6f),
                     start =
                         Offset(
                             x = x,
@@ -207,14 +220,8 @@ fun LineChart(
                             x = x,
                             y = viewPortTopY,
                         ),
-                    strokeWidth =
-                        if (index ==
-                            selectedDataPointIndex
-                        ) {
-                            style.helperLinesThicknessPx * 1.5f
-                        } else {
-                            style.helperLinesThicknessPx
-                        },
+                    strokeWidth = 1.dp.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 4f), 0f),
                 )
             }
             if (selectedDataPointIndex == index) {
@@ -223,34 +230,29 @@ fun LineChart(
                         value = visibleDataPoints[index].y,
                         unit = unit,
                     )
-                val valueResult =
+                // Combined price + date tooltip at the top of the chart, Google
+                // Finance style — single line, clamped so it never overflows the edges.
+                val tooltipText = "${valueLabel.formatted()}  ${visibleDataPoints[index].xLabel}"
+                val tooltipResult =
                     measurer.measure(
-                        text = valueLabel.formatted(),
-                        style =
-                            textStyle.copy(
-                                color = style.selectedColor,
-                            ),
+                        text = tooltipText,
+                        style = textStyle.copy(color = Color.White),
                         maxLines = 1,
                     )
-                val textPositionX =
-                    if (selectedDataPointIndex == visibleDataPointsIndices.last) {
-                        x - valueResult.size.width
-                    } else {
-                        x - valueResult.size.width / 2f
-                    }
-                val isTextInVisibleRange =
-                    (size.width - textPositionX).roundToInt() in 0..size.width.roundToInt()
-                if (isTextInVisibleRange) {
-                    drawText(
-                        textLayoutResult = valueResult,
-                        topLeft =
-                            Offset(
-                                x = textPositionX,
-                                y = viewPortTopY - valueResult.size.height - 10f,
-                            ),
-                        color = style.selectedColor,
+                val tooltipCenterX =
+                    x.coerceIn(
+                        tooltipResult.size.width / 2f,
+                        size.width - tooltipResult.size.width / 2f,
                     )
-                }
+                drawText(
+                    textLayoutResult = tooltipResult,
+                    topLeft =
+                        Offset(
+                            x = tooltipCenterX - tooltipResult.size.width / 2f,
+                            y = viewPortTopY - tooltipResult.size.height - 10f,
+                        ),
+                    color = Color.White,
+                )
             }
         }
 
@@ -273,8 +275,10 @@ fun LineChart(
                 color = style.unselectedColor,
             )
             if (showHelperLines) {
+                // Thin and low-opacity on purpose — these are a subtle price reference,
+                // not meant to compete visually with the chart line.
                 drawLine(
-                    color = style.unselectedColor,
+                    color = style.unselectedColor.copy(alpha = 0.15f),
                     start =
                         Offset(
                             x = viewPortLeftX,
@@ -285,7 +289,7 @@ fun LineChart(
                             x = viewPortRightX,
                             y = y + textLayoutResult.size.height.toFloat() / 2f,
                         ),
-                    strokeWidth = style.helperLinesThicknessPx,
+                    strokeWidth = 0.5f,
                 )
             }
         }
@@ -340,7 +344,9 @@ fun LineChart(
         )
 
         drawPoints.forEachIndexed { index, point ->
-            if (isShowingDataPoints) {
+            // Only the selected/dragged point gets a dot — drawing one per data point
+            // produced a "dotted line" effect on dense timeframes with hundreds of points.
+            if (isShowingDataPoints && selectedDataPointIndex == index) {
                 val circleOffset =
                     Offset(
                         x = point.x,
@@ -351,19 +357,17 @@ fun LineChart(
                     radius = 10f,
                     center = circleOffset,
                 )
-                if (selectedDataPointIndex == index) {
-                    drawCircle(
-                        color = Color.White,
-                        radius = 15f,
-                        center = circleOffset,
-                    )
-                    drawCircle(
-                        color = style.selectedColor,
-                        radius = 15f,
-                        center = circleOffset,
-                        style = Stroke(width = 2f),
-                    )
-                }
+                drawCircle(
+                    color = Color.White,
+                    radius = 15f,
+                    center = circleOffset,
+                )
+                drawCircle(
+                    color = style.selectedColor,
+                    radius = 15f,
+                    center = circleOffset,
+                    style = Stroke(width = 2f),
+                )
             }
         }
         val filledAreaPath =
@@ -393,10 +397,17 @@ fun LineChart(
                 }
             }
 
-        // Draw the filled area under the curve
+        // Draw the filled area under the curve — fades from semi-transparent at the
+        // top of the plotted range to fully transparent at the x-axis, instead of a
+        // flat tint, for the "glow under the line" look.
         drawPath(
             path = filledAreaPath,
-            color = style.charLineColor.copy(alpha = 0.2f), // Semi-transparent fill color
+            brush =
+                Brush.verticalGradient(
+                    colors = listOf(style.charLineColor.copy(alpha = 0.4f), Color.Transparent),
+                    startY = viewPortTopY,
+                    endY = viewPortBottomY,
+                ),
             style = androidx.compose.ui.graphics.drawscope.Fill,
         )
     }
