@@ -80,6 +80,11 @@ fun LineChart(
         mutableStateOf(listOf<DataPoint>())
     }
     var isShowingDataPoints by remember { mutableStateOf(selectedDataPoint != null) }
+    // colorScheme can't be read inside the DrawScope lambda below, so it's hoisted here.
+    val crosshairColor = CryptoTrackerTheme.colors.onSurface
+    // Axis labels use their own theme-driven color, independent of style.unselectedColor
+    // (which stays as-is for the grid lines) — onSurfaceVariant reads clearly in both themes.
+    val axisLabelColor = CryptoTrackerTheme.colors.onSurfaceVariant
 
     Canvas(
         modifier =
@@ -201,7 +206,7 @@ fun LineChart(
                         ),
                     // X-axis labels never change color on selection — only the
                     // crosshair and tooltip below indicate the selected point.
-                    color = style.unselectedColor,
+                    color = axisLabelColor,
                 )
             }
             // Only draw a vertical line for the selected (tapped/dragged) point — drawing
@@ -209,7 +214,7 @@ fun LineChart(
             // hundreds of points. Horizontal grid lines below are unaffected.
             if (showHelperLines && index == selectedDataPointIndex) {
                 drawLine(
-                    color = Color.White.copy(alpha = 0.6f),
+                    color = crosshairColor.copy(alpha = 0.6f),
                     start =
                         Offset(
                             x = x,
@@ -236,7 +241,7 @@ fun LineChart(
                 val tooltipResult =
                     measurer.measure(
                         text = tooltipText,
-                        style = textStyle.copy(color = Color.White),
+                        style = textStyle.copy(color = crosshairColor),
                         maxLines = 1,
                     )
                 val tooltipCenterX =
@@ -251,7 +256,7 @@ fun LineChart(
                             x = tooltipCenterX - tooltipResult.size.width / 2f,
                             y = viewPortTopY - tooltipResult.size.height - 10f,
                         ),
-                    color = Color.White,
+                    color = crosshairColor,
                 )
             }
         }
@@ -272,7 +277,7 @@ fun LineChart(
                         x = x,
                         y = y,
                     ),
-                color = style.unselectedColor,
+                color = axisLabelColor,
             )
             if (showHelperLines) {
                 // Thin and low-opacity on purpose — these are a subtle price reference,
@@ -358,7 +363,7 @@ fun LineChart(
                     center = circleOffset,
                 )
                 drawCircle(
-                    color = Color.White,
+                    color = crosshairColor,
                     radius = 15f,
                     center = circleOffset,
                 )
