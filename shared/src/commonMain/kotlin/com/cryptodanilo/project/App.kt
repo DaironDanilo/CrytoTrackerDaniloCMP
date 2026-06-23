@@ -10,14 +10,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.core.navigation.AdaptiveCoinListDetailPane
 import com.cryptodanilo.project.core.presentation.components.ComposeMultiplatformWatermark
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    onBackNavigableChanged: (canNavigateBack: Boolean) -> Unit = {},
+    backRequests: Flow<Unit> = emptyFlow(),
+) {
     CryptoTrackerThemeProvider {
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                AdaptiveCoinListDetailPane(modifier = Modifier.padding(innerPadding))
+                AdaptiveCoinListDetailPane(
+                    modifier = Modifier.padding(innerPadding),
+                    onBackNavigableChanged = onBackNavigableChanged,
+                    backRequests = backRequests,
+                )
             }
 
             ComposeMultiplatformWatermark()

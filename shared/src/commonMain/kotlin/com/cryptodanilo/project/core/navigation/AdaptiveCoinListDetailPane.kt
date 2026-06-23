@@ -32,6 +32,8 @@ import com.cryptodanilo.project.crypto.presentation.coinList.CoinListEvent
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListViewModel
 import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListScreen
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Duration.Companion.milliseconds
@@ -41,6 +43,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun AdaptiveCoinListDetailPane(
     viewModel: CoinListViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
+    onBackNavigableChanged: (canNavigateBack: Boolean) -> Unit = {},
+    backRequests: Flow<Unit> = emptyFlow(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -93,11 +97,22 @@ fun AdaptiveCoinListDetailPane(
     }
 
     val navState = rememberNavigationEventState(NavigationEventInfo.None)
+    val canNavigateBack = navigator.canNavigateBack()
     NavigationBackHandler(
         state = navState,
-        isBackEnabled = navigator.canNavigateBack(),
+        isBackEnabled = canNavigateBack,
         onBackCompleted = { navigateBack() },
     )
+
+    // Lets the web/Wasm target mirror this in-app back-navigable state onto the
+    // browser's history stack (see WebMain.kt), since browser back/forward are
+    // otherwise not synchronized with this adaptive-pane navigator.
+    LaunchedEffect(canNavigateBack) {
+        onBackNavigableChanged(canNavigateBack)
+    }
+    LaunchedEffect(backRequests) {
+        backRequests.collect { navigateBack() }
+    }
     SharedTransitionLayout {
         ListDetailPaneScaffold(
             directive = navigator.scaffoldDirective,
