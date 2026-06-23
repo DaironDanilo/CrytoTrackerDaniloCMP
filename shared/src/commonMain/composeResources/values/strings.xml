@@ -31,4 +31,5 @@
     <string name="search_no_results_hint">Try a different search term</string>
     <string name="built_with">Built with</string>
     <string name="compose_multiplatform_name">Compose Multiplatform</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

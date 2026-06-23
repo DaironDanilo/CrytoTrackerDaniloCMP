@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +44,7 @@ import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.built_with
 import cryptotrackerdanilo.shared.generated.resources.compose_multiplatform
 import cryptotrackerdanilo.shared.generated.resources.compose_multiplatform_name
+import cryptotrackerdanilo.shared.generated.resources.dismiss
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
@@ -55,83 +60,106 @@ actual fun ComposeMultiplatformWatermark() {
     var offsetY by remember { mutableStateOf(0f) }
     var isDragging by remember { mutableStateOf(false) }
     var badgeSize by remember { mutableStateOf(IntSize.Zero) }
+    var showBadge by remember { mutableStateOf(true) }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val maxOffsetX = (constraints.maxWidth - badgeSize.width).coerceAtLeast(0).toFloat()
         val maxOffsetY = (constraints.maxHeight - badgeSize.height).coerceAtLeast(0).toFloat()
 
-        Row(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                    .onSizeChanged { badgeSize = it }
-                    .pointerHoverIcon(
-                        if (isDragging) {
-                            PointerIcon.fromKeyword("grabbing")
-                        } else {
-                            PointerIcon.fromKeyword("grab")
-                        },
-                    ).pointerInput(Unit) {
-                        // detectDragGestures only calls onDragStart/onDragEnd once touch slop is
-                        // exceeded, so a zero-movement tap never reaches them. awaitFirstDown +
-                        // drag() fire for every gesture (including taps), letting us measure total
-                        // movement ourselves and decide tap vs. drag at release time.
-                        val dragThresholdPx = WATERMARK_DRAG_THRESHOLD.toPx()
-                        awaitEachGesture {
-                            val down = awaitFirstDown(requireUnconsumed = false)
-                            var totalDragDistance = 0f
-                            isDragging = false
-                            drag(down.id) { change ->
-                                val dragAmount = change.positionChange()
-                                change.consume()
-                                totalDragDistance += dragAmount.getDistance()
-                                if (totalDragDistance > dragThresholdPx) {
-                                    isDragging = true
+        if (showBadge) {
+            Row(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                        .onSizeChanged { badgeSize = it }
+                        .padding(CryptoTrackerTheme.spacing.medium)
+                        .clip(RoundedCornerShape(CryptoTrackerTheme.sizing.cornerFull))
+                        .background(CryptoTrackerTheme.colors.surfaceContainerHigh)
+                        .border(
+                            width = CryptoTrackerTheme.sizing.borderThin,
+                            color = CryptoTrackerTheme.colors.outline,
+                            shape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerFull),
+                        ).padding(
+                            horizontal = CryptoTrackerTheme.spacing.medium,
+                            vertical = CryptoTrackerTheme.spacing.small,
+                        ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
+            ) {
+                Row(
+                    modifier =
+                        Modifier
+                            .pointerHoverIcon(
+                                if (isDragging) {
+                                    PointerIcon.fromKeyword("grabbing")
+                                } else {
+                                    PointerIcon.fromKeyword("grab")
+                                },
+                            ).pointerInput(Unit) {
+                                // detectDragGestures only calls onDragStart/onDragEnd once touch slop is
+                                // exceeded, so a zero-movement tap never reaches them. awaitFirstDown +
+                                // drag() fire for every gesture (including taps), letting us measure total
+                                // movement ourselves and decide tap vs. drag at release time.
+                                val dragThresholdPx = WATERMARK_DRAG_THRESHOLD.toPx()
+                                awaitEachGesture {
+                                    val down = awaitFirstDown(requireUnconsumed = false)
+                                    var totalDragDistance = 0f
+                                    isDragging = false
+                                    drag(down.id) { change ->
+                                        val dragAmount = change.positionChange()
+                                        change.consume()
+                                        totalDragDistance += dragAmount.getDistance()
+                                        if (totalDragDistance > dragThresholdPx) {
+                                            isDragging = true
+                                        }
+                                        offsetX = (offsetX + dragAmount.x).coerceIn(-maxOffsetX, 0f)
+                                        offsetY = (offsetY + dragAmount.y).coerceIn(-maxOffsetY, 0f)
+                                    }
+                                    if (!isDragging) {
+                                        uriHandler.openUri(COMPOSE_MULTIPLATFORM_URL)
+                                    }
+                                    isDragging = false
                                 }
-                                offsetX = (offsetX + dragAmount.x).coerceIn(-maxOffsetX, 0f)
-                                offsetY = (offsetY + dragAmount.y).coerceIn(-maxOffsetY, 0f)
-                            }
-                            if (!isDragging) {
-                                uriHandler.openUri(COMPOSE_MULTIPLATFORM_URL)
-                            }
-                            isDragging = false
-                        }
-                    }.padding(CryptoTrackerTheme.spacing.medium)
-                    .clip(RoundedCornerShape(CryptoTrackerTheme.sizing.cornerFull))
-                    .background(CryptoTrackerTheme.colors.surfaceContainerHigh)
-                    .border(
-                        width = CryptoTrackerTheme.sizing.borderThin,
-                        color = CryptoTrackerTheme.colors.outline,
-                        shape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerFull),
-                    ).padding(
-                        horizontal = CryptoTrackerTheme.spacing.medium,
-                        vertical = CryptoTrackerTheme.spacing.small,
-                    ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
-        ) {
-            Image(
-                painter = painterResource(Res.drawable.compose_multiplatform),
-                contentDescription = "Compose Multiplatform",
-                modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
-                colorFilter = ColorFilter.tint(CryptoTrackerTheme.colors.primary),
-            )
+                            },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.compose_multiplatform),
+                        contentDescription = stringResource(Res.string.compose_multiplatform_name),
+                        modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
+                        colorFilter = ColorFilter.tint(CryptoTrackerTheme.colors.primary),
+                    )
 
-            Text(
-                text = stringResource(Res.string.built_with),
-                style = CryptoTrackerTheme.typography.bodySmall,
-                color = CryptoTrackerTheme.colors.onSurfaceVariant,
-            )
+                    Text(
+                        text = stringResource(Res.string.built_with),
+                        style = CryptoTrackerTheme.typography.bodySmall,
+                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                    )
 
-            Text(
-                text = stringResource(Res.string.compose_multiplatform_name) + " " + EXTERNAL_LINK_ARROW,
-                style =
-                    CryptoTrackerTheme.typography.bodySmall.copy(
-                        textDecoration = TextDecoration.Underline,
-                    ),
-                color = CryptoTrackerTheme.colors.primary,
-            )
+                    Text(
+                        text = stringResource(Res.string.compose_multiplatform_name) + " " + EXTERNAL_LINK_ARROW,
+                        style =
+                            CryptoTrackerTheme.typography.bodySmall.copy(
+                                textDecoration = TextDecoration.Underline,
+                            ),
+                        color = CryptoTrackerTheme.colors.primary,
+                    )
+                }
+
+                IconButton(
+                    onClick = { showBadge = false },
+                    modifier = Modifier.size(CryptoTrackerTheme.sizing.iconMedium),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(Res.string.dismiss),
+                        tint = CryptoTrackerTheme.colors.onSurfaceVariant,
+                        modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
+                    )
+                }
+            }
         }
     }
 }

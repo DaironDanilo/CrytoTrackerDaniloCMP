@@ -82,9 +82,6 @@ fun LineChart(
     var isShowingDataPoints by remember { mutableStateOf(selectedDataPoint != null) }
     // colorScheme can't be read inside the DrawScope lambda below, so it's hoisted here.
     val crosshairColor = CryptoTrackerTheme.colors.onSurface
-    // Axis labels use their own theme-driven color, independent of style.unselectedColor
-    // (which stays as-is for the grid lines) — onSurfaceVariant reads clearly in both themes.
-    val axisLabelColor = CryptoTrackerTheme.colors.onSurfaceVariant
 
     Canvas(
         modifier =
@@ -166,17 +163,7 @@ fun LineChart(
         val viewPortRightX = size.width - rightPaddingPx
         val viewPortBottomY = viewPortTopY + viewPortHeightPx
         val viewPortLeftX = 2f * horizontalPaddingPx + maxYLabelWidth
-//        val viewPort = Rect(
-//            left = viewPortLeftX,
-//            top = viewPortTopY,
-//            right = viewPortRightX,
-//            bottom = viewPortBottomY
-//        )
-//        drawRect(
-//            color = Color.Green.copy(alpha = 0.3f),
-//            topLeft = viewPort.topLeft,
-//            size = viewPort.size
-//        )
+
         xLabelWidth = maxXLabelWidth + xAxisLabelSpacingPx
         // Stretch the visible data points to always span the full viewport width,
         // so the chart never leaves empty grid space after the last data point
@@ -206,7 +193,7 @@ fun LineChart(
                         ),
                     // X-axis labels never change color on selection — only the
                     // crosshair and tooltip below indicate the selected point.
-                    color = axisLabelColor,
+                    color = style.unselectedColor,
                 )
             }
             // Only draw a vertical line for the selected (tapped/dragged) point — drawing
@@ -277,7 +264,7 @@ fun LineChart(
                         x = x,
                         y = y,
                     ),
-                color = axisLabelColor,
+                color = style.unselectedColor,
             )
             if (showHelperLines) {
                 // Thin and low-opacity on purpose — these are a subtle price reference,
