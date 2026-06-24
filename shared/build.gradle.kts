@@ -62,12 +62,13 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        val desktopMain by getting
-        val wasmJsMain by getting
+        val desktopMain = getByName("desktopMain")
+        val wasmJsMain = getByName("wasmJsMain")
 
-        val nonWasmMain by creating {
-            dependsOn(commonMain.get())
-        }
+        val nonWasmMain =
+            create("nonWasmMain") {
+                dependsOn(commonMain.get())
+            }
         androidMain.get().dependsOn(nonWasmMain)
         iosMain.get().dependsOn(nonWasmMain)
         desktopMain.dependsOn(nonWasmMain)
