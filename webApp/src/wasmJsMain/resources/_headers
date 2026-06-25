@@ -1,0 +1,14 @@
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+# The service worker and its precache manifest must always be revalidated, otherwise
+# browsers/CDNs can pin clients to a stale SW that never discovers new deploys.
+/service-worker.js
+  Cache-Control: no-cache
+
+/precache-manifest.json
+  Cache-Control: no-cache
+
+/*.wasm
+  Content-Type: application/wasm
