@@ -12,3 +12,8 @@
 
 /*.wasm
   Content-Type: application/wasm
+
+# Netlify's default mime table doesn't know the .webmanifest extension and serves it as
+# application/octet-stream, which some browsers/Lighthouse flag as a manifest error.
+/manifest.webmanifest
+  Content-Type: application/manifest+json

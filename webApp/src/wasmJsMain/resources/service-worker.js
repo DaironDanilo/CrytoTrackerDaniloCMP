@@ -1,50 +1,78 @@
-// Cache name is versioned by build content (see precache-manifest.json), not by a
-// hand-bumped string, so a new deploy always gets a fresh shell cache and old ones
-// are swept on activate.
-const SHELL_CACHE_PREFIX = 'app-shell-';
+// Substituted by the generatePwaPrecacheManifest Gradle task (see webApp/build.gradle.kts)
+// with a hash of the build output, so this file's own bytes - and therefore the cache name -
+// change on every deploy. That's what makes the browser notice a new worker and update it.
+const BUILD_REVISION = '__BUILD_REVISION__';
+const SHELL_CACHE_NAME = `app-shell-${BUILD_REVISION}`;
 const API_CACHE_NAME = 'api-cache-v1';
 const PRECACHE_MANIFEST_URL = 'precache-manifest.json';
 const API_HOSTNAME = 'rest.coincap.io';
 
-async function currentShellCacheName() {
-    try {
-        const response = await fetch(PRECACHE_MANIFEST_URL, { cache: 'no-store' });
-        const { revision } = await response.json();
-        return SHELL_CACHE_PREFIX + revision;
-    } catch (error) {
-        return SHELL_CACHE_PREFIX + 'fallback';
-    }
+// Zero external dependencies (no images, no linked CSS) so it always renders even if this
+// is the very first offline visit, before the shell itself has finished caching.
+const OFFLINE_FALLBACK_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoTracker - Offline</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    background: #101410; color: #e6f1e6; font-family: system-ui, sans-serif; padding: 24px;
+  }
+  div { max-width: 320px; }
+  h1 { font-size: 1.25rem; margin-bottom: 8px; }
+  p { opacity: 0.8; line-height: 1.4; }
+</style>
+</head>
+<body>
+  <div>
+    <h1>You're offline</h1>
+    <p>CryptoTracker needs one successful connection to finish setting up offline access. Reconnect and reopen the app once, then it will keep working offline.</p>
+  </div>
+</body>
+</html>`;
+
+async function cacheAll(cache, entries) {
+    await Promise.all(
+        entries.map(async ({ url, immutable }) => {
+            try {
+                // Content-hashed (.wasm) assets are already warm in the browser's HTTP
+                // cache from the page's own boot - reuse that instead of paying for an
+                // extra multi-megabyte download. Everything else has a fixed name that
+                // can go stale, so it must bypass the cache.
+                const response = await fetch(url, immutable ? {} : { cache: 'no-store' });
+                if (response.ok) {
+                    await cache.put(url, response);
+                }
+            } catch (error) {
+                // Skip individual asset failures; don't fail the whole install.
+            }
+        }),
+    );
 }
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
         (async () => {
-            let entries = [];
-            let cacheName = SHELL_CACHE_PREFIX + 'fallback';
+            const cache = await caches.open(SHELL_CACHE_NAME);
+            await cache.put('offline.html', new Response(OFFLINE_FALLBACK_HTML, { headers: { 'Content-Type': 'text/html' } }));
+
+            let manifest;
             try {
                 const response = await fetch(PRECACHE_MANIFEST_URL, { cache: 'no-store' });
-                const manifest = await response.json();
-                entries = manifest.entries || [];
-                cacheName = SHELL_CACHE_PREFIX + manifest.revision;
+                manifest = await response.json();
             } catch (error) {
-                // First install while offline, or manifest missing: nothing to precache yet,
-                // the runtime cache-first handler will fill the cache as pages are visited.
+                // First install while offline: nothing more we can precache yet.
                 return;
             }
 
-            const cache = await caches.open(cacheName);
-            await Promise.all(
-                entries.map(async (url) => {
-                    try {
-                        const response = await fetch(url, { cache: 'no-store' });
-                        if (response.ok) {
-                            await cache.put(url, response);
-                        }
-                    } catch (error) {
-                        // Skip individual asset failures; don't fail the whole install.
-                    }
-                }),
-            );
+            // Critical app-shell files first and awaited on their own, so the app is
+            // guaranteed bootable offline even if the worker gets killed before the much
+            // larger (but non-essential) bulk asset set below finishes caching.
+            await cacheAll(cache, manifest.critical || []);
+            await cacheAll(cache, manifest.bulk || []);
         })(),
     );
     self.skipWaiting();
@@ -53,11 +81,10 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         (async () => {
-            const activeShellCache = await currentShellCacheName();
             const keys = await caches.keys();
             await Promise.all(
                 keys
-                    .filter((key) => key !== activeShellCache && key !== API_CACHE_NAME)
+                    .filter((key) => key !== SHELL_CACHE_NAME && key !== API_CACHE_NAME)
                     .map((key) => caches.delete(key)),
             );
             await self.clients.claim();
@@ -65,25 +92,24 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-async function cacheFirst(request, cacheName) {
+async function cacheFirst(request) {
     const cached = await caches.match(request);
     if (cached) {
         return cached;
     }
     const response = await fetch(request);
     if (response.ok) {
-        const cache = await caches.open(cacheName);
+        const cache = await caches.open(SHELL_CACHE_NAME);
         cache.put(request, response.clone());
     }
     return response;
 }
 
-async function networkFirstNavigation(request) {
+async function navigationHandler(request) {
     try {
         const response = await fetch(request);
         if (response.ok) {
-            const cacheName = await currentShellCacheName();
-            const cache = await caches.open(cacheName);
+            const cache = await caches.open(SHELL_CACHE_NAME);
             cache.put('index.html', response.clone());
         }
         return response;
@@ -92,7 +118,8 @@ async function networkFirstNavigation(request) {
         if (cached) {
             return cached;
         }
-        throw error;
+        const fallback = await caches.match('offline.html');
+        return fallback || new Response(OFFLINE_FALLBACK_HTML, { status: 503, headers: { 'Content-Type': 'text/html' } });
     }
 }
 
@@ -143,12 +170,12 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // respondWith() must never receive a rejected promise - that surfaces to the browser
+    // as a hard navigation failure (net::ERR_FAILED) instead of falling back gracefully.
     if (request.mode === 'navigate') {
-        event.respondWith(networkFirstNavigation(request));
+        event.respondWith(navigationHandler(request).catch(() => new Response(OFFLINE_FALLBACK_HTML, { status: 503, headers: { 'Content-Type': 'text/html' } })));
         return;
     }
 
-    event.respondWith(
-        currentShellCacheName().then((cacheName) => cacheFirst(request, cacheName)),
-    );
+    event.respondWith(cacheFirst(request).catch(() => new Response('', { status: 504 })));
 });
