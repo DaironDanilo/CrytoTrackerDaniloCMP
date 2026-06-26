@@ -38,11 +38,6 @@ class CoinListViewModel(
     private var currentOffset = 0
     private var currentMarketsOffset = 0
 
-    // Keyed only by timeframe — cleared on every coin change in selectCoin(), since
-    // it's only meant to avoid refetching when flipping back and forth between
-    // timeframes already viewed for the *current* coin.
-    private val chartDataCache = mutableMapOf<ChartTimeframe, List<CoinPrice>>()
-
     init {
         loadCoins()
     }
@@ -51,6 +46,7 @@ class CoinListViewModel(
         when (action) {
             CoinListAction.OnRefresh -> refresh()
             CoinListAction.OnManualRefresh -> manualRefresh()
+            CoinListAction.OnDetailManualRefresh -> detailManualRefresh()
             is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
             is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
             is CoinListAction.OnTimeframeSelected -> onTimeframeSelected(action.timeframe)
@@ -99,7 +95,7 @@ class CoinListViewModel(
         }
     }
 
-    // Manual [↺] button tap — drives the button's own spinner only.
+    // Manual [↺] button tap on the list — drives the button's own spinner only.
     private fun manualRefresh() {
         viewModelScope.launch {
             _state.update { it.copy(isManualRefreshing = true, isError = false) }
@@ -109,10 +105,8 @@ class CoinListViewModel(
     }
 
     // Shared by both refresh() and manualRefresh() — keeps the current list on screen
-    // while it refreshes (so neither trigger blanks the list behind the full-screen
-    // isLoading spinner) and uses forceRefresh() rather than getCoins() because
-    // getCoins() serves straight from the Room cache while it's still within
-    // CACHE_TTL_MS — a "refresh" must always hit the network.
+    // while it refreshes and uses forceRefresh() rather than getCoins() because
+    // getCoins() serves straight from the Room cache while it's still within CACHE_TTL_MS.
     private suspend fun forceRefreshInternal() {
         val result = coinDataSource.forceRefresh(limit = PAGE_SIZE)
         val lastCachedAt = coinDataSource.getLastCachedAt()
@@ -131,6 +125,39 @@ class CoinListViewModel(
                 _state.update { it.copy(isError = true) }
                 _events.send(CoinListEvent.Error(error))
             }
+    }
+
+    // Manual [↺] button tap on the detail screen — force-fetches the current
+    // (coinId, timeframe) slice from the network, bypassing the Room cache.
+    @OptIn(ExperimentalTime::class)
+    private fun detailManualRefresh() {
+        val coinId = _state.value.selectedCoinUi?.id ?: return
+        val timeframe = _state.value.selectedTimeframe
+        viewModelScope.launch {
+            _state.update { it.copy(isManualRefreshingDetail = true) }
+            val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+            val (start, end, interval) = timeframe.toApiParams(now)
+            coinDataSource
+                .forceRefreshCoinHistory(
+                    coinId = coinId,
+                    timeframe = timeframe.label,
+                    start = start,
+                    end = end,
+                    interval = interval,
+                ).onSuccess { history ->
+                    val lastCachedAt = coinDataSource.getLastHistoryCachedAt(coinId, timeframe.label)
+                    applyChartHistory(timeframe, history)
+                    _state.update {
+                        it.copy(
+                            isManualRefreshingDetail = false,
+                            lastUpdatedDetailMs = lastCachedAt,
+                        )
+                    }
+                }.onError { networkError ->
+                    _state.update { it.copy(isManualRefreshingDetail = false) }
+                    _events.send(CoinListEvent.Error(networkError))
+                }
+        }
     }
 
     private fun loadMore() {
@@ -219,7 +246,6 @@ class CoinListViewModel(
 
     private fun selectCoin(coinUi: CoinUi) {
         currentMarketsOffset = 0
-        chartDataCache.clear()
         _state.update {
             it.copy(
                 selectedCoinUi = coinUi,
@@ -229,6 +255,8 @@ class CoinListViewModel(
                 isLoadingMoreMarkets = false,
                 hasMoreMarkets = true,
                 marketsError = null,
+                lastUpdatedDetailMs = null,
+                isManualRefreshingDetail = false,
             )
         }
         loadChartData(coinUi.id)
@@ -243,21 +271,26 @@ class CoinListViewModel(
     @OptIn(ExperimentalTime::class)
     private fun loadChartData(coinId: String) {
         val timeframe = _state.value.selectedTimeframe
-        val cached = chartDataCache[timeframe]
-        if (cached != null) {
-            applyChartHistory(timeframe, cached)
-            return
-        }
         _state.update { it.copy(isLoadingCoinHistory = true) }
         viewModelScope.launch {
             val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             val (start, end, interval) = timeframe.toApiParams(now)
             coinDataSource
-                .getCoinHistory(coinId = coinId, start = start, end = end, interval = interval)
-                .onSuccess { history ->
-                    chartDataCache[timeframe] = history
+                .getCoinHistory(
+                    coinId = coinId,
+                    timeframe = timeframe.label,
+                    start = start,
+                    end = end,
+                    interval = interval,
+                ).onSuccess { history ->
+                    val lastCachedAt = coinDataSource.getLastHistoryCachedAt(coinId, timeframe.label)
                     applyChartHistory(timeframe, history)
-                    _state.update { it.copy(isLoadingCoinHistory = false) }
+                    _state.update {
+                        it.copy(
+                            isLoadingCoinHistory = false,
+                            lastUpdatedDetailMs = lastCachedAt,
+                        )
+                    }
                 }.onError { networkError ->
                     _state.update { it.copy(isLoadingCoinHistory = false) }
                     _events.send(CoinListEvent.Error(networkError))

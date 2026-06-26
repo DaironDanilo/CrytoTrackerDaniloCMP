@@ -3,8 +3,10 @@ package com.cryptodanilo.project.crypto.data.networking
 import com.cryptodanilo.project.core.data.networking.constructUrl
 import com.cryptodanilo.project.core.data.networking.safeCall
 import com.cryptodanilo.project.core.database.CoinDao
+import com.cryptodanilo.project.core.database.CoinPriceDao
 import com.cryptodanilo.project.core.database.CryptoDatabase
 import com.cryptodanilo.project.core.database.toCoinEntity
+import com.cryptodanilo.project.core.database.toCoinPriceEntity
 import com.cryptodanilo.project.core.domain.util.NetworkError
 import com.cryptodanilo.project.core.domain.util.Result
 import com.cryptodanilo.project.core.domain.util.map
@@ -27,10 +29,12 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.time.ExperimentalTime
 import com.cryptodanilo.project.core.database.toCoin as entityToCoin
+import com.cryptodanilo.project.core.database.toCoinPrice as entityToCoinPrice
 
 class RemoteCoinDataSource(
     private val httpClient: HttpClient,
     private val coinDao: CoinDao,
+    private val coinPriceDao: CoinPriceDao,
 ) : CoinDataSource {
     override suspend fun getCoins(
         limit: Int,
@@ -50,17 +54,17 @@ class RemoteCoinDataSource(
             }
         }
 
-        return fetchAndCache(limit, offset)
+        return fetchAndCacheCoins(limit, offset)
     }
 
     override suspend fun getLastCachedAt(): Long? = coinDao.getLastCachedAt()
 
     override suspend fun forceRefresh(limit: Int): Result<List<Coin>, NetworkError> {
         coinDao.deleteAllCoins()
-        return fetchAndCache(limit, 0)
+        return fetchAndCacheCoins(limit, 0)
     }
 
-    private suspend fun fetchAndCache(
+    private suspend fun fetchAndCacheCoins(
         limit: Int,
         offset: Int,
     ): Result<List<Coin>, NetworkError> {
@@ -92,23 +96,83 @@ class RemoteCoinDataSource(
     @OptIn(ExperimentalTime::class)
     override suspend fun getCoinHistory(
         coinId: String,
+        timeframe: String,
+        start: LocalDateTime,
+        end: LocalDateTime,
+        interval: String,
+    ): Result<List<CoinPrice>, NetworkError> {
+        val now = getCurrentTimeMs()
+        val lastCachedAt = coinPriceDao.getCachedAt(coinId, timeframe)
+        val isCacheValid =
+            lastCachedAt != null &&
+                (now - lastCachedAt) < CryptoDatabase.CACHE_TTL_MS &&
+                coinPriceDao.getCount(coinId, timeframe) > 0
+
+        if (isCacheValid) {
+            val cached = coinPriceDao.getPriceHistory(coinId, timeframe)
+            if (cached.isNotEmpty()) {
+                return Result.Success(cached.map { it.entityToCoinPrice() })
+            }
+        }
+
+        return fetchAndCacheHistory(coinId, timeframe, start, end, interval)
+    }
+
+    @OptIn(ExperimentalTime::class)
+    override suspend fun forceRefreshCoinHistory(
+        coinId: String,
+        timeframe: String,
+        start: LocalDateTime,
+        end: LocalDateTime,
+        interval: String,
+    ): Result<List<CoinPrice>, NetworkError> {
+        coinPriceDao.deletePriceHistory(coinId, timeframe)
+        return fetchAndCacheHistory(coinId, timeframe, start, end, interval)
+    }
+
+    override suspend fun getLastHistoryCachedAt(
+        coinId: String,
+        timeframe: String,
+    ): Long? = coinPriceDao.getCachedAt(coinId, timeframe)
+
+    @OptIn(ExperimentalTime::class)
+    private suspend fun fetchAndCacheHistory(
+        coinId: String,
+        timeframe: String,
         start: LocalDateTime,
         end: LocalDateTime,
         interval: String,
     ): Result<List<CoinPrice>, NetworkError> {
         val startMillis = start.toInstant(TimeZone.UTC).toEpochMilliseconds()
         val endMillis = end.toInstant(TimeZone.UTC).toEpochMilliseconds()
-        return safeCall<CoinHistoryDto> {
-            httpClient.get(
-                urlString = constructUrl("/assets/$coinId/history"),
-            ) {
-                parameter("interval", interval)
-                parameter("start", startMillis)
-                parameter("end", endMillis)
+
+        val networkResult =
+            safeCall<CoinHistoryDto> {
+                httpClient.get(constructUrl("/assets/$coinId/history")) {
+                    parameter("interval", interval)
+                    parameter("start", startMillis)
+                    parameter("end", endMillis)
+                }
+            }.map { response -> response.data.map { it.toCoinPrice() } }
+
+        when (networkResult) {
+            is Result.Success -> {
+                val cachedAt = getCurrentTimeMs()
+                coinPriceDao.replacePriceHistory(
+                    coinId,
+                    timeframe,
+                    networkResult.data.map { it.toCoinPriceEntity(coinId, timeframe, cachedAt) },
+                )
             }
-        }.map { response ->
-            response.data.map { it.toCoinPrice() }
+            is Result.Error -> {
+                val staleCache = coinPriceDao.getPriceHistory(coinId, timeframe)
+                if (staleCache.isNotEmpty()) {
+                    return Result.Success(staleCache.map { it.entityToCoinPrice() })
+                }
+            }
         }
+
+        return networkResult
     }
 
     override suspend fun getMarkets(

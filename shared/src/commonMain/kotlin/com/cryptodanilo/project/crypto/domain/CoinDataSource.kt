@@ -16,10 +16,24 @@ interface CoinDataSource {
 
     suspend fun getCoinHistory(
         coinId: String,
+        timeframe: String,
         start: LocalDateTime,
         end: LocalDateTime,
         interval: String = "h6",
     ): Result<List<CoinPrice>, NetworkError>
+
+    suspend fun forceRefreshCoinHistory(
+        coinId: String,
+        timeframe: String,
+        start: LocalDateTime,
+        end: LocalDateTime,
+        interval: String,
+    ): Result<List<CoinPrice>, NetworkError>
+
+    suspend fun getLastHistoryCachedAt(
+        coinId: String,
+        timeframe: String,
+    ): Long?
 
     suspend fun getMarkets(
         assetId: String,

@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
 import com.cryptodanilo.project.core.presentation.util.formatAbbreviatedPrice
 import com.cryptodanilo.project.core.presentation.util.formatPriceChange
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.ChartTimeframeSelector
@@ -292,6 +293,20 @@ private fun DetailTabContent(
     when (state.selectedDetailTab) {
         DetailTab.Chart -> {
             Column(modifier = remainingSpaceModifier) {
+                state.lastUpdatedDetailMs?.let { updatedAt ->
+                    LastUpdatedRow(
+                        updatedAt = updatedAt,
+                        isLoading = state.isManualRefreshingDetail,
+                        onRefresh = { onAction(CoinListAction.OnDetailManualRefresh) },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = CryptoTrackerTheme.spacing.medium,
+                                    vertical = CryptoTrackerTheme.spacing.extraSmall,
+                                ),
+                    )
+                }
                 ChartTimeframeSelector(
                     selectedTimeframe = state.selectedTimeframe,
                     onTimeframeSelected = { onAction(CoinListAction.OnTimeframeSelected(it)) },
