@@ -39,6 +39,7 @@ fun InfoCard(
     modifier: Modifier = Modifier,
     contentColor: Color = CryptoTrackerTheme.colors.onSurface,
     accentColor: Color = CryptoTrackerTheme.colors.primary,
+    percentageContent: (@Composable () -> Unit)? = null,
     formattedTextStyle: TextStyle =
         LocalTextStyle.current.copy(
             color = contentColor,
@@ -83,16 +84,20 @@ fun InfoCard(
             Column(
                 modifier = Modifier.padding(start = CryptoTrackerTheme.spacing.extraSmall),
             ) {
-                AnimatedContent(
-                    targetState = formattedValue,
-                    label = "valueAnimation",
-                ) { formattedValue ->
-                    Text(
-                        text = formattedValue,
-                        style = formattedTextStyle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
+                ) {
+                    AnimatedContent(
+                        targetState = formattedValue,
+                        label = "valueAnimation",
+                    ) { fv ->
+                        Text(
+                            text = fv,
+                            style = formattedTextStyle,
+                        )
+                    }
+                    percentageContent?.invoke()
                 }
                 Text(
                     text = title,

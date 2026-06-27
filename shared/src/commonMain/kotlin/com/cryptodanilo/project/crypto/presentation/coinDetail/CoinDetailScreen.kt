@@ -54,11 +54,13 @@ import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
 import com.cryptodanilo.project.core.presentation.util.formatAbbreviatedPrice
 import com.cryptodanilo.project.core.presentation.util.formatPriceChange
+import com.cryptodanilo.project.core.presentation.util.toDisplayableNumber
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.ChartTimeframeSelector
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCard
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinList.components.PriceChange
 import com.cryptodanilo.project.crypto.presentation.coinList.components.conditional
 import com.cryptodanilo.project.crypto.presentation.coinList.components.previewCoin
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
@@ -66,7 +68,14 @@ import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.change_all_time
 import cryptotrackerdanilo.shared.generated.resources.change_last_24h
+import cryptotrackerdanilo.shared.generated.resources.change_last_5_days
+import cryptotrackerdanilo.shared.generated.resources.change_last_5_years
+import cryptotrackerdanilo.shared.generated.resources.change_last_6_months
+import cryptotrackerdanilo.shared.generated.resources.change_last_month
+import cryptotrackerdanilo.shared.generated.resources.change_last_year
+import cryptotrackerdanilo.shared.generated.resources.change_year_to_date
 import cryptotrackerdanilo.shared.generated.resources.dollar
 import cryptotrackerdanilo.shared.generated.resources.go_back
 import cryptotrackerdanilo.shared.generated.resources.market_cap
@@ -232,17 +241,78 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
             formattedValue = "$ ${coin.priceUsd.value.formatAbbreviatedPrice()}",
             icon = Res.drawable.dollar,
         )
-        val absoluteChangeValue = (coin.priceUsd.value) * (coin.changePercent24Hr.value / 100)
-        val isPositiveChange = coin.changePercent24Hr.value > 0.0
+        // Null while loading to avoid stale data from the previous range bleeding through.
+        val firstPrice: Double? =
+            if (!state.isLoadingCoinHistory) {
+                coin.coinPriceHistory
+                    .firstOrNull()
+                    ?.y
+                    ?.toDouble()
+            } else {
+                null
+            }
+        val lastPrice: Double? =
+            if (!state.isLoadingCoinHistory) {
+                coin.coinPriceHistory
+                    .lastOrNull()
+                    ?.y
+                    ?.toDouble()
+            } else {
+                null
+            }
+        val rangeChangeValue: Double? =
+            if (firstPrice != null && lastPrice != null) lastPrice - firstPrice else null
+
+        // For 1D, use the API's precomputed changePercent24Hr — the same value the list badge
+        // shows — so both places always agree on a single source of truth. For all other ranges,
+        // compute from the history series (no API equivalent).
+        val rangeChangePercent: Double? =
+            when {
+                state.isLoadingCoinHistory -> null
+                state.selectedTimeframe == ChartTimeframe.ONE_DAY -> coin.changePercent24Hr.value
+                rangeChangeValue != null && firstPrice != null && firstPrice != 0.0 ->
+                    (rangeChangeValue / firstPrice) * 100.0
+                else -> null
+            }
+
+        // For 1D, direction also comes from changePercent24Hr so it matches the list badge.
+        val isPositiveChange =
+            if (!state.isLoadingCoinHistory && state.selectedTimeframe == ChartTimeframe.ONE_DAY) {
+                coin.changePercent24Hr.value > 0.0
+            } else {
+                (rangeChangeValue ?: 0.0) > 0.0
+            }
+
         val contentColorInfoCard =
             if (isPositiveChange) {
                 if (isSystemInDarkTheme()) Color.Green else greenBackground
             } else {
                 CryptoTrackerTheme.colors.error
             }
+
+        // PriceChange is the shared percentage chip used by both the list badge and here.
+        // toDisplayableNumber() is the single formatting path for both — ensures identical
+        // decimal places, sign handling, and rendering.
+        val percentageChip: (@Composable () -> Unit)? =
+            rangeChangePercent?.let { pct ->
+                { PriceChange(change = pct.toDisplayableNumber()) }
+            }
+        val changeTitle =
+            stringResource(
+                when (state.selectedTimeframe) {
+                    ChartTimeframe.ONE_DAY -> Res.string.change_last_24h
+                    ChartTimeframe.FIVE_DAYS -> Res.string.change_last_5_days
+                    ChartTimeframe.ONE_MONTH -> Res.string.change_last_month
+                    ChartTimeframe.SIX_MONTHS -> Res.string.change_last_6_months
+                    ChartTimeframe.YTD -> Res.string.change_year_to_date
+                    ChartTimeframe.ONE_YEAR -> Res.string.change_last_year
+                    ChartTimeframe.FIVE_YEARS -> Res.string.change_last_5_years
+                    ChartTimeframe.ALL -> Res.string.change_all_time
+                },
+            )
         InfoCard(
-            title = stringResource(Res.string.change_last_24h),
-            formattedValue = absoluteChangeValue.formatPriceChange(),
+            title = changeTitle,
+            formattedValue = rangeChangeValue?.formatPriceChange() ?: "–",
             icon =
                 if (isPositiveChange) {
                     Res.drawable.trending
@@ -251,6 +321,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                 },
             contentColor = contentColorInfoCard,
             accentColor = if (isPositiveChange) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.error,
+            percentageContent = percentageChip,
         )
     }
     Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.medium))
@@ -373,15 +444,8 @@ private fun DetailTabContent(
                         )
                     }
                 }
-                // Same condition as the "Change last 24h" card: positive when > 0, flat/down otherwise.
-                // This keeps the chart color and the card color in guaranteed sync.
-                val isPositiveChange = (state.selectedCoinUi?.changePercent24Hr?.value ?: 0.0) > 0.0
-                val chartLineColor =
-                    if (isPositiveChange) {
-                        CryptoTrackerTheme.colors.primary
-                    } else {
-                        CryptoTrackerTheme.colors.error
-                    }
+
+                val chartLineColor = CryptoTrackerTheme.colors.primary
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     androidx.compose.animation.AnimatedVisibility(
                         visible = coinPriceHistory.isNotEmpty(),

@@ -9,6 +9,13 @@
     <string name="market_cap">Market Cap</string>
     <string name="price">Price</string>
     <string name="change_last_24h">Change last 24h</string>
+    <string name="change_last_5_days">Change last 5 days</string>
+    <string name="change_last_month">Change last month</string>
+    <string name="change_last_6_months">Change last 6 months</string>
+    <string name="change_year_to_date">Change year to date</string>
+    <string name="change_last_year">Change last year</string>
+    <string name="change_last_5_years">Change last 5 years</string>
+    <string name="change_all_time">Change all time</string>
     <string name="go_back">Go back</string>
     <string name="search_assets">Search Assets...</string>
     <string name="clear_search">Clear search</string>
