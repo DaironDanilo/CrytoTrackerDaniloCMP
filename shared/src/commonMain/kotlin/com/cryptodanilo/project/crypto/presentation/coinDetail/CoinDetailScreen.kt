@@ -79,6 +79,7 @@ import cryptotrackerdanilo.shared.generated.resources.change_last_month
 import cryptotrackerdanilo.shared.generated.resources.change_last_year
 import cryptotrackerdanilo.shared.generated.resources.change_year_to_date
 import cryptotrackerdanilo.shared.generated.resources.chart_load_error
+import cryptotrackerdanilo.shared.generated.resources.chart_load_error_exhausted
 import cryptotrackerdanilo.shared.generated.resources.dollar
 import cryptotrackerdanilo.shared.generated.resources.go_back
 import cryptotrackerdanilo.shared.generated.resources.market_cap
@@ -467,6 +468,8 @@ private fun DetailTabContent(
                             }
                         }
                         state.chartHistoryError -> {
+                            val retryCount =
+                                state.chartRetryCount[state.selectedTimeframe] ?: 0
                             Column(
                                 modifier = Modifier.fillMaxSize(),
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -483,12 +486,21 @@ private fun DetailTabContent(
                                         ),
                                 )
                                 Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
-                                TextButton(
-                                    onClick = { onAction(CoinListAction.OnRetryChartLoad) },
-                                ) {
+                                if (retryCount < 2) {
+                                    TextButton(
+                                        onClick = { onAction(CoinListAction.OnRetryChartLoad) },
+                                    ) {
+                                        Text(
+                                            text = stringResource(Res.string.retry),
+                                            color = CryptoTrackerTheme.colors.primary,
+                                        )
+                                    }
+                                } else {
                                     Text(
-                                        text = stringResource(Res.string.retry),
-                                        color = CryptoTrackerTheme.colors.primary,
+                                        text = stringResource(Res.string.chart_load_error_exhausted),
+                                        style = CryptoTrackerTheme.typography.bodyMedium,
+                                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                                        textAlign = TextAlign.Center,
                                     )
                                 }
                             }

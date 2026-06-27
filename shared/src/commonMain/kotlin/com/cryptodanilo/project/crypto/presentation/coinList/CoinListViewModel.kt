@@ -52,7 +52,7 @@ class CoinListViewModel(
             is CoinListAction.OnTimeframeSelected -> onTimeframeSelected(action.timeframe)
             CoinListAction.OnRetryChartLoad -> {
                 val coinId = _state.value.selectedCoinUi?.id ?: return
-                loadChartData(coinId)
+                loadChartData(coinId, isRetry = true)
             }
             CoinListAction.OnRetryMarkets -> loadInitialMarkets()
             CoinListAction.OnLoadMoreMarkets -> loadMoreMarkets()
@@ -155,6 +155,7 @@ class CoinListViewModel(
                         it.copy(
                             isManualRefreshingDetail = false,
                             lastUpdatedDetailMs = lastCachedAt,
+                            chartRetryCount = it.chartRetryCount - timeframe,
                         )
                     }
                 }.onError { networkError ->
@@ -267,6 +268,7 @@ class CoinListViewModel(
                 marketsError = null,
                 lastUpdatedDetailMs = null,
                 isManualRefreshingDetail = false,
+                chartRetryCount = emptyMap(),
             )
         }
         loadChartData(coinUi.id)
@@ -279,7 +281,10 @@ class CoinListViewModel(
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun loadChartData(coinId: String) {
+    private fun loadChartData(
+        coinId: String,
+        isRetry: Boolean = false,
+    ) {
         val timeframe = _state.value.selectedTimeframe
         _state.update { it.copy(isLoadingCoinHistory = true, chartHistoryError = false) }
         viewModelScope.launch {
@@ -299,14 +304,26 @@ class CoinListViewModel(
                         it.copy(
                             isLoadingCoinHistory = false,
                             lastUpdatedDetailMs = lastCachedAt,
+                            // Success always resets this range's retry counter.
+                            chartRetryCount = it.chartRetryCount - timeframe,
                         )
                     }
                 }.onError { networkError ->
                     _state.update {
+                        // Only increment the counter when this was an explicit retry tap —
+                        // the initial failure (from range selection or coin selection) leaves
+                        // the counter at 0 so the Retry button is always shown first.
+                        val newCount =
+                            if (isRetry) {
+                                (it.chartRetryCount[timeframe] ?: 0) + 1
+                            } else {
+                                it.chartRetryCount[timeframe] ?: 0
+                            }
                         it.copy(
                             isLoadingCoinHistory = false,
                             chartHistoryError = true,
                             lastUpdatedDetailMs = null,
+                            chartRetryCount = it.chartRetryCount + (timeframe to newCount),
                         )
                     }
                     _events.send(CoinListEvent.Error(networkError))

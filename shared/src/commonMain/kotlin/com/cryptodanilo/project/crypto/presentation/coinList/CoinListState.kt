@@ -30,4 +30,5 @@ data class CoinListState(
     val lastUpdatedDetailMs: Long? = null,
     val isManualRefreshingDetail: Boolean = false,
     val chartHistoryError: Boolean = false,
+    val chartRetryCount: Map<ChartTimeframe, Int> = emptyMap(),
 )
