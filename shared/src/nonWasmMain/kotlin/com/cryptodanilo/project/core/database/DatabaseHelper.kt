@@ -7,6 +7,7 @@ import kotlinx.coroutines.IO
 
 fun getRoomDatabase(builder: RoomDatabase.Builder<CryptoDatabase>): CryptoDatabase =
     builder
+        .fallbackToDestructiveMigration(dropAllTables = true)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()

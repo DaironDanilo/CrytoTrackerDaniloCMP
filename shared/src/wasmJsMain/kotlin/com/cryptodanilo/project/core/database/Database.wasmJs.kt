@@ -8,3 +8,4 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<CryptoDatabase> =
     Room
         .databaseBuilder<CryptoDatabase>(name = CryptoDatabase.DB_NAME)
         .setDriver(WebWorkerSQLiteDriver(createSQLiteWorker()))
+        .fallbackToDestructiveMigration(dropAllTables = true)

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -169,41 +170,52 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
     animatedPaneScope: AnimatedPaneScope?,
     onAction: (CoinListAction) -> Unit,
 ) {
-    Icon(
-        painter = painterResource(coin.iconRes),
-        contentDescription = coin.name,
-        tint = CryptoTrackerTheme.colors.primary,
-        modifier =
-            Modifier
-                .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
-                .conditional(
-                    condition = shouldExistSharedElementTransition && animatedPaneScope != null,
-                    ifTrue = {
-                        sharedElement(
-                            sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                            animatedVisibilityScope = animatedPaneScope!!,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 1000)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = coin.name,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Black,
+            textAlign = TextAlign.Center,
+            color = contentColor,
+        )
+        Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                painter = painterResource(coin.iconRes),
+                contentDescription = coin.name,
+                tint = CryptoTrackerTheme.colors.primary,
+                modifier =
+                    Modifier
+                        .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
+                        .conditional(
+                            condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                            ifTrue = {
+                                sharedElement(
+                                    sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                    animatedVisibilityScope = animatedPaneScope!!,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    },
+                                    renderInOverlayDuringTransition = false,
+                                )
                             },
-                            renderInOverlayDuringTransition = false,
-                        )
-                    },
-                ),
-    )
-    Text(
-        text = coin.name,
-        fontSize = 32.sp,
-        fontWeight = FontWeight.Black,
-        textAlign = TextAlign.Center,
-        color = contentColor,
-    )
-    Text(
-        text = coin.symbol,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Light,
-        textAlign = TextAlign.Center,
-        color = contentColor,
-    )
+                        ),
+            )
+            Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
+            Text(
+                text = coin.symbol,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Light,
+                textAlign = TextAlign.Center,
+                color = contentColor,
+            )
+        }
+    }
     Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.medium))
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
