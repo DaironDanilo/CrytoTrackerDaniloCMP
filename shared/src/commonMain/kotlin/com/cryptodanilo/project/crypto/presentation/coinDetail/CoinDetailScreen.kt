@@ -33,8 +33,10 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -76,10 +78,12 @@ import cryptotrackerdanilo.shared.generated.resources.change_last_6_months
 import cryptotrackerdanilo.shared.generated.resources.change_last_month
 import cryptotrackerdanilo.shared.generated.resources.change_last_year
 import cryptotrackerdanilo.shared.generated.resources.change_year_to_date
+import cryptotrackerdanilo.shared.generated.resources.chart_load_error
 import cryptotrackerdanilo.shared.generated.resources.dollar
 import cryptotrackerdanilo.shared.generated.resources.go_back
 import cryptotrackerdanilo.shared.generated.resources.market_cap
 import cryptotrackerdanilo.shared.generated.resources.price
+import cryptotrackerdanilo.shared.generated.resources.retry
 import cryptotrackerdanilo.shared.generated.resources.stock
 import cryptotrackerdanilo.shared.generated.resources.trending
 import cryptotrackerdanilo.shared.generated.resources.trending_down
@@ -241,9 +245,9 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
             formattedValue = "$ ${coin.priceUsd.value.formatAbbreviatedPrice()}",
             icon = Res.drawable.dollar,
         )
-        // Null while loading to avoid stale data from the previous range bleeding through.
+        // Null while loading or when the range fetch failed, to avoid stale values bleeding through.
         val firstPrice: Double? =
-            if (!state.isLoadingCoinHistory) {
+            if (!state.isLoadingCoinHistory && !state.chartHistoryError) {
                 coin.coinPriceHistory
                     .firstOrNull()
                     ?.y
@@ -252,7 +256,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                 null
             }
         val lastPrice: Double? =
-            if (!state.isLoadingCoinHistory) {
+            if (!state.isLoadingCoinHistory && !state.chartHistoryError) {
                 coin.coinPriceHistory
                     .lastOrNull()
                     ?.y
@@ -269,6 +273,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
         val rangeChangePercent: Double? =
             when {
                 state.isLoadingCoinHistory -> null
+                state.chartHistoryError -> null
                 state.selectedTimeframe == ChartTimeframe.ONE_DAY -> coin.changePercent24Hr.value
                 rangeChangeValue != null && firstPrice != null && firstPrice != 0.0 ->
                     (rangeChangeValue / firstPrice) * 100.0
@@ -446,47 +451,77 @@ private fun DetailTabContent(
                 }
 
                 val chartLineColor = CryptoTrackerTheme.colors.primary
+                var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
+                // Clear stale tooltip whenever the range or error state changes.
+                LaunchedEffect(state.selectedTimeframe, state.chartHistoryError) {
+                    selectedDataPoint = null
+                }
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = coinPriceHistory.isNotEmpty(),
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
-                        // Full, untouched range and labels are always passed through —
-                        // LineChart caps how many x-axis labels it draws internally, and
-                        // the selected point's tooltip needs its real label intact.
-                        LineChart(
-                            dataPoints = coinPriceHistory,
-                            style =
-                                ChartStyle(
-                                    charLineColor = chartLineColor,
-                                    unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
-                                    selectedColor = chartLineColor,
-                                    helperLinesThicknessPx = 5f,
-                                    axisLinesThicknessPx = 5f,
-                                    labelFontSize = 14.sp,
-                                    minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
-                                    verticalPadding = CryptoTrackerTheme.spacing.small,
-                                    horizontalPadding = CryptoTrackerTheme.spacing.small,
-                                    xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
-                                ),
-                            visibleDataPointsIndices = coinPriceHistory.indices,
-                            unit = "$",
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight()
-                                    .heightIn(min = CHART_MIN_HEIGHT),
-                            selectedDataPoint = selectedDataPoint,
-                            onSelectedDataPoint = { selectedDataPoint = it },
-                        )
-                    }
-                    if (state.isLoadingCoinHistory) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularProgressIndicator()
+                    when {
+                        state.isLoadingCoinHistory -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        state.chartHistoryError -> {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.chart_load_error),
+                                    style = CryptoTrackerTheme.typography.bodyMedium,
+                                    color = CryptoTrackerTheme.colors.onSurface,
+                                    textAlign = TextAlign.Center,
+                                    modifier =
+                                        Modifier.padding(
+                                            horizontal = CryptoTrackerTheme.spacing.medium,
+                                        ),
+                                )
+                                Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+                                TextButton(
+                                    onClick = { onAction(CoinListAction.OnRetryChartLoad) },
+                                ) {
+                                    Text(
+                                        text = stringResource(Res.string.retry),
+                                        color = CryptoTrackerTheme.colors.primary,
+                                    )
+                                }
+                            }
+                        }
+                        coinPriceHistory.isNotEmpty() -> {
+                            // Full, untouched range and labels are always passed through —
+                            // LineChart caps how many x-axis labels it draws internally, and
+                            // the selected point's tooltip needs its real label intact.
+                            LineChart(
+                                dataPoints = coinPriceHistory,
+                                style =
+                                    ChartStyle(
+                                        charLineColor = chartLineColor,
+                                        unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
+                                        selectedColor = chartLineColor,
+                                        helperLinesThicknessPx = 5f,
+                                        axisLinesThicknessPx = 5f,
+                                        labelFontSize = 14.sp,
+                                        minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                                        verticalPadding = CryptoTrackerTheme.spacing.small,
+                                        horizontalPadding = CryptoTrackerTheme.spacing.small,
+                                        xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
+                                    ),
+                                visibleDataPointsIndices = coinPriceHistory.indices,
+                                unit = "$",
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight()
+                                        .heightIn(min = CHART_MIN_HEIGHT),
+                                selectedDataPoint = selectedDataPoint,
+                                onSelectedDataPoint = { selectedDataPoint = it },
+                            )
                         }
                     }
                 }

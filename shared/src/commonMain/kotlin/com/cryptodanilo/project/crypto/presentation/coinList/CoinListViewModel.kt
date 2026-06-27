@@ -50,6 +50,10 @@ class CoinListViewModel(
             is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
             is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
             is CoinListAction.OnTimeframeSelected -> onTimeframeSelected(action.timeframe)
+            CoinListAction.OnRetryChartLoad -> {
+                val coinId = _state.value.selectedCoinUi?.id ?: return
+                loadChartData(coinId)
+            }
             CoinListAction.OnRetryMarkets -> loadInitialMarkets()
             CoinListAction.OnLoadMoreMarkets -> loadMoreMarkets()
             is CoinListAction.OnSearchQueryChange -> _state.update { it.copy(searchQuery = action.query) }
@@ -134,7 +138,7 @@ class CoinListViewModel(
         val coinId = _state.value.selectedCoinUi?.id ?: return
         val timeframe = _state.value.selectedTimeframe
         viewModelScope.launch {
-            _state.update { it.copy(isManualRefreshingDetail = true) }
+            _state.update { it.copy(isManualRefreshingDetail = true, chartHistoryError = false) }
             val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             val (start, end, interval) = timeframe.toApiParams(now)
             coinDataSource
@@ -154,7 +158,13 @@ class CoinListViewModel(
                         )
                     }
                 }.onError { networkError ->
-                    _state.update { it.copy(isManualRefreshingDetail = false) }
+                    _state.update {
+                        it.copy(
+                            isManualRefreshingDetail = false,
+                            chartHistoryError = true,
+                            lastUpdatedDetailMs = null,
+                        )
+                    }
                     _events.send(CoinListEvent.Error(networkError))
                 }
         }
@@ -271,7 +281,7 @@ class CoinListViewModel(
     @OptIn(ExperimentalTime::class)
     private fun loadChartData(coinId: String) {
         val timeframe = _state.value.selectedTimeframe
-        _state.update { it.copy(isLoadingCoinHistory = true) }
+        _state.update { it.copy(isLoadingCoinHistory = true, chartHistoryError = false) }
         viewModelScope.launch {
             val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             val (start, end, interval) = timeframe.toApiParams(now)
@@ -292,7 +302,13 @@ class CoinListViewModel(
                         )
                     }
                 }.onError { networkError ->
-                    _state.update { it.copy(isLoadingCoinHistory = false) }
+                    _state.update {
+                        it.copy(
+                            isLoadingCoinHistory = false,
+                            chartHistoryError = true,
+                            lastUpdatedDetailMs = null,
+                        )
+                    }
                     _events.send(CoinListEvent.Error(networkError))
                 }
         }

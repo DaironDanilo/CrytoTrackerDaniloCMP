@@ -23,6 +23,8 @@ sealed interface CoinListAction {
         val timeframe: ChartTimeframe,
     ) : CoinListAction
 
+    data object OnRetryChartLoad : CoinListAction
+
     data object OnRetryMarkets : CoinListAction
 
     data class OnSearchQueryChange(

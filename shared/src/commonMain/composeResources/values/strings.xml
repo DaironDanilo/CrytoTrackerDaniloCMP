@@ -24,6 +24,7 @@
     <string name="markets_retry">Retry</string>
     <string name="markets_empty">NO MARKETS FOUND</string>
     <string name="retry">Retry</string>
+    <string name="chart_load_error">Something went wrong</string>
     <string name="coin_list_error">Could not load coins. Please try again.</string>
     <string name="coins_all_loaded">All coins loaded</string>
     <string name="load_more">Load more</string>

@@ -29,4 +29,5 @@ data class CoinListState(
     val lastUpdatedMs: Long? = null,
     val lastUpdatedDetailMs: Long? = null,
     val isManualRefreshingDetail: Boolean = false,
+    val chartHistoryError: Boolean = false,
 )
