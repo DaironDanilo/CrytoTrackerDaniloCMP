@@ -38,6 +38,7 @@ fun InfoCard(
     icon: DrawableResource,
     modifier: Modifier = Modifier,
     contentColor: Color = CryptoTrackerTheme.colors.onSurface,
+    accentColor: Color = CryptoTrackerTheme.colors.primary,
     formattedTextStyle: TextStyle =
         LocalTextStyle.current.copy(
             color = contentColor,
@@ -52,11 +53,11 @@ fun InfoCard(
                 .shadow(
                     elevation = CryptoTrackerTheme.sizing.cardElevation,
                     shape = RectangleShape,
-                    ambientColor = CryptoTrackerTheme.colors.primary,
-                    spotColor = CryptoTrackerTheme.colors.primary,
+                    ambientColor = accentColor,
+                    spotColor = accentColor,
                 ),
         shape = RectangleShape,
-        border = BorderStroke(CryptoTrackerTheme.sizing.borderThin, CryptoTrackerTheme.colors.primary),
+        border = BorderStroke(CryptoTrackerTheme.sizing.borderThin, accentColor),
         colors =
             CardDefaults.cardColors(
                 containerColor = CryptoTrackerTheme.colors.surfaceContainer,

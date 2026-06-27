@@ -250,6 +250,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                     Res.drawable.trending_down
                 },
             contentColor = contentColorInfoCard,
+            accentColor = if (isPositiveChange) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.error,
         )
     }
     Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.medium))
@@ -372,6 +373,15 @@ private fun DetailTabContent(
                         )
                     }
                 }
+                // Same condition as the "Change last 24h" card: positive when > 0, flat/down otherwise.
+                // This keeps the chart color and the card color in guaranteed sync.
+                val isPositiveChange = (state.selectedCoinUi?.changePercent24Hr?.value ?: 0.0) > 0.0
+                val chartLineColor =
+                    if (isPositiveChange) {
+                        CryptoTrackerTheme.colors.primary
+                    } else {
+                        CryptoTrackerTheme.colors.error
+                    }
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     androidx.compose.animation.AnimatedVisibility(
                         visible = coinPriceHistory.isNotEmpty(),
@@ -385,9 +395,9 @@ private fun DetailTabContent(
                             dataPoints = coinPriceHistory,
                             style =
                                 ChartStyle(
-                                    charLineColor = CryptoTrackerTheme.colors.primary,
+                                    charLineColor = chartLineColor,
                                     unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
-                                    selectedColor = CryptoTrackerTheme.colors.primary,
+                                    selectedColor = chartLineColor,
                                     helperLinesThicknessPx = 5f,
                                     axisLinesThicknessPx = 5f,
                                     labelFontSize = 14.sp,
