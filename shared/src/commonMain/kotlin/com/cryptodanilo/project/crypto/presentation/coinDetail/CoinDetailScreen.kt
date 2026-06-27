@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -305,26 +306,72 @@ private fun DetailTabContent(
     when (state.selectedDetailTab) {
         DetailTab.Chart -> {
             Column(modifier = remainingSpaceModifier) {
-                state.lastUpdatedDetailMs?.let { updatedAt ->
-                    LastUpdatedRow(
-                        updatedAt = updatedAt,
-                        isLoading = state.isManualRefreshingDetail,
-                        onRefresh = { onAction(CoinListAction.OnDetailManualRefresh) },
+                // Range chips (horizontally scrollable) + refresh button pinned to the right.
+                // Both apply to the currently-selected range only.
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    ChartTimeframeSelector(
+                        selectedTimeframe = state.selectedTimeframe,
+                        onTimeframeSelected = { onAction(CoinListAction.OnTimeframeSelected(it)) },
+                        modifier = Modifier.weight(1f),
+                    )
+                    Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
+                    val buttonShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerMedium)
+                    Box(
                         modifier =
                             Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = CryptoTrackerTheme.spacing.medium,
+                                .size(CryptoTrackerTheme.sizing.iconLarge)
+                                .background(
+                                    color = CryptoTrackerTheme.colors.surfaceContainerHighest,
+                                    shape = buttonShape,
+                                ).border(
+                                    width = CryptoTrackerTheme.sizing.borderThin,
+                                    color = CryptoTrackerTheme.colors.primary.copy(alpha = 0.35f),
+                                    shape = buttonShape,
+                                ).clickable(enabled = !state.isManualRefreshingDetail) {
+                                    onAction(CoinListAction.OnDetailManualRefresh)
+                                },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (state.isManualRefreshingDetail) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
+                                color = CryptoTrackerTheme.colors.primary,
+                                strokeWidth = CryptoTrackerTheme.sizing.borderThin,
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = null,
+                                tint = CryptoTrackerTheme.colors.primary,
+                                modifier = Modifier.size(CryptoTrackerTheme.sizing.iconMedium),
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+                // Freshness badge — right-aligned caption directly above the chart.
+                // Shown only once a range has been fetched; reflects the selected range's timestamp.
+                state.lastUpdatedDetailMs?.let { updatedAt ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        LastUpdatedRow(
+                            updatedAt = updatedAt,
+                            isLoading = state.isManualRefreshingDetail,
+                            onRefresh = { onAction(CoinListAction.OnDetailManualRefresh) },
+                            showRefreshButton = false,
+                            modifier =
+                                Modifier.padding(
+                                    horizontal = CryptoTrackerTheme.spacing.small,
                                     vertical = CryptoTrackerTheme.spacing.extraSmall,
                                 ),
-                    )
+                        )
+                    }
                 }
-                ChartTimeframeSelector(
-                    selectedTimeframe = state.selectedTimeframe,
-                    onTimeframeSelected = { onAction(CoinListAction.OnTimeframeSelected(it)) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     androidx.compose.animation.AnimatedVisibility(
                         visible = coinPriceHistory.isNotEmpty(),

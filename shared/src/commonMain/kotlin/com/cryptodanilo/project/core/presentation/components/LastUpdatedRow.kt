@@ -46,6 +46,7 @@ fun LastUpdatedRow(
     updatedAt: Long,
     isLoading: Boolean,
     onRefresh: () -> Unit,
+    showRefreshButton: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     var tick by remember { mutableStateOf(0) }
@@ -117,33 +118,35 @@ fun LastUpdatedRow(
             )
         }
 
-        Spacer(Modifier.width(CryptoTrackerTheme.spacing.small))
+        if (showRefreshButton) {
+            Spacer(Modifier.width(CryptoTrackerTheme.spacing.small))
 
-        Box(
-            modifier =
-                Modifier
-                    .size(CryptoTrackerTheme.sizing.iconLarge)
-                    .background(color = CryptoTrackerTheme.colors.surfaceContainerHighest, shape = buttonShape)
-                    .border(
-                        width = CryptoTrackerTheme.sizing.borderThin,
-                        color = primary.copy(alpha = 0.35f),
-                        shape = buttonShape,
-                    ).clickable(enabled = !isLoading, onClick = onRefresh),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
-                    color = primary,
-                    strokeWidth = CryptoTrackerTheme.sizing.borderThin,
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null,
-                    tint = primary,
-                    modifier = Modifier.size(CryptoTrackerTheme.sizing.iconMedium),
-                )
+            Box(
+                modifier =
+                    Modifier
+                        .size(CryptoTrackerTheme.sizing.iconLarge)
+                        .background(color = CryptoTrackerTheme.colors.surfaceContainerHighest, shape = buttonShape)
+                        .border(
+                            width = CryptoTrackerTheme.sizing.borderThin,
+                            color = primary.copy(alpha = 0.35f),
+                            shape = buttonShape,
+                        ).clickable(enabled = !isLoading, onClick = onRefresh),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
+                        color = primary,
+                        strokeWidth = CryptoTrackerTheme.sizing.borderThin,
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = primary,
+                        modifier = Modifier.size(CryptoTrackerTheme.sizing.iconMedium),
+                    )
+                }
             }
         }
     }
