@@ -1,0 +1,75 @@
+{
+  "timestamp": 1782691200000,
+  "data": [
+    {
+      "exchangeId": "binance",
+      "rank": "1",
+      "baseSymbol": "BTC",
+      "baseId": "bitcoin",
+      "quoteSymbol": "USDT",
+      "quoteId": "tether",
+      "priceQuote": "62000.00",
+      "priceUsd": "62000.00",
+      "volumeUsd24Hr": "1200000000.00",
+      "percentExchangeVolume": "35.50",
+      "tradesCount24Hr": 1250000,
+      "updated": 1782691200000
+    },
+    {
+      "exchangeId": "coinbase-exchange",
+      "rank": "2",
+      "baseSymbol": "BTC",
+      "baseId": "bitcoin",
+      "quoteSymbol": "USD",
+      "quoteId": "united-states-dollar",
+      "priceQuote": "61995.00",
+      "priceUsd": "61995.00",
+      "volumeUsd24Hr": "820000000.00",
+      "percentExchangeVolume": "24.20",
+      "tradesCount24Hr": 890000,
+      "updated": 1782691200000
+    },
+    {
+      "exchangeId": "kraken",
+      "rank": "3",
+      "baseSymbol": "BTC",
+      "baseId": "bitcoin",
+      "quoteSymbol": "USD",
+      "quoteId": "united-states-dollar",
+      "priceQuote": "62010.00",
+      "priceUsd": "62010.00",
+      "volumeUsd24Hr": "450000000.00",
+      "percentExchangeVolume": "13.30",
+      "tradesCount24Hr": 420000,
+      "updated": 1782691200000
+    },
+    {
+      "exchangeId": "okex",
+      "rank": "4",
+      "baseSymbol": "BTC",
+      "baseId": "bitcoin",
+      "quoteSymbol": "USDT",
+      "quoteId": "tether",
+      "priceQuote": "61998.00",
+      "priceUsd": "61998.00",
+      "volumeUsd24Hr": "310000000.00",
+      "percentExchangeVolume": "9.15",
+      "tradesCount24Hr": 295000,
+      "updated": 1782691200000
+    },
+    {
+      "exchangeId": "bybit",
+      "rank": "5",
+      "baseSymbol": "BTC",
+      "baseId": "bitcoin",
+      "quoteSymbol": "USDT",
+      "quoteId": "tether",
+      "priceQuote": "62005.00",
+      "priceUsd": "62005.00",
+      "volumeUsd24Hr": "280000000.00",
+      "percentExchangeVolume": "8.27",
+      "tradesCount24Hr": 265000,
+      "updated": 1782691200000
+    }
+  ]
+}

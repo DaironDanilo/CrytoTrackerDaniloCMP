@@ -1,0 +1,29 @@
+{
+  "data": [
+    {"id": "bitcoin",          "rank": 1,  "name": "Bitcoin",           "symbol": "BTC",  "marketCapUsd": 1220000000000.0, "priceUsd": 62000.0,    "changePercent24Hr":  2.50},
+    {"id": "ethereum",         "rank": 2,  "name": "Ethereum",          "symbol": "ETH",  "marketCapUsd":  298000000000.0, "priceUsd":  2480.0,    "changePercent24Hr": -1.20},
+    {"id": "tether",           "rank": 3,  "name": "Tether",            "symbol": "USDT", "marketCapUsd":  110000000000.0, "priceUsd":     1.0,    "changePercent24Hr":  0.01},
+    {"id": "bnb",              "rank": 4,  "name": "BNB",               "symbol": "BNB",  "marketCapUsd":   85000000000.0, "priceUsd":   590.0,    "changePercent24Hr":  0.80},
+    {"id": "solana",           "rank": 5,  "name": "Solana",            "symbol": "SOL",  "marketCapUsd":   72000000000.0, "priceUsd":   153.0,    "changePercent24Hr":  3.10},
+    {"id": "usd-coin",         "rank": 6,  "name": "USD Coin",          "symbol": "USDC", "marketCapUsd":   44000000000.0, "priceUsd":     1.0,    "changePercent24Hr":  0.00},
+    {"id": "xrp",              "rank": 7,  "name": "XRP",               "symbol": "XRP",  "marketCapUsd":   37000000000.0, "priceUsd":     0.64,   "changePercent24Hr": -0.50},
+    {"id": "dogecoin",         "rank": 8,  "name": "Dogecoin",          "symbol": "DOGE", "marketCapUsd":   22000000000.0, "priceUsd":     0.15,   "changePercent24Hr":  1.80},
+    {"id": "toncoin",          "rank": 9,  "name": "Toncoin",           "symbol": "TON",  "marketCapUsd":   18000000000.0, "priceUsd":     4.50,   "changePercent24Hr": -2.10},
+    {"id": "cardano",          "rank": 10, "name": "Cardano",           "symbol": "ADA",  "marketCapUsd":   16000000000.0, "priceUsd":     0.46,   "changePercent24Hr":  0.30},
+    {"id": "avalanche",        "rank": 11, "name": "Avalanche",         "symbol": "AVAX", "marketCapUsd":   14000000000.0, "priceUsd":    35.0,    "changePercent24Hr": -1.50},
+    {"id": "shiba-inu",        "rank": 12, "name": "Shiba Inu",         "symbol": "SHIB", "marketCapUsd":   12000000000.0, "priceUsd":     0.0000087, "changePercent24Hr": 2.20},
+    {"id": "polkadot",         "rank": 13, "name": "Polkadot",          "symbol": "DOT",  "marketCapUsd":   11000000000.0, "priceUsd":     7.50,   "changePercent24Hr": -0.90},
+    {"id": "chainlink",        "rank": 14, "name": "Chainlink",         "symbol": "LINK", "marketCapUsd":    9500000000.0, "priceUsd":    14.20,   "changePercent24Hr":  1.10},
+    {"id": "litecoin",         "rank": 15, "name": "Litecoin",          "symbol": "LTC",  "marketCapUsd":    8500000000.0, "priceUsd":   120.0,    "changePercent24Hr": -0.70},
+    {"id": "bitcoin-cash",     "rank": 16, "name": "Bitcoin Cash",      "symbol": "BCH",  "marketCapUsd":    7800000000.0, "priceUsd":   400.0,    "changePercent24Hr":  1.40},
+    {"id": "uniswap",          "rank": 17, "name": "Uniswap",           "symbol": "UNI",  "marketCapUsd":    7200000000.0, "priceUsd":     8.80,   "changePercent24Hr": -1.80},
+    {"id": "polygon",          "rank": 18, "name": "Polygon",           "symbol": "MATIC","marketCapUsd":    6500000000.0, "priceUsd":     0.72,   "changePercent24Hr":  0.60},
+    {"id": "dai",              "rank": 19, "name": "Dai",               "symbol": "DAI",  "marketCapUsd":    5200000000.0, "priceUsd":     1.00,   "changePercent24Hr":  0.02},
+    {"id": "near-protocol",    "rank": 20, "name": "NEAR Protocol",     "symbol": "NEAR", "marketCapUsd":    4800000000.0, "priceUsd":     5.10,   "changePercent24Hr": -2.30},
+    {"id": "internet-computer","rank": 21, "name": "Internet Computer", "symbol": "ICP",  "marketCapUsd":    4100000000.0, "priceUsd":    13.00,   "changePercent24Hr":  1.90},
+    {"id": "monero",           "rank": 22, "name": "Monero",            "symbol": "XMR",  "marketCapUsd":    3700000000.0, "priceUsd":   195.0,    "changePercent24Hr": -0.40},
+    {"id": "cosmos",           "rank": 23, "name": "Cosmos",            "symbol": "ATOM", "marketCapUsd":    3200000000.0, "priceUsd":     8.20,   "changePercent24Hr":  0.70},
+    {"id": "ethereum-classic", "rank": 24, "name": "Ethereum Classic",  "symbol": "ETC",  "marketCapUsd":    2900000000.0, "priceUsd":    28.0,    "changePercent24Hr": -1.10},
+    {"id": "stellar",          "rank": 25, "name": "Stellar",           "symbol": "XLM",  "marketCapUsd":    2600000000.0, "priceUsd":     0.11,   "changePercent24Hr":  0.50}
+  ]
+}

@@ -127,7 +127,17 @@ COIN_API_KEY=your_api_key_here
 
 The key is injected at build time via [BuildKonfig](https://github.com/yshrsmz/BuildKonfig) and is accessed inside the app as `BuildKonfig.COIN_API_KEY`. Without this file the build will fail.
 
-### 4. Configure Android SDK path (first-time only)
+### 4. Enable mock data (optional, local dev only)
+
+To develop without consuming real API quota, add this line to `local.properties` (already git-ignored):
+
+```properties
+useMock=true
+```
+
+A "MOCK DATA" banner will appear in the UI. Release builds always ignore this flag. You can also pass `-PuseMock=true` as a Gradle argument. Remove the line (or set it to `false`) to restore real API calls.
+
+### 5. Configure Android SDK path (first-time only)
 
 Android Studio usually creates `local.properties` automatically. If it is missing, create it in the project root:
 

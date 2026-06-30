@@ -1,6 +1,8 @@
 package com.cryptodanilo.project.di
 
+import com.cryptodanilo.project.BuildKonfig
 import com.cryptodanilo.project.core.data.networking.HttpClientFactory
+import com.cryptodanilo.project.crypto.data.networking.MockCoinDataSource
 import com.cryptodanilo.project.crypto.data.networking.RemoteCoinDataSource
 import com.cryptodanilo.project.crypto.domain.CoinDataSource
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListViewModel
@@ -15,6 +17,10 @@ expect val platformModule: Module
 val sharedModule =
     module {
         single { HttpClientFactory.create(get()) }
-        singleOf(::RemoteCoinDataSource).bind<CoinDataSource>()
+        if (BuildKonfig.USE_MOCK_DATA) {
+            single<CoinDataSource> { MockCoinDataSource() }
+        } else {
+            singleOf(::RemoteCoinDataSource).bind<CoinDataSource>()
+        }
         viewModelOf(::CoinListViewModel)
     }

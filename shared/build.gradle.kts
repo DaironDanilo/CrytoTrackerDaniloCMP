@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -164,5 +165,19 @@ buildkonfig {
                 config.value.toString(),
             )
         }
+
+        // Release task names force-false regardless of any local override.
+        val isReleaseBuild =
+            gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }
+        val useMock =
+            if (isReleaseBuild) {
+                false
+            } else {
+                val localProps = readProperties("local.properties")
+                val fromProps = localProps.getProperty("useMock")
+                val fromGradle = project.findProperty("useMock")?.toString()
+                (fromProps ?: fromGradle ?: "false").toBoolean()
+            }
+        buildConfigField(BOOLEAN, "USE_MOCK_DATA", useMock.toString())
     }
 }
