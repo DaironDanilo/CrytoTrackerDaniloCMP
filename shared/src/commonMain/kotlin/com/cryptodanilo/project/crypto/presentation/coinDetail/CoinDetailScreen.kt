@@ -247,8 +247,12 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
             icon = Res.drawable.dollar,
         )
         // Null while loading or when the range fetch failed, to avoid stale values bleeding through.
+        val chartDataReady =
+            !state.isLoadingCoinHistory &&
+                !state.isRetryingChartFromError &&
+                !state.chartHistoryError
         val firstPrice: Double? =
-            if (!state.isLoadingCoinHistory && !state.chartHistoryError) {
+            if (chartDataReady) {
                 coin.coinPriceHistory
                     .firstOrNull()
                     ?.y
@@ -257,7 +261,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                 null
             }
         val lastPrice: Double? =
-            if (!state.isLoadingCoinHistory && !state.chartHistoryError) {
+            if (chartDataReady) {
                 coin.coinPriceHistory
                     .lastOrNull()
                     ?.y
@@ -274,6 +278,7 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
         val rangeChangePercent: Double? =
             when {
                 state.isLoadingCoinHistory -> null
+                state.isRetryingChartFromError -> null
                 state.chartHistoryError -> null
                 state.selectedTimeframe == ChartTimeframe.ONE_DAY -> coin.changePercent24Hr.value
                 rangeChangeValue != null && firstPrice != null && firstPrice != 0.0 ->
@@ -396,6 +401,10 @@ private fun DetailTabContent(
                         modifier = Modifier.weight(1f),
                     )
                     Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
+                    val retryExhausted =
+                        state.chartHistoryError &&
+                            (state.chartRetryCount[state.selectedTimeframe] ?: 0) >= 2
+                    val refreshEnabled = !state.isManualRefreshingDetail && !retryExhausted
                     val buttonShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerMedium)
                     Box(
                         modifier =
@@ -406,9 +415,14 @@ private fun DetailTabContent(
                                     shape = buttonShape,
                                 ).border(
                                     width = CryptoTrackerTheme.sizing.borderThin,
-                                    color = CryptoTrackerTheme.colors.primary.copy(alpha = 0.35f),
+                                    color =
+                                        if (retryExhausted) {
+                                            CryptoTrackerTheme.colors.outlineVariant
+                                        } else {
+                                            CryptoTrackerTheme.colors.primary.copy(alpha = 0.35f)
+                                        },
                                     shape = buttonShape,
-                                ).clickable(enabled = !state.isManualRefreshingDetail) {
+                                ).clickable(enabled = refreshEnabled) {
                                     onAction(CoinListAction.OnDetailManualRefresh)
                                 },
                         contentAlignment = Alignment.Center,
@@ -423,7 +437,12 @@ private fun DetailTabContent(
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = null,
-                                tint = CryptoTrackerTheme.colors.primary,
+                                tint =
+                                    if (retryExhausted) {
+                                        CryptoTrackerTheme.colors.onSurface.copy(alpha = 0.38f)
+                                    } else {
+                                        CryptoTrackerTheme.colors.primary
+                                    },
                                 modifier = Modifier.size(CryptoTrackerTheme.sizing.iconMedium),
                             )
                         }
@@ -459,7 +478,7 @@ private fun DetailTabContent(
                 }
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     when {
-                        state.isLoadingCoinHistory -> {
+                        state.isLoadingCoinHistory || state.isRetryingChartFromError -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center,

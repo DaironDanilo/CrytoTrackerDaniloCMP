@@ -137,8 +137,21 @@ class CoinListViewModel(
     private fun detailManualRefresh() {
         val coinId = _state.value.selectedCoinUi?.id ?: return
         val timeframe = _state.value.selectedTimeframe
+        // Capture before clearing: if we were already in an error state this press is
+        // an explicit retry, so it counts against the same per-range budget as the
+        // inline Retry button.
+        val wasInErrorState = _state.value.chartHistoryError
         viewModelScope.launch {
-            _state.update { it.copy(isManualRefreshingDetail = true, chartHistoryError = false) }
+            _state.update {
+                it.copy(
+                    isManualRefreshingDetail = true,
+                    chartHistoryError = false,
+                    // Signal to the chart area to render the error-area loading spinner
+                    // (not the chart) while this retry is in-flight, preventing stale
+                    // data from a previously-loaded range from flashing through.
+                    isRetryingChartFromError = wasInErrorState,
+                )
+            }
             val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             val (start, end, interval) = timeframe.toApiParams(now)
             coinDataSource
@@ -154,16 +167,25 @@ class CoinListViewModel(
                     _state.update {
                         it.copy(
                             isManualRefreshingDetail = false,
+                            isRetryingChartFromError = false,
                             lastUpdatedDetailMs = lastCachedAt,
                             chartRetryCount = it.chartRetryCount - timeframe,
                         )
                     }
                 }.onError { networkError ->
                     _state.update {
+                        val newCount =
+                            if (wasInErrorState) {
+                                (it.chartRetryCount[timeframe] ?: 0) + 1
+                            } else {
+                                it.chartRetryCount[timeframe] ?: 0
+                            }
                         it.copy(
                             isManualRefreshingDetail = false,
+                            isRetryingChartFromError = false,
                             chartHistoryError = true,
                             lastUpdatedDetailMs = null,
+                            chartRetryCount = it.chartRetryCount + (timeframe to newCount),
                         )
                     }
                     _events.send(CoinListEvent.Error(networkError))
@@ -268,6 +290,7 @@ class CoinListViewModel(
                 marketsError = null,
                 lastUpdatedDetailMs = null,
                 isManualRefreshingDetail = false,
+                isRetryingChartFromError = false,
                 chartRetryCount = emptyMap(),
             )
         }
@@ -286,7 +309,13 @@ class CoinListViewModel(
         isRetry: Boolean = false,
     ) {
         val timeframe = _state.value.selectedTimeframe
-        _state.update { it.copy(isLoadingCoinHistory = true, chartHistoryError = false) }
+        _state.update {
+            it.copy(
+                isLoadingCoinHistory = true,
+                chartHistoryError = false,
+                isRetryingChartFromError = false,
+            )
+        }
         viewModelScope.launch {
             val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             val (start, end, interval) = timeframe.toApiParams(now)

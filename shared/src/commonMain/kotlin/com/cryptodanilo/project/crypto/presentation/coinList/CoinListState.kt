@@ -31,4 +31,8 @@ data class CoinListState(
     val isManualRefreshingDetail: Boolean = false,
     val chartHistoryError: Boolean = false,
     val chartRetryCount: Map<ChartTimeframe, Int> = emptyMap(),
+    // True only while a top-right refresh is in-flight for a range that was already
+    // in an error state. Drives the chart area's loading branch so the error-area
+    // spinner shows instead of falling through to a previously-loaded range's data.
+    val isRetryingChartFromError: Boolean = false,
 )
