@@ -71,10 +71,8 @@ import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.shared.generated.resources.Res
-import cryptotrackerdanilo.shared.generated.resources.change_all_time
 import cryptotrackerdanilo.shared.generated.resources.change_last_24h
 import cryptotrackerdanilo.shared.generated.resources.change_last_5_days
-import cryptotrackerdanilo.shared.generated.resources.change_last_5_years
 import cryptotrackerdanilo.shared.generated.resources.change_last_6_months
 import cryptotrackerdanilo.shared.generated.resources.change_last_month
 import cryptotrackerdanilo.shared.generated.resources.change_last_year
@@ -85,6 +83,7 @@ import cryptotrackerdanilo.shared.generated.resources.dollar
 import cryptotrackerdanilo.shared.generated.resources.go_back
 import cryptotrackerdanilo.shared.generated.resources.market_cap
 import cryptotrackerdanilo.shared.generated.resources.price
+import cryptotrackerdanilo.shared.generated.resources.question_sign
 import cryptotrackerdanilo.shared.generated.resources.retry
 import cryptotrackerdanilo.shared.generated.resources.stock
 import cryptotrackerdanilo.shared.generated.resources.trending
@@ -296,11 +295,28 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                     (rangeChangeValue ?: 0.0) > 0.0
                 }
 
+            // True only once a range's chart history has been successfully fetched — false
+            // during loading, error, or an error retry. Drives a neutral, non-directional
+            // treatment for the Change box so it never implies a real data point that isn't there.
+            val isChangeDataAvailable = rangeChangeValue != null
+
             val contentColorInfoCard =
-                if (isPositiveChange) {
-                    if (isSystemInDarkTheme()) Color.Green else greenBackground
-                } else {
-                    CryptoTrackerTheme.colors.error
+                when {
+                    !isChangeDataAvailable -> CryptoTrackerTheme.colors.onSurfaceVariant
+                    isPositiveChange -> if (isSystemInDarkTheme()) Color.Green else greenBackground
+                    else -> CryptoTrackerTheme.colors.error
+                }
+            val changeAccentColor =
+                when {
+                    !isChangeDataAvailable -> CryptoTrackerTheme.colors.outlineVariant
+                    isPositiveChange -> CryptoTrackerTheme.colors.primary
+                    else -> CryptoTrackerTheme.colors.error
+                }
+            val changeIcon =
+                when {
+                    !isChangeDataAvailable -> Res.drawable.question_sign
+                    isPositiveChange -> Res.drawable.trending
+                    else -> Res.drawable.trending_down
                 }
 
             // PriceChange is the shared percentage chip used by both the list badge and here.
@@ -319,21 +335,14 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                         ChartTimeframe.SIX_MONTHS -> Res.string.change_last_6_months
                         ChartTimeframe.YTD -> Res.string.change_year_to_date
                         ChartTimeframe.ONE_YEAR -> Res.string.change_last_year
-                        ChartTimeframe.FIVE_YEARS -> Res.string.change_last_5_years
-                        ChartTimeframe.ALL -> Res.string.change_all_time
                     },
                 )
             InfoCard(
                 title = changeTitle,
                 formattedValue = rangeChangeValue?.formatPriceChange() ?: "–",
-                icon =
-                    if (isPositiveChange) {
-                        Res.drawable.trending
-                    } else {
-                        Res.drawable.trending_down
-                    },
+                icon = changeIcon,
                 contentColor = contentColorInfoCard,
-                accentColor = if (isPositiveChange) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.error,
+                accentColor = changeAccentColor,
                 percentageContent = percentageChip,
             )
         }

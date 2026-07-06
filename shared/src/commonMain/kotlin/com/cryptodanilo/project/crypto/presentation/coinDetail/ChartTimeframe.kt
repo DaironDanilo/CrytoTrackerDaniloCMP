@@ -18,13 +18,10 @@ enum class ChartTimeframe(
     SIX_MONTHS("6M"),
     YTD("YTD"),
     ONE_YEAR("1Y"),
-    FIVE_YEARS("5Y"),
-    ALL("ALL"),
 }
 
-// CoinCap's /assets/{id}/history endpoint only supports these intervals — there is
-// no weekly interval, so 5Y/ALL fall back to daily and rely on x-axis label
-// thinning (see DetailTabContent) to stay readable.
+// CoinCap's /assets/{id}/history endpoint only supports these intervals, and its
+// history endpoint caps the requestable range at 1 year (5Y/ALL are not offered).
 @OptIn(ExperimentalTime::class)
 fun ChartTimeframe.toApiParams(now: LocalDateTime): Triple<LocalDateTime, LocalDateTime, String> {
     val timeZone = TimeZone.UTC
@@ -37,19 +34,13 @@ fun ChartTimeframe.toApiParams(now: LocalDateTime): Triple<LocalDateTime, LocalD
             ChartTimeframe.SIX_MONTHS -> nowInstant.minus(6, DateTimeUnit.MONTH, timeZone).toLocalDateTime(timeZone)
             ChartTimeframe.YTD -> LocalDateTime(now.year, 1, 1, 0, 0, 0)
             ChartTimeframe.ONE_YEAR -> nowInstant.minus(1, DateTimeUnit.YEAR, timeZone).toLocalDateTime(timeZone)
-            ChartTimeframe.FIVE_YEARS -> nowInstant.minus(5, DateTimeUnit.YEAR, timeZone).toLocalDateTime(timeZone)
-            // CoinCap has no data before this; the API simply returns from the
-            // coin's earliest available point.
-            ChartTimeframe.ALL -> LocalDateTime(2010, 1, 1, 0, 0, 0)
         }
     val interval =
         when (this) {
             ChartTimeframe.ONE_DAY -> "h1"
             ChartTimeframe.FIVE_DAYS -> "h2"
             ChartTimeframe.ONE_MONTH -> "h12"
-            ChartTimeframe.SIX_MONTHS, ChartTimeframe.YTD, ChartTimeframe.ONE_YEAR,
-            ChartTimeframe.FIVE_YEARS, ChartTimeframe.ALL,
-            -> "d1"
+            ChartTimeframe.SIX_MONTHS, ChartTimeframe.YTD, ChartTimeframe.ONE_YEAR -> "d1"
         }
     return Triple(start, now, interval)
 }
@@ -65,8 +56,6 @@ fun ChartTimeframe.formatXAxisLabel(dateTime: LocalDateTime): String =
             "${dateTime.month.shortName()} ${dateTime.day}"
         ChartTimeframe.ONE_YEAR ->
             "${dateTime.month.shortName()} ${dateTime.year.toString().takeLast(2)}"
-        ChartTimeframe.FIVE_YEARS, ChartTimeframe.ALL ->
-            dateTime.year.toString()
     }
 
 private fun Month.shortName(): String = name.take(3).lowercase().replaceFirstChar { it.uppercase() }

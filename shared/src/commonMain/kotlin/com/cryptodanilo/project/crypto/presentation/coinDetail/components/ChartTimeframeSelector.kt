@@ -96,7 +96,7 @@ fun ChartTimeframeSelector(
 @Composable
 private fun ChartTimeframeSelectorPreview() {
     CryptoTrackerThemeProvider(darkTheme = true) {
-        val selected = remember { ChartTimeframe.ALL }
+        val selected = remember { ChartTimeframe.ONE_YEAR }
         ChartTimeframeSelector(
             selectedTimeframe = selected,
             onTimeframeSelected = {},

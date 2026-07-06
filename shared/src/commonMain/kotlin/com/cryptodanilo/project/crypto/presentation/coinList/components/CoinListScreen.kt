@@ -1,12 +1,8 @@
 package com.cryptodanilo.project.crypto.presentation.coinList.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,17 +19,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
+import com.cryptodanilo.project.core.presentation.components.ShimmerOverlay
 import com.cryptodanilo.project.core.presentation.util.PullToRefreshWrapper
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
@@ -163,22 +154,14 @@ fun SharedTransitionScope.CoinListScreen(
                             )
                         }
                     } else {
-                        val isPreview = LocalInspectionMode.current
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            items(
-                                items = displayedCoins,
-                                // Keying on refreshKey forces every row to be treated as new after a
-                                // refresh, so the fade-in below replays even if the coin data is unchanged.
-                                key = { coin -> "${coin.id}_${state.refreshKey}" },
-                            ) { coin ->
-                                var visible by remember(coin.id, state.refreshKey) { mutableStateOf(false) }
-                                LaunchedEffect(coin.id, state.refreshKey) { visible = true }
-                                AnimatedVisibility(
-                                    visible = visible,
-                                    enter = fadeIn(animationSpec = if (isPreview) snap() else tween(300)),
-                                ) {
+                        Box {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                            ) {
+                                items(
+                                    items = displayedCoins,
+                                    key = { coin -> coin.id },
+                                ) { coin ->
                                     Column {
                                         CoinListItem(
                                             animatedPaneScope = animatedPaneScope,
@@ -191,46 +174,52 @@ fun SharedTransitionScope.CoinListScreen(
                                         HorizontalDivider()
                                     }
                                 }
-                            }
 
-                            if (state.searchQuery.isBlank()) {
-                                item {
-                                    when {
-                                        state.isLoadingMore -> {
-                                            Box(
-                                                modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                                contentAlignment = Alignment.Center,
-                                            ) {
-                                                CircularProgressIndicator()
+                                if (state.searchQuery.isBlank()) {
+                                    item {
+                                        when {
+                                            state.isLoadingMore -> {
+                                                Box(
+                                                    modifier =
+                                                        Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                                    contentAlignment = Alignment.Center,
+                                                ) {
+                                                    CircularProgressIndicator()
+                                                }
                                             }
-                                        }
 
-                                        !state.hasMoreCoins -> {
-                                            Box(
-                                                modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                                contentAlignment = Alignment.Center,
-                                            ) {
-                                                Text(
-                                                    text = stringResource(Res.string.coins_all_loaded),
-                                                    style = CryptoTrackerTheme.typography.bodySmall,
-                                                    color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                                                )
+                                            !state.hasMoreCoins -> {
+                                                Box(
+                                                    modifier =
+                                                        Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                                    contentAlignment = Alignment.Center,
+                                                ) {
+                                                    Text(
+                                                        text = stringResource(Res.string.coins_all_loaded),
+                                                        style = CryptoTrackerTheme.typography.bodySmall,
+                                                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                                                    )
+                                                }
                                             }
-                                        }
 
-                                        else -> {
-                                            Box(
-                                                modifier = Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
-                                                contentAlignment = Alignment.Center,
-                                            ) {
-                                                Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
-                                                    Text(stringResource(Res.string.load_more))
+                                            else -> {
+                                                Box(
+                                                    modifier =
+                                                        Modifier.fillMaxWidth().padding(CryptoTrackerTheme.spacing.medium),
+                                                    contentAlignment = Alignment.Center,
+                                                ) {
+                                                    Button(onClick = { onAction(CoinListAction.OnLoadMore) }) {
+                                                        Text(stringResource(Res.string.load_more))
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                            // Shimmer sweeps over the real list while a manual refresh is in
+                            // flight — rows stay exactly as they were, never re-keyed or re-animated.
+                            ShimmerOverlay(isShimmering = state.isManualRefreshing)
                         }
                     }
                 }
