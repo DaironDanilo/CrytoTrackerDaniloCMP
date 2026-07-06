@@ -28,6 +28,9 @@ data class CoinListState(
     val marketsError: UiText? = null,
     val lastUpdatedMs: Long? = null,
     val lastUpdatedDetailMs: Long? = null,
+    // Bumped on every successful refresh so the list can force a re-render/fade of each row,
+    // even when the returned coins are otherwise identical to what's already displayed.
+    val refreshKey: Int = 0,
     val isManualRefreshingDetail: Boolean = false,
     val chartHistoryError: Boolean = false,
     val chartRetryCount: Map<ChartTimeframe, Int> = emptyMap(),

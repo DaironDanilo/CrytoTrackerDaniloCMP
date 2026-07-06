@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
+import com.cryptodanilo.project.core.presentation.components.ShimmerOverlay
 import com.cryptodanilo.project.core.presentation.util.formatAbbreviatedPrice
 import com.cryptodanilo.project.core.presentation.util.formatPriceChange
 import com.cryptodanilo.project.core.presentation.util.toDisplayableNumber
@@ -232,108 +233,113 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
         }
     }
     Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.medium))
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        InfoCard(
-            title = stringResource(Res.string.market_cap),
-            formattedValue = "$ ${coin.marketCapUsd.value.formatAbbreviatedPrice()}",
-            icon = Res.drawable.stock,
-        )
-        InfoCard(
-            title = stringResource(Res.string.price),
-            formattedValue = "$ ${coin.priceUsd.value.formatAbbreviatedPrice()}",
-            icon = Res.drawable.dollar,
-        )
-        // Null while loading or when the range fetch failed, to avoid stale values bleeding through.
-        val chartDataReady =
-            !state.isLoadingCoinHistory &&
-                !state.isRetryingChartFromError &&
-                !state.chartHistoryError
-        val firstPrice: Double? =
-            if (chartDataReady) {
-                coin.coinPriceHistory
-                    .firstOrNull()
-                    ?.y
-                    ?.toDouble()
-            } else {
-                null
-            }
-        val lastPrice: Double? =
-            if (chartDataReady) {
-                coin.coinPriceHistory
-                    .lastOrNull()
-                    ?.y
-                    ?.toDouble()
-            } else {
-                null
-            }
-        val rangeChangeValue: Double? =
-            if (firstPrice != null && lastPrice != null) lastPrice - firstPrice else null
-
-        // For 1D, use the API's precomputed changePercent24Hr — the same value the list badge
-        // shows — so both places always agree on a single source of truth. For all other ranges,
-        // compute from the history series (no API equivalent).
-        val rangeChangePercent: Double? =
-            when {
-                state.isLoadingCoinHistory -> null
-                state.isRetryingChartFromError -> null
-                state.chartHistoryError -> null
-                state.selectedTimeframe == ChartTimeframe.ONE_DAY -> coin.changePercent24Hr.value
-                rangeChangeValue != null && firstPrice != null && firstPrice != 0.0 ->
-                    (rangeChangeValue / firstPrice) * 100.0
-                else -> null
-            }
-
-        // For 1D, direction also comes from changePercent24Hr so it matches the list badge.
-        val isPositiveChange =
-            if (!state.isLoadingCoinHistory && state.selectedTimeframe == ChartTimeframe.ONE_DAY) {
-                coin.changePercent24Hr.value > 0.0
-            } else {
-                (rangeChangeValue ?: 0.0) > 0.0
-            }
-
-        val contentColorInfoCard =
-            if (isPositiveChange) {
-                if (isSystemInDarkTheme()) Color.Green else greenBackground
-            } else {
-                CryptoTrackerTheme.colors.error
-            }
-
-        // PriceChange is the shared percentage chip used by both the list badge and here.
-        // toDisplayableNumber() is the single formatting path for both — ensures identical
-        // decimal places, sign handling, and rendering.
-        val percentageChip: (@Composable () -> Unit)? =
-            rangeChangePercent?.let { pct ->
-                { PriceChange(change = pct.toDisplayableNumber()) }
-            }
-        val changeTitle =
-            stringResource(
-                when (state.selectedTimeframe) {
-                    ChartTimeframe.ONE_DAY -> Res.string.change_last_24h
-                    ChartTimeframe.FIVE_DAYS -> Res.string.change_last_5_days
-                    ChartTimeframe.ONE_MONTH -> Res.string.change_last_month
-                    ChartTimeframe.SIX_MONTHS -> Res.string.change_last_6_months
-                    ChartTimeframe.YTD -> Res.string.change_year_to_date
-                    ChartTimeframe.ONE_YEAR -> Res.string.change_last_year
-                    ChartTimeframe.FIVE_YEARS -> Res.string.change_last_5_years
-                    ChartTimeframe.ALL -> Res.string.change_all_time
-                },
+    Box {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            InfoCard(
+                title = stringResource(Res.string.market_cap),
+                formattedValue = "$ ${coin.marketCapUsd.value.formatAbbreviatedPrice()}",
+                icon = Res.drawable.stock,
             )
-        InfoCard(
-            title = changeTitle,
-            formattedValue = rangeChangeValue?.formatPriceChange() ?: "–",
-            icon =
-                if (isPositiveChange) {
-                    Res.drawable.trending
+            InfoCard(
+                title = stringResource(Res.string.price),
+                formattedValue = "$ ${coin.priceUsd.value.formatAbbreviatedPrice()}",
+                icon = Res.drawable.dollar,
+            )
+            // Null while loading or when the range fetch failed, to avoid stale values bleeding through.
+            val chartDataReady =
+                !state.isLoadingCoinHistory &&
+                    !state.isRetryingChartFromError &&
+                    !state.chartHistoryError
+            val firstPrice: Double? =
+                if (chartDataReady) {
+                    coin.coinPriceHistory
+                        .firstOrNull()
+                        ?.y
+                        ?.toDouble()
                 } else {
-                    Res.drawable.trending_down
-                },
-            contentColor = contentColorInfoCard,
-            accentColor = if (isPositiveChange) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.error,
-            percentageContent = percentageChip,
-        )
+                    null
+                }
+            val lastPrice: Double? =
+                if (chartDataReady) {
+                    coin.coinPriceHistory
+                        .lastOrNull()
+                        ?.y
+                        ?.toDouble()
+                } else {
+                    null
+                }
+            val rangeChangeValue: Double? =
+                if (firstPrice != null && lastPrice != null) lastPrice - firstPrice else null
+
+            // For 1D, use the API's precomputed changePercent24Hr — the same value the list badge
+            // shows — so both places always agree on a single source of truth. For all other ranges,
+            // compute from the history series (no API equivalent).
+            val rangeChangePercent: Double? =
+                when {
+                    state.isLoadingCoinHistory -> null
+                    state.isRetryingChartFromError -> null
+                    state.chartHistoryError -> null
+                    state.selectedTimeframe == ChartTimeframe.ONE_DAY -> coin.changePercent24Hr.value
+                    rangeChangeValue != null && firstPrice != null && firstPrice != 0.0 ->
+                        (rangeChangeValue / firstPrice) * 100.0
+                    else -> null
+                }
+
+            // For 1D, direction also comes from changePercent24Hr so it matches the list badge.
+            val isPositiveChange =
+                if (!state.isLoadingCoinHistory && state.selectedTimeframe == ChartTimeframe.ONE_DAY) {
+                    coin.changePercent24Hr.value > 0.0
+                } else {
+                    (rangeChangeValue ?: 0.0) > 0.0
+                }
+
+            val contentColorInfoCard =
+                if (isPositiveChange) {
+                    if (isSystemInDarkTheme()) Color.Green else greenBackground
+                } else {
+                    CryptoTrackerTheme.colors.error
+                }
+
+            // PriceChange is the shared percentage chip used by both the list badge and here.
+            // toDisplayableNumber() is the single formatting path for both — ensures identical
+            // decimal places, sign handling, and rendering.
+            val percentageChip: (@Composable () -> Unit)? =
+                rangeChangePercent?.let { pct ->
+                    { PriceChange(change = pct.toDisplayableNumber()) }
+                }
+            val changeTitle =
+                stringResource(
+                    when (state.selectedTimeframe) {
+                        ChartTimeframe.ONE_DAY -> Res.string.change_last_24h
+                        ChartTimeframe.FIVE_DAYS -> Res.string.change_last_5_days
+                        ChartTimeframe.ONE_MONTH -> Res.string.change_last_month
+                        ChartTimeframe.SIX_MONTHS -> Res.string.change_last_6_months
+                        ChartTimeframe.YTD -> Res.string.change_year_to_date
+                        ChartTimeframe.ONE_YEAR -> Res.string.change_last_year
+                        ChartTimeframe.FIVE_YEARS -> Res.string.change_last_5_years
+                        ChartTimeframe.ALL -> Res.string.change_all_time
+                    },
+                )
+            InfoCard(
+                title = changeTitle,
+                formattedValue = rangeChangeValue?.formatPriceChange() ?: "–",
+                icon =
+                    if (isPositiveChange) {
+                        Res.drawable.trending
+                    } else {
+                        Res.drawable.trending_down
+                    },
+                contentColor = contentColorInfoCard,
+                accentColor = if (isPositiveChange) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.error,
+                percentageContent = percentageChip,
+            )
+        }
+        // Shimmer sweeps over the real stat-box values while a manual refresh is in
+        // flight — the boxes above stay exactly as they were, never replaced or hidden.
+        ShimmerOverlay(isShimmering = state.isManualRefreshingDetail)
     }
     Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.medium))
     // Chart | Markets tab switcher
@@ -528,31 +534,38 @@ private fun DetailTabContent(
                             // Full, untouched range and labels are always passed through —
                             // LineChart caps how many x-axis labels it draws internally, and
                             // the selected point's tooltip needs its real label intact.
-                            LineChart(
-                                dataPoints = coinPriceHistory,
-                                style =
-                                    ChartStyle(
-                                        charLineColor = chartLineColor,
-                                        unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
-                                        selectedColor = chartLineColor,
-                                        helperLinesThicknessPx = 5f,
-                                        axisLinesThicknessPx = 5f,
-                                        labelFontSize = 14.sp,
-                                        minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
-                                        verticalPadding = CryptoTrackerTheme.spacing.small,
-                                        horizontalPadding = CryptoTrackerTheme.spacing.small,
-                                        xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
-                                    ),
-                                visibleDataPointsIndices = coinPriceHistory.indices,
-                                unit = "$",
+                            Box(
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
                                         .fillMaxHeight()
                                         .heightIn(min = CHART_MIN_HEIGHT),
-                                selectedDataPoint = selectedDataPoint,
-                                onSelectedDataPoint = { selectedDataPoint = it },
-                            )
+                            ) {
+                                LineChart(
+                                    dataPoints = coinPriceHistory,
+                                    style =
+                                        ChartStyle(
+                                            charLineColor = chartLineColor,
+                                            unselectedColor = CryptoTrackerTheme.colors.secondary.copy(alpha = 0.3f),
+                                            selectedColor = chartLineColor,
+                                            helperLinesThicknessPx = 5f,
+                                            axisLinesThicknessPx = 5f,
+                                            labelFontSize = 14.sp,
+                                            minYLabelSpacing = CryptoTrackerTheme.sizing.chartMinYLabelSpacing,
+                                            verticalPadding = CryptoTrackerTheme.spacing.small,
+                                            horizontalPadding = CryptoTrackerTheme.spacing.small,
+                                            xAxisLabelSpacing = CryptoTrackerTheme.spacing.small,
+                                        ),
+                                    visibleDataPointsIndices = coinPriceHistory.indices,
+                                    unit = "$",
+                                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                                    selectedDataPoint = selectedDataPoint,
+                                    onSelectedDataPoint = { selectedDataPoint = it },
+                                )
+                                // Shimmer sweeps over the existing chart while a manual refresh is
+                                // in flight — the line/points above stay exactly as they were.
+                                ShimmerOverlay(isShimmering = state.isManualRefreshingDetail)
+                            }
                         }
                     }
                 }

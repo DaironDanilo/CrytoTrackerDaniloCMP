@@ -123,6 +123,7 @@ class CoinListViewModel(
                         coins = coinUis,
                         hasMoreCoins = coins.size >= PAGE_SIZE,
                         lastUpdatedMs = lastCachedAt,
+                        refreshKey = it.refreshKey + 1,
                     )
                 }
             }.onError { error ->

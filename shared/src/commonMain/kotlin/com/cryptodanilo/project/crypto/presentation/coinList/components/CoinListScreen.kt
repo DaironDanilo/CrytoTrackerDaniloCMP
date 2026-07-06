@@ -1,8 +1,12 @@
 package com.cryptodanilo.project.crypto.presentation.coinList.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +23,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
@@ -153,23 +163,33 @@ fun SharedTransitionScope.CoinListScreen(
                             )
                         }
                     } else {
+                        val isPreview = LocalInspectionMode.current
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             items(
                                 items = displayedCoins,
-                                key = { coin -> coin.id },
+                                // Keying on refreshKey forces every row to be treated as new after a
+                                // refresh, so the fade-in below replays even if the coin data is unchanged.
+                                key = { coin -> "${coin.id}_${state.refreshKey}" },
                             ) { coin ->
-                                Column {
-                                    CoinListItem(
-                                        animatedPaneScope = animatedPaneScope,
-                                        coin = coin,
-                                        isSelected = coin.id == state.selectedCoinUi?.id,
-                                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                                        onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
-                                        modifier = Modifier.fillMaxWidth(),
-                                    )
-                                    HorizontalDivider()
+                                var visible by remember(coin.id, state.refreshKey) { mutableStateOf(false) }
+                                LaunchedEffect(coin.id, state.refreshKey) { visible = true }
+                                AnimatedVisibility(
+                                    visible = visible,
+                                    enter = fadeIn(animationSpec = if (isPreview) snap() else tween(300)),
+                                ) {
+                                    Column {
+                                        CoinListItem(
+                                            animatedPaneScope = animatedPaneScope,
+                                            coin = coin,
+                                            isSelected = coin.id == state.selectedCoinUi?.id,
+                                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                                            onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                        HorizontalDivider()
+                                    }
                                 }
                             }
 

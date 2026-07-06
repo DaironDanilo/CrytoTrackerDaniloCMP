@@ -1,8 +1,12 @@
 package com.cryptodanilo.project.core.presentation.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,10 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import com.cryptodanilo.project.core.util.MILLIS_PER_HOUR
 import com.cryptodanilo.project.core.util.MILLIS_PER_MINUTE
 import com.cryptodanilo.project.core.util.getCurrentTimeMs
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
+import com.cryptodanilo.project.ui.theme.greenBackground
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.updated_hours_ago
 import cryptotrackerdanilo.shared.generated.resources.updated_just_now
@@ -40,6 +47,7 @@ import kotlin.time.Duration.Companion.milliseconds
 internal const val MIN_TICKER_DELAY_MS = 100L
 internal const val FRESH_THRESHOLD_MS = 5 * MILLIS_PER_MINUTE
 internal const val STALE_THRESHOLD_MS = 10 * MILLIS_PER_MINUTE
+internal const val JUST_UPDATED_FLASH_MS = 2000L
 
 @Composable
 fun LastUpdatedRow(
@@ -65,7 +73,7 @@ fun LastUpdatedRow(
     }
 
     val diffMs = remember(tick, updatedAt) { getCurrentTimeMs() - updatedAt }
-    val labelText =
+    val elapsedLabelText =
         when {
             diffMs < MILLIS_PER_MINUTE -> stringResource(Res.string.updated_just_now)
             diffMs < MILLIS_PER_HOUR -> stringResource(Res.string.updated_minutes_ago, diffMs / MILLIS_PER_MINUTE)
@@ -81,6 +89,26 @@ fun LastUpdatedRow(
             diffMs < STALE_THRESHOLD_MS -> tertiary
             else -> error
         }
+
+    // Brief green flash on the label right after a refresh completes, separate from the
+    // elapsed-time-based "just now" text above, which can stay true for up to a minute.
+    val isPreview = LocalInspectionMode.current
+    var showJustUpdated by remember { mutableStateOf(false) }
+    var wasLoading by remember { mutableStateOf(isLoading) }
+    LaunchedEffect(isLoading) {
+        if (wasLoading && !isLoading) {
+            showJustUpdated = true
+            delay(JUST_UPDATED_FLASH_MS.milliseconds)
+            showJustUpdated = false
+        }
+        wasLoading = isLoading
+    }
+    val labelText = if (showJustUpdated) stringResource(Res.string.updated_just_now) else elapsedLabelText
+    val justUpdatedColor = if (isSystemInDarkTheme()) Color.Green else greenBackground
+    val labelColor by animateColorAsState(
+        targetValue = if (showJustUpdated) justUpdatedColor else CryptoTrackerTheme.colors.onSurface,
+        animationSpec = if (isPreview) snap() else tween(300),
+    )
 
     val pillShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerFull)
     val buttonShape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerMedium)
@@ -114,7 +142,7 @@ fun LastUpdatedRow(
             Text(
                 text = labelText,
                 style = CryptoTrackerTheme.typography.bodySmall,
-                color = CryptoTrackerTheme.colors.onSurface,
+                color = labelColor,
             )
         }
 
