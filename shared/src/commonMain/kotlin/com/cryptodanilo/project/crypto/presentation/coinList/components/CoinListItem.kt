@@ -5,15 +5,17 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.sp
@@ -60,58 +63,85 @@ fun SharedTransitionScope.CoinListItem(
                 .then(
                     if (isSelected) {
                         Modifier
-                            .background(CryptoTrackerTheme.colors.surfaceVariant)
+                            .background(CryptoTrackerTheme.colors.surfaceVariant.copy(alpha = 0.5f))
                             .clip(RoundedCornerShape(CryptoTrackerTheme.spacing.small))
                     } else {
                         Modifier
                     },
                 ).clickable { onItemClick() }
-                .padding(CryptoTrackerTheme.spacing.medium),
+                .padding(
+                    horizontal = CryptoTrackerTheme.spacing.medium,
+                    vertical = CryptoTrackerTheme.spacing.medium,
+                ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.medium),
     ) {
-        Icon(
-            painter = painterResource(coin.iconRes),
-            contentDescription = coin.name,
-            tint = CryptoTrackerTheme.colors.primary,
-            modifier =
-                Modifier
-                    .size(CryptoTrackerTheme.sizing.coinIconListSize)
-                    .conditional(
-                        condition = shouldExistSharedElementTransition && animatedPaneScope != null,
-                        ifTrue = {
-                            sharedElement(
-                                sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                animatedVisibilityScope = animatedPaneScope!!,
-                                boundsTransform = { _, _ ->
-                                    tween(durationMillis = 1000)
+        Row(
+            modifier = Modifier.weight(ASSET_COLUMN_WEIGHT),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(CryptoTrackerTheme.sizing.coinIconListSize)
+                        .border(
+                            width = CryptoTrackerTheme.sizing.borderThin,
+                            color = CryptoTrackerTheme.colors.primary.copy(alpha = 0.5f),
+                            shape = CircleShape,
+                        ).padding(CryptoTrackerTheme.sizing.coinIconListBorderPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(coin.iconRes),
+                    contentDescription = null,
+                    tint = CryptoTrackerTheme.colors.primary,
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .conditional(
+                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                                ifTrue = {
+                                    sharedElement(
+                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                        animatedVisibilityScope = animatedPaneScope!!,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = 1000)
+                                        },
+                                    )
                                 },
-                            )
-                        },
-                    ),
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = coin.symbol,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = contentColor,
-            )
-            Text(
-                text = coin.name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Light,
-                color = contentColor,
-            )
+                            ),
+                )
+            }
+            Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
+            Column {
+                Text(
+                    text = coin.symbol,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = contentColor,
+                    style = CryptoTrackerTheme.typography.bodyMedium,
+                )
+                Text(
+                    text = coin.name,
+                    fontSize = 12.sp,
+                    color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                    style = CryptoTrackerTheme.typography.bodySmall,
+                )
+            }
         }
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = "$ ${coin.priceUsd.value.formatFullPrice()}",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = contentColor,
-            )
-            Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
+
+        Text(
+            text = "$ ${coin.priceUsd.value.formatFullPrice()}",
+            modifier = Modifier.weight(PRICE_COLUMN_WEIGHT),
+            fontWeight = FontWeight.SemiBold,
+            color = contentColor,
+            textAlign = TextAlign.Start,
+            style = CryptoTrackerTheme.typography.bodyMedium,
+        )
+
+        Box(
+            modifier = Modifier.weight(CHANGE_COLUMN_WEIGHT),
+            contentAlignment = Alignment.CenterStart,
+        ) {
             PriceChange(
                 change = coin.changePercent24Hr,
                 modifier =
