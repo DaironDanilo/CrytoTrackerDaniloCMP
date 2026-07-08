@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
@@ -27,43 +27,45 @@ fun PriceChange(
     modifier: Modifier = Modifier,
 ) {
     val contentColor =
-        if (change.value < 0.0) {
-            CryptoTrackerTheme.colors.error
-        } else {
-            CryptoTrackerTheme.colors.primary
+        when {
+            change.value > 0.0 -> CryptoTrackerTheme.colors.primary
+            change.value < 0.0 -> CryptoTrackerTheme.colors.error
+            else -> CryptoTrackerTheme.colors.onSurfaceVariant
         }
-    val backgroundColor =
-        if (change.value < 0.0) {
-            CryptoTrackerTheme.colors.error.copy(alpha = 0.1f)
-        } else {
-            CryptoTrackerTheme.colors.primary.copy(alpha = 0.1f)
-        }
+    val backgroundColor = contentColor.copy(alpha = 0.15f)
+
+    val prefix = if (change.value > 0.0) "+" else ""
+
     Row(
         modifier =
             modifier
-                .clip(RoundedCornerShape(100))
+                .clip(CircleShape)
                 .background(backgroundColor)
                 .padding(
                     horizontal = CryptoTrackerTheme.spacing.small,
                     vertical = CryptoTrackerTheme.spacing.extraSmall,
                 ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
+        horizontalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            imageVector = Icons.Default.ArrowDropDown,
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .size(CryptoTrackerTheme.sizing.priceChangeIconSize)
-                    .rotate(if (change.value < 0.0) 0f else 180f),
-            tint = contentColor,
-        )
+        if (change.value != 0.0) {
+            // A single triangle icon rotated 180° for "up" — unicode arrow glyphs
+            // don't render reliably on the web target.
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = null,
+                tint = contentColor,
+                modifier =
+                    Modifier
+                        .size(CryptoTrackerTheme.sizing.priceChangeIconSize)
+                        .rotate(if (change.value > 0.0) 180f else 0f),
+            )
+        }
         Text(
-            text = "${change.formatted}%",
+            text = "$prefix${change.formatted}%",
             color = contentColor,
+            style = CryptoTrackerTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            style = CryptoTrackerTheme.typography.bodySmall,
         )
     }
 }

@@ -17,6 +17,7 @@ data class CoinUi(
     val changePercent24Hr: DisplayableNumber,
     val iconRes: DrawableResource,
     val coinPriceHistory: List<DataPoint> = emptyList(),
+    val trendPoints: List<Double> = emptyList(),
 )
 
 fun Coin.toCoinUi(): CoinUi =

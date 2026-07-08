@@ -12,11 +12,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
@@ -25,19 +29,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
 import com.cryptodanilo.project.core.presentation.components.ShimmerOverlay
 import com.cryptodanilo.project.core.presentation.util.PullToRefreshWrapper
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.ASSET_COLUMN_WEIGHT
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.CHANGE_COLUMN_WEIGHT
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.PRICE_COLUMN_WEIGHT
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.TREND_COLUMN_WEIGHT
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.coin_list_error
 import cryptotrackerdanilo.shared.generated.resources.coin_list_header_asset
-import cryptotrackerdanilo.shared.generated.resources.coin_list_header_change_24h
+import cryptotrackerdanilo.shared.generated.resources.coin_list_header_change_pct
 import cryptotrackerdanilo.shared.generated.resources.coin_list_header_price
+import cryptotrackerdanilo.shared.generated.resources.coin_list_header_trend
 import cryptotrackerdanilo.shared.generated.resources.coins_all_loaded
 import cryptotrackerdanilo.shared.generated.resources.load_more
 import cryptotrackerdanilo.shared.generated.resources.retry
@@ -45,10 +54,6 @@ import cryptotrackerdanilo.shared.generated.resources.search_no_results_hint
 import cryptotrackerdanilo.shared.generated.resources.search_no_results_title
 import cryptotrackerdanilo.shared.generated.resources.search_results_count
 import org.jetbrains.compose.resources.stringResource
-
-const val ASSET_COLUMN_WEIGHT = 0.42f
-const val PRICE_COLUMN_WEIGHT = 0.35f
-const val CHANGE_COLUMN_WEIGHT = 0.23f
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -173,7 +178,10 @@ fun SharedTransitionScope.CoinListScreen(
                     } else {
                         Box {
                             LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = CryptoTrackerTheme.spacing.medium),
                             ) {
                                 items(
                                     items = displayedCoins,
@@ -188,10 +196,10 @@ fun SharedTransitionScope.CoinListScreen(
                                             onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
                                             modifier = Modifier.fillMaxWidth(),
                                         )
-                                        HorizontalDivider(
-                                            modifier = Modifier.padding(horizontal = CryptoTrackerTheme.spacing.medium),
-                                            color = CryptoTrackerTheme.colors.outlineVariant,
-                                        )
+//                                        HorizontalDivider(
+//                                            modifier = Modifier.padding(horizontal = CryptoTrackerTheme.spacing.medium),
+//                                            color = CryptoTrackerTheme.colors.outlineVariant,
+//                                        )
                                     }
                                 }
 
@@ -250,53 +258,63 @@ fun SharedTransitionScope.CoinListScreen(
 
 @Composable
 private fun CoinListHeader(modifier: Modifier = Modifier) {
+    val headerStyle =
+        CryptoTrackerTheme.typography.labelSmall.copy(
+            fontWeight = FontWeight.Bold,
+            color = CryptoTrackerTheme.colors.onSurfaceVariant,
+        )
+
     Column(modifier = modifier) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(vertical = CryptoTrackerTheme.spacing.extraSmall),
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(Res.string.coin_list_header_asset),
+                text = stringResource(Res.string.coin_list_header_asset).uppercase(),
                 modifier = Modifier.weight(ASSET_COLUMN_WEIGHT),
-                style =
-                    CryptoTrackerTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                    ),
+                style = headerStyle,
                 textAlign = TextAlign.Start,
             )
-            Text(
-                text = stringResource(Res.string.coin_list_header_price),
+
+            Row(
                 modifier = Modifier.weight(PRICE_COLUMN_WEIGHT),
-                style =
-                    CryptoTrackerTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                    ),
-                textAlign = TextAlign.Start,
-            )
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(Res.string.coin_list_header_price).uppercase(),
+                    style = headerStyle,
+                )
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    tint = CryptoTrackerTheme.colors.primary,
+                    modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
+                )
+            }
+
             Text(
-                text = stringResource(Res.string.coin_list_header_change_24h),
+                text = stringResource(Res.string.coin_list_header_trend).uppercase(),
+                modifier = Modifier.weight(TREND_COLUMN_WEIGHT),
+                style = headerStyle,
+                textAlign = TextAlign.Center,
+            )
+
+            Text(
+                text = stringResource(Res.string.coin_list_header_change_pct).uppercase(),
                 modifier = Modifier.weight(CHANGE_COLUMN_WEIGHT),
-                style =
-                    CryptoTrackerTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp,
-                        color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                        lineHeight = 14.sp,
-                    ),
-                textAlign = TextAlign.Start,
+                style = headerStyle,
+                textAlign = TextAlign.End,
             )
         }
         HorizontalDivider(
-            modifier = Modifier.padding(top = CryptoTrackerTheme.spacing.extraSmall),
-            color = CryptoTrackerTheme.colors.outlineVariant,
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 0.5.dp,
+            color = CryptoTrackerTheme.colors.onSurfaceVariant.copy(alpha = 0.12f),
         )
+        Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.extraSmall))
     }
 }
 

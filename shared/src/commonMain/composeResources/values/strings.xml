@@ -41,5 +41,6 @@
     <string name="dismiss">Dismiss</string>
     <string name="coin_list_header_asset">ASSET</string>
     <string name="coin_list_header_price">PRICE</string>
-    <string name="coin_list_header_change_24h">CHANGE (24H)</string>
+    <string name="coin_list_header_trend">TREND (24H)</string>
+    <string name="coin_list_header_change_pct">CHANGE</string>
 </resources>

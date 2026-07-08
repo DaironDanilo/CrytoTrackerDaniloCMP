@@ -85,6 +85,11 @@ private fun Double.toCommaFormattedString(decimals: Int): String {
     }
 }
 
+fun Double.formatCoinListPrice(): String {
+    val decimals = if (this >= 100.0) 2 else 4
+    return "$ ${toCommaFormattedString(decimals)}"
+}
+
 // Always shows the full number with thousand separators — used for the coin list,
 // where prices must never be abbreviated. Small altcoin prices need more decimal
 // places than whole-dollar prices to remain meaningful (e.g. 0.000142).

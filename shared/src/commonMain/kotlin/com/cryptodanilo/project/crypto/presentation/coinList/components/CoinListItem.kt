@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -29,16 +31,23 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
-import com.cryptodanilo.project.core.presentation.util.formatFullPrice
+import com.cryptodanilo.project.core.presentation.util.formatCoinListPrice
 import com.cryptodanilo.project.crypto.domain.Coin
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.ASSET_COLUMN_WEIGHT
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.CHANGE_COLUMN_WEIGHT
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.PRICE_COLUMN_WEIGHT
+import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.TREND_COLUMN_WEIGHT
 import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 import com.cryptodanilo.project.crypto.presentation.models.toCoinUi
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
+import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.question_sign
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -60,17 +69,15 @@ fun SharedTransitionScope.CoinListItem(
     Row(
         modifier =
             modifier
+                .clip(RoundedCornerShape(CryptoTrackerTheme.spacing.small))
                 .then(
                     if (isSelected) {
-                        Modifier
-                            .background(CryptoTrackerTheme.colors.surfaceVariant.copy(alpha = 0.5f))
-                            .clip(RoundedCornerShape(CryptoTrackerTheme.spacing.small))
+                        Modifier.background(CryptoTrackerTheme.colors.surfaceVariant.copy(alpha = 0.3f))
                     } else {
                         Modifier
                     },
                 ).clickable { onItemClick() }
                 .padding(
-                    horizontal = CryptoTrackerTheme.spacing.medium,
                     vertical = CryptoTrackerTheme.spacing.medium,
                 ),
         verticalAlignment = Alignment.CenterVertically,
@@ -84,63 +91,84 @@ fun SharedTransitionScope.CoinListItem(
                     Modifier
                         .size(CryptoTrackerTheme.sizing.coinIconListSize)
                         .border(
-                            width = CryptoTrackerTheme.sizing.borderThin,
-                            color = CryptoTrackerTheme.colors.primary.copy(alpha = 0.5f),
+                            width = 1.dp,
+                            color = CryptoTrackerTheme.colors.primary,
                             shape = CircleShape,
-                        ).padding(CryptoTrackerTheme.sizing.coinIconListBorderPadding),
+                        ),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    painter = painterResource(coin.iconRes),
-                    contentDescription = null,
-                    tint = CryptoTrackerTheme.colors.primary,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .conditional(
-                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
-                                ifTrue = {
-                                    sharedElement(
-                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                        animatedVisibilityScope = animatedPaneScope!!,
-                                        boundsTransform = { _, _ ->
-                                            tween(durationMillis = 1000)
-                                        },
-                                    )
-                                },
-                            ),
-                )
+                if (coin.iconRes == Res.drawable.question_sign) {
+                    Text(
+                        text = coin.symbol.take(1).uppercase(),
+                        color = CryptoTrackerTheme.colors.primary,
+                        style = CryptoTrackerTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(coin.iconRes),
+                        contentDescription = null,
+                        tint = CryptoTrackerTheme.colors.primary,
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .conditional(
+                                    condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                                    ifTrue = {
+                                        sharedElement(
+                                            sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                            animatedVisibilityScope = animatedPaneScope!!,
+                                            boundsTransform = { _, _ ->
+                                                tween(durationMillis = 1000)
+                                            },
+                                        )
+                                    },
+                                ),
+                    )
+                }
             }
             Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
             Column {
                 Text(
                     text = coin.symbol,
+                    style = CryptoTrackerTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
                     color = contentColor,
-                    style = CryptoTrackerTheme.typography.bodyMedium,
+                    maxLines = 1,
                 )
                 Text(
                     text = coin.name,
-                    fontSize = 12.sp,
+                    style = CryptoTrackerTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Light,
                     color = CryptoTrackerTheme.colors.onSurfaceVariant,
-                    style = CryptoTrackerTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
 
         Text(
-            text = "$ ${coin.priceUsd.value.formatFullPrice()}",
+            text = coin.priceUsd.value.formatCoinListPrice(),
             modifier = Modifier.weight(PRICE_COLUMN_WEIGHT),
+            style = CryptoTrackerTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = contentColor,
             textAlign = TextAlign.Start,
-            style = CryptoTrackerTheme.typography.bodyMedium,
+        )
+
+        InlineSparkline(
+            trendPoints = coin.trendPoints,
+            changePercent = coin.changePercent24Hr.value,
+            modifier =
+                Modifier
+                    .weight(TREND_COLUMN_WEIGHT)
+                    .height(32.dp)
+                    .padding(horizontal = CryptoTrackerTheme.spacing.small),
         )
 
         Box(
             modifier = Modifier.weight(CHANGE_COLUMN_WEIGHT),
-            contentAlignment = Alignment.CenterStart,
+            contentAlignment = Alignment.CenterEnd,
         ) {
             PriceChange(
                 change = coin.changePercent24Hr,
