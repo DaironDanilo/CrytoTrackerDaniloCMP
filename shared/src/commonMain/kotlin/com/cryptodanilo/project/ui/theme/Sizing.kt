@@ -44,6 +44,7 @@ data class Sizing(
     val coinListTrendColumnHeight: Dp = 32.dp,
     val coinListChangeChipMinWidth: Dp = 72.dp,
     val coinListCompactPriceBreakpoint: Dp = 100.dp,
+    val searchBarHeight: Dp = 56.dp,
 )
 
 val LocalSizing = staticCompositionLocalOf { Sizing() }

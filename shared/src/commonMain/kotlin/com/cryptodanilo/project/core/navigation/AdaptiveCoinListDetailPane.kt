@@ -2,6 +2,9 @@ package com.cryptodanilo.project.core.navigation
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -19,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -132,46 +136,57 @@ fun AdaptiveCoinListDetailPane(
         }
     }
 
-    SharedTransitionLayout {
-        ListDetailPaneScaffold(
-            directive = navigator.scaffoldDirective,
-            value = navigator.scaffoldValue,
-            listPane = {
-                AnimatedPane {
-                    CoinListScreen(
-                        animatedPaneScope = this,
-                        state = state,
-                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                        isSearchBarFocusable = searchBarFocusable,
-                        onAction = { action ->
-                            viewModel.onAction(action)
-                            when (action) {
-                                is CoinListAction.OnCoinClicked -> {
-                                    keyboardController?.hide()
-                                    focusManager.clearFocus(force = true)
-                                    coroutineScope.launch {
-                                        navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                },
+    ) {
+        SharedTransitionLayout {
+            ListDetailPaneScaffold(
+                directive = navigator.scaffoldDirective,
+                value = navigator.scaffoldValue,
+                listPane = {
+                    AnimatedPane {
+                        CoinListScreen(
+                            animatedPaneScope = this,
+                            state = state,
+                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                            isSearchBarFocusable = searchBarFocusable,
+                            onAction = { action ->
+                                viewModel.onAction(action)
+                                when (action) {
+                                    is CoinListAction.OnCoinClicked -> {
+                                        keyboardController?.hide()
+                                        focusManager.clearFocus(force = true)
+                                        coroutineScope.launch {
+                                            navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail)
+                                        }
                                     }
-                                }
 
-                                CoinListAction.OnRefresh -> Unit
-                                else -> Unit
-                            }
-                        },
-                    )
-                }
-            },
-            detailPane = {
-                AnimatedPane {
-                    CoinDetailScreen(
-                        animatedPaneScope = this,
-                        state = state,
-                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                        onAction = { action -> viewModel.onAction(action) },
-                    )
-                }
-            },
-            modifier = modifier,
-        )
+                                    CoinListAction.OnRefresh -> Unit
+                                    else -> Unit
+                                }
+                            },
+                        )
+                    }
+                },
+                detailPane = {
+                    AnimatedPane {
+                        CoinDetailScreen(
+                            animatedPaneScope = this,
+                            state = state,
+                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                            onAction = { action -> viewModel.onAction(action) },
+                        )
+                    }
+                },
+                modifier = modifier,
+            )
+        }
     }
 }
