@@ -35,6 +35,8 @@ runtime = "1.11.1"
 ktlintGradle = "14.2.0"
 room = "3.0.0"
 sqlite = "2.7.0"
+jetbrainsNavigation3 = "1.1.1"
+lifecycleViewmodelNavigation3 = "2.10.0"
 
 [libraries]
 adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptiveZ" }
@@ -91,6 +93,8 @@ androidx-room-runtime = { module = "androidx.room3:room3-runtime", version.ref =
 androidx-room-compiler = { module = "androidx.room3:room3-compiler", version.ref = "room" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 androidx-sqlite-web = { module = "androidx.sqlite:sqlite-web", version.ref = "sqlite" }
+jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "jetbrainsNavigation3" }
+jetbrains-lifecycle-viewmodelNavigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNavigation3" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

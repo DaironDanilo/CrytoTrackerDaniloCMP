@@ -25,22 +25,27 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import com.cryptodanilo.project.core.presentation.topbar.TopBarViewModel
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
 import com.cryptodanilo.project.crypto.presentation.coinDetail.CoinDetailScreen
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListEvent
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListViewModel
 import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListScreen
+import cryptotrackerdanilo.shared.generated.resources.Res
+import cryptotrackerdanilo.shared.generated.resources.tab_crypto
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun AdaptiveCoinListDetailPane(
+    topBarViewModel: TopBarViewModel,
     viewModel: CoinListViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     onBackNavigableChanged: (canNavigateBack: Boolean) -> Unit = {},
@@ -113,6 +118,20 @@ fun AdaptiveCoinListDetailPane(
     LaunchedEffect(backRequests) {
         backRequests.collect { navigateBack() }
     }
+
+    // Mirrors the pane navigator's list/detail state onto the app-level top bar: full title
+    // when the list is showing, the selected coin's name + a working back button (wired to
+    // this same pane navigator) when mobile is showing the detail pane on its own.
+    val cryptoTabTitle = stringResource(Res.string.tab_crypto)
+    val selectedCoinName = state.selectedCoinUi?.name
+    LaunchedEffect(isListOfCoinsPaneHidden, selectedCoinName, cryptoTabTitle) {
+        if (isListOfCoinsPaneHidden && selectedCoinName != null) {
+            topBarViewModel.setDetailMode(title = selectedCoinName, onBack = { navigateBack() })
+        } else {
+            topBarViewModel.setListMode(title = cryptoTabTitle)
+        }
+    }
+
     SharedTransitionLayout {
         ListDetailPaneScaffold(
             directive = navigator.scaffoldDirective,
@@ -147,9 +166,7 @@ fun AdaptiveCoinListDetailPane(
                     CoinDetailScreen(
                         animatedPaneScope = this,
                         state = state,
-                        shouldShowBackNavigationIcon = isListOfCoinsPaneHidden,
                         shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                        onBack = { navigateBack() },
                         onAction = { action -> viewModel.onAction(action) },
                     )
                 }

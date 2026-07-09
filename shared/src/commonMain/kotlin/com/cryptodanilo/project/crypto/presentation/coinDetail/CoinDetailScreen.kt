@@ -28,7 +28,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -80,7 +79,6 @@ import cryptotrackerdanilo.shared.generated.resources.change_year_to_date
 import cryptotrackerdanilo.shared.generated.resources.chart_load_error
 import cryptotrackerdanilo.shared.generated.resources.chart_load_error_exhausted
 import cryptotrackerdanilo.shared.generated.resources.dollar
-import cryptotrackerdanilo.shared.generated.resources.go_back
 import cryptotrackerdanilo.shared.generated.resources.market_cap
 import cryptotrackerdanilo.shared.generated.resources.price
 import cryptotrackerdanilo.shared.generated.resources.question_sign
@@ -96,10 +94,8 @@ import org.jetbrains.compose.resources.stringResource
 fun SharedTransitionScope.CoinDetailScreen(
     animatedPaneScope: AnimatedPaneScope? = null,
     state: CoinListState,
-    shouldShowBackNavigationIcon: Boolean,
     shouldExistSharedElementTransition: Boolean,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {},
     onAction: (CoinListAction) -> Unit = {},
 ) {
     val contentColor =
@@ -117,59 +113,45 @@ fun SharedTransitionScope.CoinDetailScreen(
         }
     } else if (state.selectedCoinUi != null) {
         val coin = state.selectedCoinUi
-        Box {
-            // The chart (and Markets list) normally take exactly the space left over
-            // after the header/cards/tabs, with no scrolling — true whether this pane
-            // is the only one showing (mobile) or sits next to the coin list
-            // (desktop/web dual-pane). But that remaining space can shrink to nothing
-            // on a very short window, so it's clamped to CHART_MIN_HEIGHT and the
-            // screen falls back to scrolling only when that minimum doesn't fit.
-            BoxWithConstraints(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(CryptoTrackerTheme.spacing.medium),
-            ) {
-                val density = LocalDensity.current
-                var headerHeightPx by remember { mutableFloatStateOf(0f) }
-                val headerHeightDp = with(density) { headerHeightPx.toDp() }
-                val remainingSpaceHeight = (maxHeight - headerHeightDp).coerceAtLeast(CHART_MIN_HEIGHT)
+        // The chart (and Markets list) normally take exactly the space left over
+        // after the header/cards/tabs, with no scrolling — true whether this pane
+        // is the only one showing (mobile) or sits next to the coin list
+        // (desktop/web dual-pane). But that remaining space can shrink to nothing
+        // on a very short window, so it's clamped to CHART_MIN_HEIGHT and the
+        // screen falls back to scrolling only when that minimum doesn't fit.
+        BoxWithConstraints(
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(CryptoTrackerTheme.spacing.medium),
+        ) {
+            val density = LocalDensity.current
+            var headerHeightPx by remember { mutableFloatStateOf(0f) }
+            val headerHeightDp = with(density) { headerHeightPx.toDp() }
+            val remainingSpaceHeight = (maxHeight - headerHeightDp).coerceAtLeast(CHART_MIN_HEIGHT)
 
+            Column(
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    modifier = Modifier.fillMaxWidth().onSizeChanged { headerHeightPx = it.height.toFloat() },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().onSizeChanged { headerHeightPx = it.height.toFloat() },
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        CoinDetailHeaderAndTabs(
-                            coin = coin,
-                            state = state,
-                            contentColor = contentColor,
-                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                            animatedPaneScope = animatedPaneScope,
-                            onAction = onAction,
-                        )
-                    }
-                    DetailTabContent(
+                    CoinDetailHeaderAndTabs(
+                        coin = coin,
                         state = state,
-                        coinPriceHistory = coin.coinPriceHistory,
-                        remainingSpaceModifier = Modifier.height(remainingSpaceHeight),
+                        contentColor = contentColor,
+                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                        animatedPaneScope = animatedPaneScope,
                         onAction = onAction,
                     )
                 }
-            }
-            if (shouldShowBackNavigationIcon) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.go_back),
-                    tint = contentColor,
-                    modifier =
-                        Modifier
-                            .clickable { onBack() }
-                            .padding(CryptoTrackerTheme.spacing.large)
-                            .size(CryptoTrackerTheme.sizing.backIconSize),
+                DetailTabContent(
+                    state = state,
+                    coinPriceHistory = coin.coinPriceHistory,
+                    remainingSpaceModifier = Modifier.height(remainingSpaceHeight),
+                    onAction = onAction,
                 )
             }
         }
@@ -602,9 +584,7 @@ private fun CoinDetailScreenLightPreview() {
         SharedTransitionLayout {
             CoinDetailScreen(
                 state = CoinListState(selectedCoinUi = previewCoin),
-                shouldShowBackNavigationIcon = true,
                 shouldExistSharedElementTransition = false,
-                onBack = {},
             )
         }
     }
@@ -618,9 +598,7 @@ private fun CoinDetailScreenDarkPreview() {
         SharedTransitionLayout {
             CoinDetailScreen(
                 state = CoinListState(selectedCoinUi = previewCoin),
-                shouldShowBackNavigationIcon = false,
                 shouldExistSharedElementTransition = false,
-                onBack = {},
             )
         }
     }

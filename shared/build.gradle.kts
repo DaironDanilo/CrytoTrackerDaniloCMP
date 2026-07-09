@@ -99,6 +99,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             implementation(libs.jetbrains.compose.navigation)
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)

@@ -43,4 +43,7 @@
     <string name="coin_list_header_price">PRICE</string>
     <string name="coin_list_header_trend">TREND (24H)</string>
     <string name="coin_list_header_change_pct">CHANGE</string>
+    <string name="tab_crypto">Crypto</string>
+    <string name="tab_stocks">Stocks</string>
+    <string name="stocks_coming_soon">Coming soon</string>
 </resources>
