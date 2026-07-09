@@ -180,7 +180,7 @@ fun SharedTransitionScope.CoinListScreen(
                             LazyColumn(
                                 modifier =
                                     Modifier
-                                        .fillMaxSize()
+                                        .fillMaxSize(),
                             ) {
                                 items(
                                     items = displayedCoins,
