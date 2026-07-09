@@ -123,7 +123,11 @@ fun SharedTransitionScope.CoinDetailScreen(
             modifier =
                 modifier
                     .fillMaxSize()
-                    .padding(CryptoTrackerTheme.spacing.medium),
+                    .padding(
+                        bottom = CryptoTrackerTheme.spacing.medium,
+                        start = CryptoTrackerTheme.spacing.medium,
+                        end = CryptoTrackerTheme.spacing.medium,
+                    ),
         ) {
             val density = LocalDensity.current
             var headerHeightPx by remember { mutableFloatStateOf(0f) }
@@ -170,14 +174,6 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = coin.name,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Black,
-            textAlign = TextAlign.Center,
-            color = contentColor,
-        )
-        Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.small))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,

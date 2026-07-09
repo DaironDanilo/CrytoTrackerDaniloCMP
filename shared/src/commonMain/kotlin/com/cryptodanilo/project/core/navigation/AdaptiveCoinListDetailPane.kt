@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import com.cryptodanilo.project.core.presentation.topbar.TopBarViewModel
+import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
 import com.cryptodanilo.project.crypto.presentation.coinDetail.CoinDetailScreen
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
@@ -45,7 +45,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun AdaptiveCoinListDetailPane(
-    topBarViewModel: TopBarViewModel,
+    topBarViewModel: AppShellViewModel,
     viewModel: CoinListViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     onBackNavigableChanged: (canNavigateBack: Boolean) -> Unit = {},

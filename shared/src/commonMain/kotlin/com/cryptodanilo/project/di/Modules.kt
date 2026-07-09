@@ -2,7 +2,7 @@ package com.cryptodanilo.project.di
 
 import com.cryptodanilo.project.BuildKonfig
 import com.cryptodanilo.project.core.data.networking.HttpClientFactory
-import com.cryptodanilo.project.core.presentation.topbar.TopBarViewModel
+import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 import com.cryptodanilo.project.crypto.data.networking.MockCoinDataSource
 import com.cryptodanilo.project.crypto.data.networking.RemoteCoinDataSource
 import com.cryptodanilo.project.crypto.domain.CoinDataSource
@@ -24,5 +24,5 @@ val sharedModule =
             singleOf(::RemoteCoinDataSource).bind<CoinDataSource>()
         }
         viewModelOf(::CoinListViewModel)
-        viewModelOf(::TopBarViewModel)
+        viewModelOf(::AppShellViewModel)
     }

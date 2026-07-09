@@ -44,7 +44,7 @@ fun ChartTimeframeSelector(
                     shape = shape,
                 ).padding(
                     horizontal = CryptoTrackerTheme.spacing.medium,
-                    vertical = CryptoTrackerTheme.spacing.small,
+                    vertical = CryptoTrackerTheme.spacing.extraSmall,
                 ).horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,

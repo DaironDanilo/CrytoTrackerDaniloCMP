@@ -10,12 +10,12 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.cryptodanilo.project.core.presentation.topbar.TopBarViewModel
+import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 
 @Composable
 fun StocksNavDisplay(
     backStack: NavBackStack<NavKey>,
-    topBarViewModel: TopBarViewModel,
+    topBarViewModel: AppShellViewModel,
     visible: Boolean,
     modifier: Modifier = Modifier,
 ) {

@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.rememberNavBackStack
-import com.cryptodanilo.project.core.presentation.topbar.TopBarViewModel
+import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -24,7 +24,7 @@ fun RootScreen(
     onBackNavigableChanged: (canNavigateBack: Boolean) -> Unit = {},
     backRequests: Flow<Unit> = emptyFlow(),
 ) {
-    val topBarViewModel: TopBarViewModel = koinViewModel()
+    val topBarViewModel: AppShellViewModel = koinViewModel()
     val topBarState by topBarViewModel.state.collectAsStateWithLifecycle()
 
     // One back stack per tab — preserves each tab's own navigation state when switching.
@@ -35,12 +35,18 @@ fun RootScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = { AppTopBar(state = topBarState) },
+        topBar = {
+            if (topBarState.showTopBar) {
+                AppTopBar(state = topBarState)
+            }
+        },
         bottomBar = {
-            AppBottomNavBar(
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it },
-            )
+            if (topBarState.showBottomBar) {
+                AppBottomNavBar(
+                    selectedTab = selectedTab,
+                    onTabSelected = { selectedTab = it },
+                )
+            }
         },
         containerColor = CryptoTrackerTheme.colors.background,
     ) { innerPadding ->

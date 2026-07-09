@@ -1,5 +1,6 @@
 package com.cryptodanilo.project.core.navigation
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -9,8 +10,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import com.cryptodanilo.project.core.presentation.topbar.TopBarState
+import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.core.presentation.shell.AppShellState
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.go_back
@@ -18,7 +22,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppTopBar(
-    state: TopBarState,
+    state: AppShellState,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -26,10 +30,16 @@ fun AppTopBar(
         title = {
             Text(
                 text = state.title,
-                style = CryptoTrackerTheme.typography.titleLarge,
+                style =
+                    CryptoTrackerTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                    ),
                 color = CryptoTrackerTheme.colors.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         navigationIcon = {

@@ -89,69 +89,75 @@ private fun CompactMarketListItem(
             )
         }
         Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.extraSmall))
+        // Pair + trades on their own full-width row, so they're never squeezed into
+        // leftover space next to other content.
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Pair is core information and must never be truncated, so it's measured at its
-            // natural width; the secondary cluster (vol/percent/updated) absorbs the remaining
-            // space and is the one allowed to wrap on narrow screens.
             Text(
                 text = market.pairLine(stringResource(Res.string.market_trades)),
                 style = CryptoTrackerTheme.typography.bodySmall,
                 color = CryptoTrackerTheme.colors.onSurfaceVariant,
                 maxLines = 1,
-            )
-            Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
-            MarketSecondaryInfo(
-                market = market,
-                modifier = Modifier.weight(1f),
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis,
             )
         }
-    }
-}
-
-@Composable
-private fun MarketSecondaryInfo(
-    market: MarketUi,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = stringResource(Res.string.market_vol).asVolumeLabel(),
-            style = CryptoTrackerTheme.typography.bodySmall,
-            color = CryptoTrackerTheme.colors.onSurfaceVariant,
-        )
-        Text(
-            text = market.volumeUsd24Hr,
-            style = CryptoTrackerTheme.typography.bodySmall,
-            color = CryptoTrackerTheme.colors.onSurface,
-        )
-        Text(
-            text = SEPARATOR,
-            style = CryptoTrackerTheme.typography.bodySmall,
-            color = CryptoTrackerTheme.colors.onSurfaceVariant,
-        )
-        Text(
-            text = market.percentExchangeVolume,
-            style = CryptoTrackerTheme.typography.bodySmall,
-            color = CryptoTrackerTheme.colors.onSurface,
-        )
-        Text(
-            text = SEPARATOR,
-            style = CryptoTrackerTheme.typography.bodySmall,
-            color = CryptoTrackerTheme.colors.onSurfaceVariant,
-        )
-        Text(
-            text = market.updated,
-            style = CryptoTrackerTheme.typography.bodySmall,
-            color = CryptoTrackerTheme.colors.onSurfaceVariant.copy(alpha = 0.6f),
-            fontStyle = FontStyle.Italic,
-        )
+        Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.extraSmall))
+        // Volume on the left, percentage + updated time on the right — its own full-width
+        // row so neither side is ever squeezed to the point of wrapping character by character.
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(Res.string.market_vol).asVolumeLabel(),
+                    style = CryptoTrackerTheme.typography.bodySmall,
+                    color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = market.volumeUsd24Hr,
+                    style = CryptoTrackerTheme.typography.bodySmall,
+                    color = CryptoTrackerTheme.colors.onSurface,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = market.percentExchangeVolume,
+                    style = CryptoTrackerTheme.typography.bodySmall,
+                    color = CryptoTrackerTheme.colors.onSurface,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = SEPARATOR,
+                    style = CryptoTrackerTheme.typography.bodySmall,
+                    color = CryptoTrackerTheme.colors.onSurfaceVariant,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = market.updated,
+                    style = CryptoTrackerTheme.typography.bodySmall,
+                    color = CryptoTrackerTheme.colors.onSurfaceVariant.copy(alpha = 0.6f),
+                    fontStyle = FontStyle.Italic,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
     }
 }
 

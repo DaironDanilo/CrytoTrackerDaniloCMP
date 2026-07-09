@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.cryptodanilo.project.core.presentation.topbar.TopBarViewModel
+import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.stocks_coming_soon
@@ -16,7 +16,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun StocksPlaceholderScreen(
-    topBarViewModel: TopBarViewModel,
+    topBarViewModel: AppShellViewModel,
     modifier: Modifier = Modifier,
 ) {
     val tabTitle = stringResource(Res.string.tab_stocks)
