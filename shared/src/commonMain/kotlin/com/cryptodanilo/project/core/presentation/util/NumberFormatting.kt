@@ -85,9 +85,18 @@ private fun Double.toCommaFormattedString(decimals: Int): String {
     }
 }
 
+// Tiered by magnitude so the coin list price column never needs to wrap: coins whose
+// price is large enough to risk overflowing the column (>= 1,000) get abbreviated with
+// a K/M/B suffix, while anything under that always has room for full 4-decimal precision.
 fun Double.formatCoinListPrice(): String {
-    val decimals = if (this >= 100.0) 2 else 4
-    return "$ ${toCommaFormattedString(decimals)}"
+    val abs = kotlin.math.abs(this)
+    return when {
+        abs >= 1_000_000_000.0 -> "$ ${(this / 1_000_000_000.0).toCommaFormattedString(1)}B"
+        abs >= 1_000_000.0 -> "$ ${(this / 1_000_000.0).toCommaFormattedString(1)}M"
+        abs >= 1_000.0 -> "$ ${(this / 1_000.0).toCommaFormattedString(1)}K"
+        abs >= 1.0 -> "$ ${toCommaFormattedString(2)}"
+        else -> "$ ${toCommaFormattedString(4)}"
+    }
 }
 
 // Always shows the full number with thousand separators — used for the coin list,

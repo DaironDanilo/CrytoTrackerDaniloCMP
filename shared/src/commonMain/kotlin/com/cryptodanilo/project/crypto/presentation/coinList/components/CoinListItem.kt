@@ -9,14 +9,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -34,9 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.core.presentation.util.formatCoinListPrice
+import com.cryptodanilo.project.core.presentation.util.formatFullPrice
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.ASSET_COLUMN_WEIGHT
 import com.cryptodanilo.project.crypto.presentation.coinList.components.CoinListConstants.CHANGE_COLUMN_WEIGHT
@@ -77,9 +77,7 @@ fun SharedTransitionScope.CoinListItem(
                         Modifier
                     },
                 ).clickable { onItemClick() }
-                .padding(
-                    vertical = CryptoTrackerTheme.spacing.medium,
-                ),
+                .padding(CryptoTrackerTheme.spacing.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
@@ -91,7 +89,7 @@ fun SharedTransitionScope.CoinListItem(
                     Modifier
                         .size(CryptoTrackerTheme.sizing.coinIconListSize)
                         .border(
-                            width = 1.dp,
+                            width = CryptoTrackerTheme.sizing.borderThin,
                             color = CryptoTrackerTheme.colors.primary,
                             shape = CircleShape,
                         ),
@@ -111,7 +109,7 @@ fun SharedTransitionScope.CoinListItem(
                         tint = CryptoTrackerTheme.colors.primary,
                         modifier =
                             Modifier
-                                .size(32.dp)
+                                .size(CryptoTrackerTheme.sizing.coinIconSize)
                                 .conditional(
                                     condition = shouldExistSharedElementTransition && animatedPaneScope != null,
                                     ifTrue = {
@@ -147,14 +145,28 @@ fun SharedTransitionScope.CoinListItem(
             }
         }
 
-        Text(
-            text = coin.priceUsd.value.formatCoinListPrice(),
-            modifier = Modifier.weight(PRICE_COLUMN_WEIGHT),
-            style = CryptoTrackerTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = contentColor,
-            textAlign = TextAlign.Start,
-        )
+        BoxWithConstraints(modifier = Modifier.weight(PRICE_COLUMN_WEIGHT)) {
+            // Starting point for where "$ 62,000.00"-style full price text has room
+            // vs. needs to fall back to the compact K/M/B format — nudge if a real
+            // device/browser shows it flipping too early or too late.
+            val compactPriceThreshold = CryptoTrackerTheme.sizing.coinListCompactPriceBreakpoint
+            val priceText =
+                if (maxWidth < compactPriceThreshold) {
+                    coin.priceUsd.value.formatCoinListPrice()
+                } else {
+                    "$ ${coin.priceUsd.value.formatFullPrice()}"
+                }
+            Text(
+                text = priceText,
+                style = CryptoTrackerTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor,
+                textAlign = TextAlign.Start,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Visible,
+            )
+        }
 
         InlineSparkline(
             trendPoints = coin.trendPoints,
@@ -162,12 +174,17 @@ fun SharedTransitionScope.CoinListItem(
             modifier =
                 Modifier
                     .weight(TREND_COLUMN_WEIGHT)
-                    .height(32.dp)
-                    .padding(horizontal = CryptoTrackerTheme.spacing.small),
+                    .height(CryptoTrackerTheme.sizing.coinListTrendColumnHeight)
+                    .padding(horizontal = CryptoTrackerTheme.spacing.medium),
         )
 
         Box(
-            modifier = Modifier.weight(CHANGE_COLUMN_WEIGHT),
+            modifier =
+                Modifier
+                    .weight(CHANGE_COLUMN_WEIGHT)
+                    // Guarantees the column is always wide enough for the full chip
+                    // ("+2.50%") even when 20% of a narrow row would otherwise clip it.
+                    .widthIn(min = CryptoTrackerTheme.sizing.coinListChangeChipMinWidth),
             contentAlignment = Alignment.CenterEnd,
         ) {
             PriceChange(

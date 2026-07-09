@@ -4,17 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
@@ -39,6 +35,7 @@ fun PriceChange(
     Row(
         modifier =
             modifier
+                .wrapContentWidth()
                 .clip(CircleShape)
                 .background(backgroundColor)
                 .padding(
@@ -48,24 +45,13 @@ fun PriceChange(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        if (change.value != 0.0) {
-            // A single triangle icon rotated 180° for "up" — unicode arrow glyphs
-            // don't render reliably on the web target.
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null,
-                tint = contentColor,
-                modifier =
-                    Modifier
-                        .size(CryptoTrackerTheme.sizing.priceChangeIconSize)
-                        .rotate(if (change.value > 0.0) 180f else 0f),
-            )
-        }
         Text(
             text = "$prefix${change.formatted}%",
             color = contentColor,
             style = CryptoTrackerTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            softWrap = false,
         )
     }
 }

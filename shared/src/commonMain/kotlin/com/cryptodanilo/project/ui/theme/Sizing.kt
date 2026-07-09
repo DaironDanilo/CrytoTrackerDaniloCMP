@@ -21,6 +21,7 @@ data class Sizing(
     // Borders
     val borderThin: Dp = 1.dp,
     val borderMedium: Dp = 2.dp,
+    val dividerThickness: Dp = 0.5.dp,
     // Corner radii
     val cornerSmall: Dp = 4.dp,
     val cornerMedium: Dp = 8.dp,
@@ -40,6 +41,9 @@ data class Sizing(
     val rankExchangeSpacing: Dp = 12.dp,
     val marketsListCompactBreakpoint: Dp = 600.dp,
     val statusDotSize: Dp = 8.dp,
+    val coinListTrendColumnHeight: Dp = 32.dp,
+    val coinListChangeChipMinWidth: Dp = 72.dp,
+    val coinListCompactPriceBreakpoint: Dp = 100.dp,
 )
 
 val LocalSizing = staticCompositionLocalOf { Sizing() }

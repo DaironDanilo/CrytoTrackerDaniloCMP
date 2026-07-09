@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -29,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
 import com.cryptodanilo.project.core.presentation.components.ShimmerOverlay
 import com.cryptodanilo.project.core.presentation.util.PullToRefreshWrapper
@@ -181,26 +181,19 @@ fun SharedTransitionScope.CoinListScreen(
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .padding(horizontal = CryptoTrackerTheme.spacing.medium),
                             ) {
                                 items(
                                     items = displayedCoins,
                                     key = { coin -> coin.id },
                                 ) { coin ->
-                                    Column {
-                                        CoinListItem(
-                                            animatedPaneScope = animatedPaneScope,
-                                            coin = coin,
-                                            isSelected = coin.id == state.selectedCoinUi?.id,
-                                            shouldExistSharedElementTransition = shouldExistSharedElementTransition,
-                                            onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
-                                            modifier = Modifier.fillMaxWidth(),
-                                        )
-//                                        HorizontalDivider(
-//                                            modifier = Modifier.padding(horizontal = CryptoTrackerTheme.spacing.medium),
-//                                            color = CryptoTrackerTheme.colors.outlineVariant,
-//                                        )
-                                    }
+                                    CoinListItem(
+                                        animatedPaneScope = animatedPaneScope,
+                                        coin = coin,
+                                        isSelected = coin.id == state.selectedCoinUi?.id,
+                                        shouldExistSharedElementTransition = shouldExistSharedElementTransition,
+                                        onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
                                 }
 
                                 if (state.searchQuery.isBlank()) {
@@ -304,14 +297,19 @@ private fun CoinListHeader(modifier: Modifier = Modifier) {
 
             Text(
                 text = stringResource(Res.string.coin_list_header_change_pct).uppercase(),
-                modifier = Modifier.weight(CHANGE_COLUMN_WEIGHT),
+                modifier =
+                    Modifier
+                        .weight(CHANGE_COLUMN_WEIGHT)
+                        // Matches the min width on the data column's chip container below,
+                        // so the header stays aligned with it at every row width.
+                        .widthIn(min = CryptoTrackerTheme.sizing.coinListChangeChipMinWidth),
                 style = headerStyle,
                 textAlign = TextAlign.End,
             )
         }
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
-            thickness = 0.5.dp,
+            thickness = CryptoTrackerTheme.sizing.dividerThickness,
             color = CryptoTrackerTheme.colors.onSurfaceVariant.copy(alpha = 0.12f),
         )
         Spacer(modifier = Modifier.height(CryptoTrackerTheme.spacing.extraSmall))
