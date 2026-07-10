@@ -32,34 +32,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.window.core.layout.WindowSizeClass
 import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 import com.cryptodanilo.project.ui.theme.CryptoTrackerTheme
 import cryptotrackerdanilo.shared.generated.resources.Res
-import cryptotrackerdanilo.shared.generated.resources.btc_bold
-import cryptotrackerdanilo.shared.generated.resources.stock
 import cryptotrackerdanilo.shared.generated.resources.tab_crypto
 import cryptotrackerdanilo.shared.generated.resources.tab_stocks
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 private data class BottomTabItem(
     val tab: BottomTab,
     val labelRes: StringResource,
-    val icon: DrawableResource,
+    val icon: ImageVector,
 )
 
+// Defined as Kotlin ImageVectors rather than composeResources XML drawables — see
+// BoldNavIcons.kt for why (the wasmJs target silently fails to resolve newly-added XML vector
+// resources at runtime; ImageVector is compiled code, not a runtime-fetched asset, so it works
+// identically on every target).
 private val bottomTabItems =
     listOf(
-        BottomTabItem(tab = BottomTab.CRYPTO, labelRes = Res.string.tab_crypto, icon = Res.drawable.btc_bold),
-        BottomTabItem(tab = BottomTab.STOCKS, labelRes = Res.string.tab_stocks, icon = Res.drawable.stock),
+        BottomTabItem(tab = BottomTab.CRYPTO, labelRes = Res.string.tab_crypto, icon = BtcBoldIcon),
+        BottomTabItem(tab = BottomTab.STOCKS, labelRes = Res.string.tab_stocks, icon = StockBoldIcon),
     )
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -188,7 +189,7 @@ fun RootScreen(
                                     ),
                         ) {
                             Icon(
-                                painter = painterResource(tabItem.icon),
+                                imageVector = tabItem.icon,
                                 contentDescription = label,
                                 tint =
                                     if (isSelected) {
@@ -259,7 +260,7 @@ fun RootScreen(
                         onClick = { selectedTab = tabItem.tab },
                         icon = {
                             Icon(
-                                painter = painterResource(tabItem.icon),
+                                imageVector = tabItem.icon,
                                 contentDescription = label,
                                 tint =
                                     if (isSelected) {
