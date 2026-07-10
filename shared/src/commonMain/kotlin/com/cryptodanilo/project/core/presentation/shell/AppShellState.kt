@@ -6,4 +6,5 @@ data class AppShellState(
     val onBack: (() -> Unit)? = null,
     val showTopBar: Boolean = false,
     val showBottomBar: Boolean = true,
+    val isTwoPane: Boolean = false,
 )

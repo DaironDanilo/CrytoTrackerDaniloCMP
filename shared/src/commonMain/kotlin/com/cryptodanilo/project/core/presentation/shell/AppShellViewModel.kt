@@ -13,7 +13,8 @@ class AppShellViewModel : ViewModel() {
     fun setListMode(title: String) {
         _state.update {
             AppShellState(
-                title = title,
+                // The list screen never has a title, on any screen size.
+                title = "",
                 showBackButton = false,
                 onBack = null,
                 showTopBar = false,
@@ -25,14 +26,21 @@ class AppShellViewModel : ViewModel() {
     fun setDetailMode(
         title: String,
         onBack: () -> Unit,
+        isCompact: Boolean,
+        isTwoPane: Boolean,
     ) {
         _state.update {
             AppShellState(
                 title = title,
-                showBackButton = true,
+                // The back button only makes sense when the list isn't visible alongside the
+                // detail pane — in a two-pane layout the list is already on screen.
+                showBackButton = !isTwoPane,
                 onBack = onBack,
                 showTopBar = true,
-                showBottomBar = false,
+                // On compact, the detail pane replaces the list, so the bottom nav hides.
+                // On medium/expanded, the nav rail/drawer stays put alongside both panes.
+                showBottomBar = !isCompact,
+                isTwoPane = isTwoPane,
             )
         }
     }

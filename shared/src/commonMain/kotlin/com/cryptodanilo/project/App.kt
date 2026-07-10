@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.cryptodanilo.project.core.navigation.RootScreen
 import com.cryptodanilo.project.core.presentation.components.ComposeMultiplatformWatermark
-import com.cryptodanilo.project.core.presentation.components.MockDataBanner
 import com.cryptodanilo.project.ui.theme.CryptoTrackerThemeProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -27,7 +26,7 @@ fun App(
             )
 
             ComposeMultiplatformWatermark()
-            MockDataBanner()
+            // MockDataBanner()
         }
     }
 }

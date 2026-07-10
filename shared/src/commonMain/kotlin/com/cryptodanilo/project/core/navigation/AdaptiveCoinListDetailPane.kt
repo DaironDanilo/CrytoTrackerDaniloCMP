@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import androidx.window.core.layout.WindowSizeClass
 import com.cryptodanilo.project.core.presentation.shell.AppShellViewModel
 import com.cryptodanilo.project.core.presentation.util.ObserveAsEvents
 import com.cryptodanilo.project.crypto.presentation.coinDetail.CoinDetailScreen
@@ -64,12 +65,14 @@ fun AdaptiveCoinListDetailPane(
             }
         }
     }
+    val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
+    val isCompact =
+        !windowAdaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(
+            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+        )
     val navigator =
         rememberListDetailPaneScaffoldNavigator(
-            scaffoldDirective =
-                calculatePaneScaffoldDirective(
-                    currentWindowAdaptiveInfoV2(),
-                ),
+            scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
         )
     // calculates if the list pane is hidden
     val isListOfCoinsPaneHidden =
@@ -128,9 +131,17 @@ fun AdaptiveCoinListDetailPane(
     // this same pane navigator) when mobile is showing the detail pane on its own.
     val cryptoTabTitle = stringResource(Res.string.tab_crypto)
     val selectedCoinName = state.selectedCoinUi?.name
-    LaunchedEffect(isListOfCoinsPaneHidden, selectedCoinName, cryptoTabTitle) {
+    LaunchedEffect(isListOfCoinsPaneHidden, selectedCoinName, cryptoTabTitle, isCompact, isDualPane) {
         if (isListOfCoinsPaneHidden && selectedCoinName != null) {
-            topBarViewModel.setDetailMode(title = selectedCoinName, onBack = { navigateBack() })
+            topBarViewModel.setDetailMode(
+                title = selectedCoinName,
+                onBack = { navigateBack() },
+                isCompact = isCompact,
+                // isListOfCoinsPaneHidden being true already implies isDualPane is false here,
+                // but this keeps the shell state driven by the real pane-navigator signal rather
+                // than an assumption baked into the call site.
+                isTwoPane = isDualPane,
+            )
         } else {
             topBarViewModel.setListMode(title = cryptoTabTitle)
         }

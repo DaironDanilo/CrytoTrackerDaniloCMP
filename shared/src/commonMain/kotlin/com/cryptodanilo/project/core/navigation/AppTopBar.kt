@@ -43,6 +43,9 @@ fun AppTopBar(
             )
         },
         navigationIcon = {
+            // showBackButton already accounts for two-pane layouts (see
+            // AppShellViewModel.setDetailMode) — it's only true when the detail pane is showing
+            // without the list alongside it.
             if (state.showBackButton) {
                 IconButton(onClick = { state.onBack?.invoke() }) {
                     Icon(

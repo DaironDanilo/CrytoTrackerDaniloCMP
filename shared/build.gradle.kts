@@ -95,6 +95,7 @@ kotlin {
             implementation(libs.adaptive)
             implementation(libs.adaptive.navigation)
             implementation(libs.adaptive.layout)
+            implementation(libs.material3.adaptive.navigation.suite)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
