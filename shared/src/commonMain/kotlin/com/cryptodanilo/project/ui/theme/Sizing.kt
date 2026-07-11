@@ -18,6 +18,9 @@ data class Sizing(
     val infoCardIconSize: Dp = 48.dp,
     val backIconSize: Dp = 36.dp,
     val exchangeChipSize: Dp = 28.dp,
+    // Material 3 minimum touch target — also used to size layout spacers that must
+    // match an IconButton's footprint (e.g. balancing a TopAppBar's navigationIcon).
+    val touchTargetMinimum: Dp = 48.dp,
     // Borders
     val borderThin: Dp = 1.dp,
     val borderMedium: Dp = 2.dp,

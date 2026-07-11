@@ -1,6 +1,8 @@
 package com.cryptodanilo.project.core.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -54,6 +56,13 @@ fun AppTopBar(
                         tint = CryptoTrackerTheme.colors.onSurfaceVariant,
                     )
                 }
+            }
+        },
+        actions = {
+            // Balances the navigationIcon's IconButton so the title's own fillMaxWidth/
+            // TextAlign.Center is centered within the whole bar, not just the space left of it.
+            if (state.showBackButton) {
+                Box(modifier = Modifier.size(CryptoTrackerTheme.sizing.touchTargetMinimum))
             }
         },
         colors =

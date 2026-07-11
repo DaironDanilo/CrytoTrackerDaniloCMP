@@ -1,5 +1,8 @@
 package com.cryptodanilo.project.core.navigation
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -121,19 +124,32 @@ fun RootScreen(
             },
             containerColor = CryptoTrackerTheme.colors.background,
         ) { innerPadding ->
-            Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                CryptoNavDisplay(
-                    backStack = cryptoBackStack,
-                    topBarViewModel = topBarViewModel,
-                    visible = selectedTab == BottomTab.CRYPTO,
-                    onBackNavigableChanged = onBackNavigableChanged,
-                    backRequests = backRequests,
-                )
-                StocksNavDisplay(
-                    backStack = stocksBackStack,
-                    topBarViewModel = topBarViewModel,
-                    visible = selectedTab == BottomTab.STOCKS,
-                )
+            // Crossfade (not the default show/hide) so tab switches are a plain 200ms fade —
+            // AnimatedVisibility's default expand/shrink spec animates size and reads as a
+            // diagonal slide, which is wrong for tab switching. `visible = true` is passed to
+            // both NavDisplays unconditionally: Crossfade alone decides which is on screen, and
+            // since it never flips back to false, the inner AnimatedVisibility never re-triggers.
+            Crossfade(
+                targetState = selectedTab,
+                animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            ) { tab ->
+                when (tab) {
+                    BottomTab.CRYPTO ->
+                        CryptoNavDisplay(
+                            backStack = cryptoBackStack,
+                            topBarViewModel = topBarViewModel,
+                            visible = true,
+                            onBackNavigableChanged = onBackNavigableChanged,
+                            backRequests = backRequests,
+                        )
+                    BottomTab.STOCKS ->
+                        StocksNavDisplay(
+                            backStack = stocksBackStack,
+                            topBarViewModel = topBarViewModel,
+                            visible = true,
+                        )
+                }
             }
         }
     }
