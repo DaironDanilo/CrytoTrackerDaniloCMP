@@ -75,73 +75,47 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 
 ## Adaptive Layout
 
-<!--
-  HOW TO CAPTURE THESE SCREENSHOTS
-  =================================
-  Goal: show the same screen reflowing across Compose Multiplatform's three window-size
-  classes (Material 3 default breakpoints: compact <600dp, medium 600–839dp,
-  expanded ≥840dp width). Easiest sources are the Desktop and Web targets, since both let
-  you resize the window/viewport freely without a physical device.
-
-  Option A — Desktop (simplest, recommended):
-    1. Run: ./gradlew :desktopApp:run
-    2. Resize the window to roughly:
-         - ~400px wide  → Compact  (single pane, bottom navigation bar)
-         - ~700px wide  → Medium   (navigation rail appears)
-         - ~1100px wide → Expanded (list + detail side-by-side dual-pane, navigation rail)
-    3. Take a screenshot of the whole window at each width
-       (macOS: Cmd+Shift+4, then Space, then click the window).
-
-  Option B — Web:
-    1. Run: ./gradlew :webApp:wasmJsBrowserDevelopmentRun --continuous
-    2. Open the printed localhost URL in Chrome/Edge, then open DevTools (Cmd+Opt+I / F12)
-       and toggle the device toolbar (Cmd+Shift+M) to set a custom responsive viewport
-       width for each breakpoint above.
-    3. Use the DevTools screenshot capture (⋮ menu → "Capture screenshot") or your OS
-       screenshot tool.
-
-  For the "Expanded" shot, navigate to a coin so the list and detail panes are both
-  visible — that's the clearest demonstration of the adaptive two-pane behavior.
-
-  To add the images: edit this file in the GitHub web UI and drag-and-drop each
-  screenshot directly into the editor at the matching PASTE_*_SCREENSHOT_URL_HERE
-  placeholder below — GitHub uploads it and inserts a user-attachments URL, which
-  you then use as the <img> src (same approach already used for the demo videos
-  above). Remove this comment once all three URLs are filled in.
--->
-
 The list/detail flow, navigation shell, and tab switcher all reflow automatically as the window resizes — no separate phone/tablet/desktop code paths, just Material 3 `WindowSizeClass` driving one shared composable tree.
 
 <table>
   <tr>
     <td align="center"><strong>Compact</strong></td>
+    <td align="center"><strong>Compact</strong></td>
   </tr>
   <tr>
     <td align="center">
-      <img src="PASTE_COMPACT_SCREENSHOT_URL_HERE" alt="Compact width: single pane with bottom navigation bar" width="500" /><br/>
-      Bottom navigation bar · single-pane list/detail
+      <img src="https://github.com/user-attachments/assets/70fe9086-4664-4fe7-908a-d93092396005" alt="Compact width: list screen with bottom navigation bar" width="300" /><br/>
+      Bottom navigation bar · list screen
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/d398f3ec-e846-4520-9424-dfb0fe4cc31f" alt="Compact width: detail screen" width="300" /><br/>
+      Bottom navigation bar · detail screen
     </td>
   </tr>
   <tr>
     <td align="center"><strong>Medium</strong></td>
+    <td align="center"><strong>Medium</strong></td>
   </tr>
   <tr>
     <td align="center">
-      <img src="PASTE_MEDIUM_SCREENSHOT_URL_HERE" alt="Medium width: navigation rail, single active pane" width="500" /><br/>
-      Navigation rail appears · single active pane
+      <img src="https://github.com/user-attachments/assets/bcd66716-eea0-4cff-9f4d-c6e1623537bb" alt="Medium width: list screen with navigation rail" width="300" /><br/>
+      Navigation rail · list screen
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/c934fe0d-978b-4c75-9ddd-004c9d9597ce" alt="Medium width: detail screen with navigation rail" width="300" /><br/>
+      Navigation rail · detail screen
     </td>
   </tr>
   <tr>
-    <td align="center"><strong>Expanded</strong></td>
+    <td align="center" colspan="2"><strong>Expanded</strong></td>
   </tr>
   <tr>
-    <td align="center">
-      <img src="PASTE_EXPANDED_SCREENSHOT_URL_HERE" alt="Expanded width: navigation rail with list and detail panes side by side" width="500" /><br/>
+    <td align="center" colspan="2">
+      <img src="https://github.com/user-attachments/assets/fd168ab7-2a51-4227-a8a2-ca0f570491bf" alt="Expanded width: navigation rail with list and detail panes side by side" width="620" /><br/>
       Dual-pane: list + detail shown side by side
     </td>
   </tr>
 </table>
-
 ---
 
 ## Tech Stack
