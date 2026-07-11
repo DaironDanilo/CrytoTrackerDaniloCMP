@@ -10,7 +10,7 @@ data class Sizing(
     val iconMedium: Dp = 24.dp,
     val iconLarge: Dp = 40.dp,
     val iconExtraLarge: Dp = 64.dp,
-    val coinIconSize: Dp = 48.dp,
+    val coinIconSize: Dp = 42.dp,
     val coinIconListSize: Dp = 56.dp,
     val coinIconListBorderPadding: Dp = 6.dp,
     val coinDetailIconSize: Dp = 80.dp,

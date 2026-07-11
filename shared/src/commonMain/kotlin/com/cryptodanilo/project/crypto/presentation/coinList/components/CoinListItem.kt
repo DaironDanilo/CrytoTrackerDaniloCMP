@@ -66,13 +66,20 @@ fun SharedTransitionScope.CoinListItem(
         } else {
             Color.Black
         }
+    val coinListItemShape = RoundedCornerShape(CryptoTrackerTheme.spacing.small)
     Row(
         modifier =
             modifier
-                .clip(RoundedCornerShape(CryptoTrackerTheme.spacing.small))
+                .clip(coinListItemShape)
                 .then(
                     if (isSelected) {
-                        Modifier.background(CryptoTrackerTheme.colors.surfaceVariant.copy(alpha = 0.3f))
+                        Modifier
+                            .background(CryptoTrackerTheme.colors.surfaceVariant.copy(alpha = 0.3f))
+                            .border(
+                                width = CryptoTrackerTheme.sizing.borderThin,
+                                color = CryptoTrackerTheme.colors.primary.copy(alpha = 0.35f),
+                                shape = coinListItemShape,
+                            )
                     } else {
                         Modifier
                     },

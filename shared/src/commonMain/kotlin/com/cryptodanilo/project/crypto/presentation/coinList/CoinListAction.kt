@@ -7,6 +7,10 @@ import com.cryptodanilo.project.crypto.presentation.models.CoinUi
 sealed interface CoinListAction {
     data class OnCoinClicked(
         val coinUi: CoinUi,
+        // True when the list and detail panes are both visible side by side. In that
+        // layout, switching coins should keep the currently selected detail tab —
+        // it's a session-level UI preference, not something tied to a specific coin.
+        val isDualPane: Boolean = false,
     ) : CoinListAction
 
     data object OnRefresh : CoinListAction

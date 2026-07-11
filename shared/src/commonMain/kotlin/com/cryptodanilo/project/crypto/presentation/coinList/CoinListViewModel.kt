@@ -47,7 +47,7 @@ class CoinListViewModel(
             CoinListAction.OnRefresh -> refresh()
             CoinListAction.OnManualRefresh -> manualRefresh()
             CoinListAction.OnDetailManualRefresh -> detailManualRefresh()
-            is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi)
+            is CoinListAction.OnCoinClicked -> selectCoin(action.coinUi, preserveDetailTab = action.isDualPane)
             is CoinListAction.OnDetailTabSelected -> onDetailTabSelected(action.tab)
             is CoinListAction.OnTimeframeSelected -> onTimeframeSelected(action.timeframe)
             CoinListAction.OnRetryChartLoad -> {
@@ -277,12 +277,19 @@ class CoinListViewModel(
         }
     }
 
-    private fun selectCoin(coinUi: CoinUi) {
+    private fun selectCoin(
+        coinUi: CoinUi,
+        // Dual-pane: keep whatever tab was already selected — it's a session-level UI
+        // preference, not tied to a specific coin. Single-pane: always land on Chart,
+        // since the user explicitly navigated away from the previous coin's detail screen.
+        preserveDetailTab: Boolean = false,
+    ) {
         currentMarketsOffset = 0
+        val detailTab = if (preserveDetailTab) _state.value.selectedDetailTab else DetailTab.Chart
         _state.update {
             it.copy(
                 selectedCoinUi = coinUi,
-                selectedDetailTab = DetailTab.Chart,
+                selectedDetailTab = detailTab,
                 markets = emptyList(),
                 isMarketsLoading = false,
                 isLoadingMoreMarkets = false,
@@ -295,6 +302,9 @@ class CoinListViewModel(
             )
         }
         loadChartData(coinUi.id)
+        if (detailTab == DetailTab.Markets) {
+            loadInitialMarkets()
+        }
     }
 
     private fun onTimeframeSelected(timeframe: ChartTimeframe) {

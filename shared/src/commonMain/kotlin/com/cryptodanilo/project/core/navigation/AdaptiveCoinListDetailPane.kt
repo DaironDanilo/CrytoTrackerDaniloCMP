@@ -169,8 +169,17 @@ fun AdaptiveCoinListDetailPane(
                             shouldExistSharedElementTransition = shouldExistSharedElementTransition,
                             isSearchBarFocusable = searchBarFocusable,
                             onAction = { action ->
-                                viewModel.onAction(action)
-                                when (action) {
+                                // Tag coin selection with the current pane layout so the ViewModel
+                                // knows whether to keep the selected detail tab (dual-pane) or reset
+                                // it to Chart (single-pane, where the user explicitly navigated away).
+                                val resolvedAction =
+                                    if (action is CoinListAction.OnCoinClicked) {
+                                        action.copy(isDualPane = isDualPane)
+                                    } else {
+                                        action
+                                    }
+                                viewModel.onAction(resolvedAction)
+                                when (resolvedAction) {
                                     is CoinListAction.OnCoinClicked -> {
                                         keyboardController?.hide()
                                         focusManager.clearFocus(force = true)
