@@ -182,8 +182,10 @@ To produce a distributable package (`.dmg` / `.msi` / `.deb`):
 ### Web (Kotlin/Wasm)
 
 ```bash
-./gradlew :webApp:wasmJsBrowserDevelopmentRun
+./gradlew :webApp:wasmJsBrowserDevelopmentRun --continuous
 ```
+
+The `--continuous` flag is required — without it, the task builds but never starts the dev server.
 
 Open the URL printed in the console (typically `http://localhost:8080`).
 
@@ -247,7 +249,7 @@ UI (Compose) ──► Action ──► ViewModel ──► UseCase / DataSource
 |---|---|
 | `./gradlew :androidApp:installDebug` | Build and install Android debug APK |
 | `./gradlew :desktopApp:run` | Run Desktop app |
-| `./gradlew :webApp:wasmJsBrowserDevelopmentRun` | Run Web app in browser |
+| `./gradlew :webApp:wasmJsBrowserDevelopmentRun --continuous` | Run Web app in browser |
 | `./gradlew :desktopApp:packageDistributionForCurrentOS` | Package Desktop distributable |
 | `./gradlew build` | Build all targets |
 | `./gradlew :webApp:wasmJsBrowserDistribution` | Build production Web bundle (deployed to Netlify) |

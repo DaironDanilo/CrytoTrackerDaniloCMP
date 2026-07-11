@@ -124,6 +124,7 @@ fun SharedTransitionScope.CoinDetailScreen(
                 modifier
                     .fillMaxSize()
                     .padding(
+                        top = CryptoTrackerTheme.spacing.extraSmall,
                         bottom = CryptoTrackerTheme.spacing.medium,
                         start = CryptoTrackerTheme.spacing.medium,
                         end = CryptoTrackerTheme.spacing.medium,
