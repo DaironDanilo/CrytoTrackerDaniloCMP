@@ -3,5 +3,17 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+}
+
+html {
+    /* Lets the page scroll instead of clipping once the viewport shrinks below body's
+       min-width/min-height below. */
+    overflow: auto;
+}
+
+body {
+    /* iPhone SE viewport (375x667) - smallest mainstream phone size, keeps the layout usable.
+       Mirrored by MinimumViewportSize.WIDTH_DP/HEIGHT_DP, set at runtime in WebMain.kt. */
+    min-width: 375px;
+    min-height: 667px;
 }
