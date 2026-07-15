@@ -25,7 +25,7 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Run unit tests
-        run: ./gradlew :shared:desktopTest
+        run: ./gradlew :app:shared:desktopTest
 
       - name: Upload test reports
         if: always()

@@ -15,6 +15,12 @@ plugins {
     alias(libs.plugins.buildKonfigPlugin)
 }
 
+compose {
+    resources {
+        packageOfResClass = "cryptotrackerdanilo.shared.generated.resources"
+    }
+}
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")

@@ -23,7 +23,7 @@ kotlin {
     sourceSets {
         val wasmJsMain = getByName("wasmJsMain")
         wasmJsMain.dependencies {
-            implementation(projects.shared)
+            implementation(projects.app.shared)
             implementation(libs.ui)
         }
     }

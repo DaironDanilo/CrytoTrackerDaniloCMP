@@ -25,13 +25,13 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build Android debug APK
-        run: ./gradlew :androidApp:assembleDebug
+        run: ./gradlew :app:androidApp:assembleDebug
 
       - name: Upload Android debug APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: androidApp/build/outputs/apk/debug/*.apk
+          path: app/androidApp/build/outputs/apk/debug/*.apk
           retention-days: 7
 
   build-ios:
@@ -50,7 +50,7 @@ jobs:
       - name: Build iOS simulator app
         run: |
           xcodebuild build \
-            -project iosApp/iosApp.xcodeproj \
+            -project app/iosApp/iosApp.xcodeproj \
             -configuration Debug \
             -scheme iosApp \
             -sdk iphonesimulator \
@@ -81,13 +81,13 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build macOS DMG
-        run: ./gradlew :desktopApp:packageDmg
+        run: ./gradlew :app:desktopApp:packageDmg
 
       - name: Upload macOS DMG
         uses: actions/upload-artifact@v4
         with:
           name: desktop-macos-dmg
-          path: desktopApp/build/compose/binaries/main/dmg/*.dmg
+          path: app/desktopApp/build/compose/binaries/main/dmg/*.dmg
           retention-days: 7
 
   build-desktop-windows:
@@ -107,13 +107,13 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build Windows MSI
-        run: ./gradlew :desktopApp:packageMsi
+        run: ./gradlew :app:desktopApp:packageMsi
 
       - name: Upload Windows MSI
         uses: actions/upload-artifact@v4
         with:
           name: desktop-windows-msi
-          path: desktopApp/build/compose/binaries/main/msi/*.msi
+          path: app/desktopApp/build/compose/binaries/main/msi/*.msi
           retention-days: 7
 
   build-desktop-linux:
@@ -130,13 +130,13 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build Linux DEB
-        run: ./gradlew :desktopApp:packageDeb
+        run: ./gradlew :app:desktopApp:packageDeb
 
       - name: Upload Linux DEB
         uses: actions/upload-artifact@v4
         with:
           name: desktop-linux-deb
-          path: desktopApp/build/compose/binaries/main/deb/*.deb
+          path: app/desktopApp/build/compose/binaries/main/deb/*.deb
           retention-days: 7
 
   build-web:
@@ -153,13 +153,13 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build WASM distribution
-        run: ./gradlew :webApp:wasmJsBrowserDevelopmentDistribution
+        run: ./gradlew :app:webApp:wasmJsBrowserDevelopmentDistribution
 
       - name: Upload web distribution
         uses: actions/upload-artifact@v4
         with:
           name: web-wasm-dist
-          path: webApp/build/dist/wasmJs/developmentExecutable/
+          path: app/webApp/build/dist/wasmJs/developmentExecutable/
           retention-days: 7
 
   deploy-web:
@@ -178,11 +178,11 @@ jobs:
         uses: ./.github/actions/gradle-setup
 
       - name: Build WASM production distribution
-        run: ./gradlew :webApp:wasmJsBrowserDistribution
+        run: ./gradlew :app:webApp:wasmJsBrowserDistribution
 
       - name: Add COOP/COEP security headers
         run: |
-          cat > webApp/build/dist/wasmJs/productionExecutable/_headers << 'EOF'
+          cat > app/webApp/build/dist/wasmJs/productionExecutable/_headers << 'EOF'
           /*
             Cross-Origin-Opener-Policy: same-origin
             Cross-Origin-Embedder-Policy: require-corp
@@ -191,7 +191,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
-          publish-dir: webApp/build/dist/wasmJs/productionExecutable
+          publish-dir: app/webApp/build/dist/wasmJs/productionExecutable
           production-branch: main
           production-deploy: true
           deploy-message: "Deploy from GitHub Actions - ${{ github.sha }}"

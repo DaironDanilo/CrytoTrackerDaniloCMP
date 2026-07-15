@@ -39,7 +39,9 @@ dependencyResolutionManagement {
     }
 }
 
-include(":shared")
-include(":androidApp")
-include(":desktopApp")
-include(":webApp")
+include(":app:shared")
+include(":app:androidApp")
+include(":app:desktopApp")
+include(":app:webApp")
+include(":core")
+include(":server")

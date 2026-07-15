@@ -199,35 +199,35 @@ sdk.dir=/path/to/your/Android/Sdk
 Open the project in Android Studio and run the **androidApp** configuration, or from the terminal:
 
 ```bash
-./gradlew :androidApp:installDebug
+./gradlew :app:androidApp:installDebug
 ```
 
 ### iOS (macOS only)
 
-Open the project in Android Studio (or Fleet) and run the **iosApp** scheme, which builds the shared framework and launches the Xcode-managed app. Alternatively, open `iosApp/iosApp.xcodeproj` in Xcode and run from there.
+Open the project in Android Studio (or Fleet) and run the **iosApp** scheme, which builds the shared framework and launches the Xcode-managed app. Alternatively, open `app/iosApp/iosApp.xcodeproj` in Xcode and run from there.
 
 Before the first iOS run, set your development team in Xcode:
 
-1. Open `iosApp/iosApp.xcodeproj`
+1. Open `app/iosApp/iosApp.xcodeproj`
 2. Select the **iosApp** target → **Signing & Capabilities**
 3. Choose your Apple Developer team
 
 ### Desktop (JVM)
 
 ```bash
-./gradlew :desktopApp:run
+./gradlew :app:desktopApp:run
 ```
 
 To produce a distributable package (`.dmg` / `.msi` / `.deb`):
 
 ```bash
-./gradlew :desktopApp:packageDistributionForCurrentOS
+./gradlew :app:desktopApp:packageDistributionForCurrentOS
 ```
 
 ### Web (Kotlin/Wasm)
 
 ```bash
-./gradlew :webApp:wasmJsBrowserDevelopmentRun --continuous
+./gradlew :app:webApp:wasmJsBrowserDevelopmentRun --continuous
 ```
 
 The `--continuous` flag is required — without it, the task builds but never starts the dev server.
@@ -239,36 +239,39 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 ## Project Structure
 
 ```
-├── androidApp/                  # Android application entry point
-│   └── src/
-│       └── main/
-│           └── kotlin/          # MainActivity → sets up Koin + Compose
-├── iosApp/                      # iOS application entry point
-│   └── iosApp.xcodeproj/        # Xcode project — open this to run on iOS
-├── shared/                      # Shared KMP library module
-│   └── src/
-│       ├── commonMain/          # Shared UI, domain, and data code
-│       │   └── kotlin/com/cryptodanilo/project/
-│       │       ├── core/        # Networking, navigation, utilities
-│       │       ├── crypto/      # Feature: coin list & coin detail
-│       │       │   ├── data/    # DTOs, mappers, RemoteCoinDataSource
-│       │       │   ├── domain/  # Coin, CoinPrice, CoinDataSource
-│       │       │   └── presentation/ # ViewModels, State, Actions, Events
-│       │       ├── di/          # Koin modules
-│       │       └── ui/theme/    # Material 3 theme, colors, typography
-│       ├── androidMain/         # Android-specific implementations
-│       ├── iosMain/             # iOS-specific implementations
-│       ├── desktopMain/         # Desktop-specific implementations
-│       └── wasmJsMain/          # Web-specific implementations
-├── desktopApp/                  # Desktop application entry point
-│   └── src/main/kotlin/         # main.kt → initializes Koin + launches window
-├── webApp/                      # Web application entry point
-│   └── src/wasmJsMain/          # main.kt + index.html + styles.css
-├── kotlin-js-store/             # yarn.lock for Kotlin/Wasm npm deps — committed for reproducible builds
+├── app/                          # Client applications
+│   ├── androidApp/                # Android application entry point
+│   │   └── src/
+│   │       └── main/
+│   │           └── kotlin/        # MainActivity → sets up Koin + Compose
+│   ├── iosApp/                    # iOS application entry point
+│   │   └── iosApp.xcodeproj/      # Xcode project — open this to run on iOS
+│   ├── shared/                    # Shared KMP library module
+│   │   └── src/
+│   │       ├── commonMain/        # Shared UI, domain, and data code
+│   │       │   └── kotlin/com/cryptodanilo/project/
+│   │       │       ├── core/      # Networking, navigation, utilities
+│   │       │       ├── crypto/    # Feature: coin list & coin detail
+│   │       │       │   ├── data/  # DTOs, mappers, RemoteCoinDataSource
+│   │       │       │   ├── domain/ # Coin, CoinPrice, CoinDataSource
+│   │       │       │   └── presentation/ # ViewModels, State, Actions, Events
+│   │       │       ├── di/        # Koin modules
+│   │       │       └── ui/theme/  # Material 3 theme, colors, typography
+│   │       ├── androidMain/       # Android-specific implementations
+│   │       ├── iosMain/           # iOS-specific implementations
+│   │       ├── desktopMain/       # Desktop-specific implementations
+│   │       └── wasmJsMain/        # Web-specific implementations
+│   ├── desktopApp/                # Desktop application entry point
+│   │   └── src/main/kotlin/       # main.kt → initializes Koin + launches window
+│   └── webApp/                    # Web application entry point
+│       └── src/wasmJsMain/        # main.kt + index.html + styles.css
+├── core/                         # KMP library shared between :server and :app modules (placeholder, populated once the backend lands)
+├── server/                       # Ktor backend (placeholder, populated once the backend lands)
+├── kotlin-js-store/              # yarn.lock for Kotlin/Wasm npm deps — committed for reproducible builds
 ├── gradle/
-│   └── libs.versions.toml       # Version catalog
-├── secrets.properties           # API key — NOT committed (see .gitignore)
-└── local.properties             # Android SDK path — NOT committed
+│   └── libs.versions.toml        # Version catalog
+├── secrets.properties            # API key — NOT committed (see .gitignore)
+└── local.properties              # Android SDK path — NOT committed
 ```
 
 ### Architecture
@@ -292,12 +295,12 @@ UI (Compose) ──► Action ──► ViewModel ──► UseCase / DataSource
 
 | Task | Description |
 |---|---|
-| `./gradlew :androidApp:installDebug` | Build and install Android debug APK |
-| `./gradlew :desktopApp:run` | Run Desktop app |
-| `./gradlew :webApp:wasmJsBrowserDevelopmentRun --continuous` | Run Web app in browser |
-| `./gradlew :desktopApp:packageDistributionForCurrentOS` | Package Desktop distributable |
+| `./gradlew :app:androidApp:installDebug` | Build and install Android debug APK |
+| `./gradlew :app:desktopApp:run` | Run Desktop app |
+| `./gradlew :app:webApp:wasmJsBrowserDevelopmentRun --continuous` | Run Web app in browser |
+| `./gradlew :app:desktopApp:packageDistributionForCurrentOS` | Package Desktop distributable |
 | `./gradlew build` | Build all targets |
-| `./gradlew :webApp:wasmJsBrowserDistribution` | Build production Web bundle (deployed to Netlify) |
+| `./gradlew :app:webApp:wasmJsBrowserDistribution` | Build production Web bundle (deployed to Netlify) |
 
 ---
 
