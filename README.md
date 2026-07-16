@@ -252,7 +252,7 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 │   │       │   └── kotlin/com/cryptodanilo/project/
 │   │       │       ├── core/      # Networking, navigation, utilities
 │   │       │       ├── crypto/    # Feature: coin list & coin detail
-│   │       │       │   ├── data/  # DTOs, mappers, RemoteCoinDataSource
+│   │       │       │   ├── data/  # DTOs, mappers, ServerCoinDataSource, MockCoinDataSource
 │   │       │       │   ├── domain/ # Coin, CoinPrice, CoinDataSource
 │   │       │       │   └── presentation/ # ViewModels, State, Actions, Events
 │   │       │       ├── di/        # Koin modules
@@ -265,8 +265,8 @@ Open the URL printed in the console (typically `http://localhost:8080`).
 │   │   └── src/main/kotlin/       # main.kt → initializes Koin + launches window
 │   └── webApp/                    # Web application entry point
 │       └── src/wasmJsMain/        # main.kt + index.html + styles.css
-├── core/                         # KMP library shared between :server and :app modules (placeholder, populated once the backend lands)
-├── server/                       # Ktor backend (placeholder, populated once the backend lands)
+├── core/                         # KMP library shared between :server and :app modules (currently just the `Candle` model)
+├── server/                       # Ktor backend — see server/README.md for its architecture
 ├── kotlin-js-store/              # yarn.lock for Kotlin/Wasm npm deps — committed for reproducible builds
 ├── gradle/
 │   └── libs.versions.toml        # Version catalog
@@ -288,6 +288,13 @@ UI (Compose) ──► Action ──► ViewModel ──► UseCase / DataSource
 - **`data`** — Ktor-based implementation, DTOs, mappers
 - **`presentation`** — `ViewModel` + `UiState` + `Action` + `Event` per screen
 - **`core/navigation`** — `AdaptiveCoinListDetailPane` uses Material 3 adaptive layout for a responsive two-pane experience on wide screens
+
+### Backend (`:server`)
+
+The client talks to a Ktor backend, not CoinCap directly. Its layered
+architecture (routes/service/repository/domain), Lambda-architecture candle
+history, endpoints, and deployment are documented in
+**[`server/README.md`](server/README.md)**.
 
 ---
 

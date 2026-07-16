@@ -90,6 +90,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
+            implementation(projects.core)
             implementation(libs.androidx.room.runtime)
             implementation(libs.runtime)
             implementation(libs.foundation)

@@ -1,6 +1,6 @@
-package com.cryptodanilo.project.crypto.data.networking
+package com.cryptodanilo.project.crypto.data.networking.server
 
-import com.cryptodanilo.project.core.data.networking.constructUrl
+import com.cryptodanilo.project.core.Candle
 import com.cryptodanilo.project.core.data.networking.safeCall
 import com.cryptodanilo.project.core.database.CoinDao
 import com.cryptodanilo.project.core.database.CoinPriceDao
@@ -14,9 +14,8 @@ import com.cryptodanilo.project.core.util.getCurrentTimeMs
 import com.cryptodanilo.project.crypto.data.mappers.toCoin
 import com.cryptodanilo.project.crypto.data.mappers.toCoinPrice
 import com.cryptodanilo.project.crypto.data.mappers.toMarket
-import com.cryptodanilo.project.crypto.data.networking.dto.CoinHistoryDto
-import com.cryptodanilo.project.crypto.data.networking.dto.CoinsResponseDto
-import com.cryptodanilo.project.crypto.data.networking.dto.MarketsResponseDto
+import com.cryptodanilo.project.crypto.data.networking.server.dto.CoinsPageDto
+import com.cryptodanilo.project.crypto.data.networking.server.dto.MarketsPageDto
 import com.cryptodanilo.project.crypto.domain.Coin
 import com.cryptodanilo.project.crypto.domain.CoinDataSource
 import com.cryptodanilo.project.crypto.domain.CoinPrice
@@ -25,13 +24,24 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlin.time.ExperimentalTime
 import com.cryptodanilo.project.core.database.toCoin as entityToCoin
 import com.cryptodanilo.project.core.database.toCoinPrice as entityToCoinPrice
 
-class RemoteCoinDataSource(
+// :server now runs on Cloud Run (min-instances=0, built/pushed from the
+// Ubuntu box, no Cloud Build), reachable from anywhere rather than only
+// the home LAN. Swap this out for a BuildKonfig-driven value if
+// per-environment URLs are ever needed.
+private const val BASE_URL = "https://cryptotracker-server-560504442386.us-central1.run.app/api/v1"
+
+private const val COINS_SEGMENT = "coins"
+private const val HISTORY_SEGMENT = "history"
+private const val MARKETS_SEGMENT = "markets"
+
+private const val PARAM_LIMIT = "limit"
+private const val PARAM_OFFSET = "offset"
+private const val PARAM_RANGE = "range"
+
+class ServerCoinDataSource(
     private val httpClient: HttpClient,
     private val coinDao: CoinDao,
     private val coinPriceDao: CoinPriceDao,
@@ -69,10 +79,10 @@ class RemoteCoinDataSource(
         offset: Int,
     ): Result<List<Coin>, NetworkError> {
         val networkResult =
-            safeCall<CoinsResponseDto> {
-                httpClient.get(constructUrl("/assets")) {
-                    parameter("limit", limit)
-                    parameter("offset", offset)
+            safeCall<CoinsPageDto> {
+                httpClient.get("$BASE_URL/$COINS_SEGMENT") {
+                    parameter(PARAM_LIMIT, limit)
+                    parameter(PARAM_OFFSET, offset)
                 }
             }.map { response -> response.data.map { it.toCoin() } }
 
@@ -93,7 +103,6 @@ class RemoteCoinDataSource(
         return networkResult
     }
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun getCoinHistory(
         coinId: String,
         timeframe: String,
@@ -115,10 +124,9 @@ class RemoteCoinDataSource(
             }
         }
 
-        return fetchAndCacheHistory(coinId, timeframe, start, end, interval)
+        return fetchAndCacheHistory(coinId, timeframe)
     }
 
-    @OptIn(ExperimentalTime::class)
     override suspend fun forceRefreshCoinHistory(
         coinId: String,
         timeframe: String,
@@ -127,7 +135,7 @@ class RemoteCoinDataSource(
         interval: String,
     ): Result<List<CoinPrice>, NetworkError> {
         coinPriceDao.deletePriceHistory(coinId, timeframe)
-        return fetchAndCacheHistory(coinId, timeframe, start, end, interval)
+        return fetchAndCacheHistory(coinId, timeframe)
     }
 
     override suspend fun getLastHistoryCachedAt(
@@ -135,25 +143,22 @@ class RemoteCoinDataSource(
         timeframe: String,
     ): Long? = coinPriceDao.getCachedAt(coinId, timeframe)
 
-    @OptIn(ExperimentalTime::class)
+    /**
+     * [timeframe] is [ChartTimeframe.label] ("1D"/"5D"/"1M"/"6M"/"YTD"/"1Y"),
+     * which lowercased is exactly the `range` value :server's history route
+     * expects -- no date-math needed on this side, the server picks
+     * granularity and applies a point cap per range.
+     */
     private suspend fun fetchAndCacheHistory(
         coinId: String,
         timeframe: String,
-        start: LocalDateTime,
-        end: LocalDateTime,
-        interval: String,
     ): Result<List<CoinPrice>, NetworkError> {
-        val startMillis = start.toInstant(TimeZone.UTC).toEpochMilliseconds()
-        val endMillis = end.toInstant(TimeZone.UTC).toEpochMilliseconds()
-
         val networkResult =
-            safeCall<CoinHistoryDto> {
-                httpClient.get(constructUrl("/assets/$coinId/history")) {
-                    parameter("interval", interval)
-                    parameter("start", startMillis)
-                    parameter("end", endMillis)
+            safeCall<List<Candle>> {
+                httpClient.get("$BASE_URL/$COINS_SEGMENT/$coinId/$HISTORY_SEGMENT") {
+                    parameter(PARAM_RANGE, timeframe.lowercase())
                 }
-            }.map { response -> response.data.map { it.toCoinPrice() } }
+            }.map { candles -> candles.map { it.toCoinPrice() } }
 
         when (networkResult) {
             is Result.Success -> {
@@ -180,13 +185,12 @@ class RemoteCoinDataSource(
         limit: Int,
         offset: Int,
     ): Result<List<Market>, NetworkError> =
-        safeCall<MarketsResponseDto> {
-            httpClient.get(constructUrl("/markets")) {
-                parameter("assetId", assetId)
-                parameter("limit", limit)
-                parameter("offset", offset)
+        safeCall<MarketsPageDto> {
+            httpClient.get("$BASE_URL/$COINS_SEGMENT/$assetId/$MARKETS_SEGMENT") {
+                parameter(PARAM_LIMIT, limit)
+                parameter(PARAM_OFFSET, offset)
             }
         }.map { response ->
-            response.data.map { it.toMarket() }
+            response.data.map { it.toMarket(assetId) }
         }
 }
