@@ -143,8 +143,13 @@ which breaks server-side prepared statements otherwise.
 `.github/workflows/deploy-server.yml` runs `:server:test`, builds the fat
 jar, builds/pushes the image with plain `docker build`/`docker push` (no
 Cloud Build), and deploys it to Cloud Run — triggered on push to `main`,
-scoped to `server/**` and `core/**` (the only module `:server` depends on)
-so client-only changes never touch Cloud Run. Auth is keyless: a
+scoped to `server/**` and `core/**` (the only module `:server` depends on),
+plus root build-infrastructure files `:server`'s build also draws from
+(`gradle/libs.versions.toml`, root `build.gradle.kts`, `settings.gradle.kts`,
+`gradle.properties`, the Gradle wrapper) — a path filter can't tell which
+side a version-catalog bump actually affects, so both this workflow and
+`build.yml`/`test.yml` trigger on all of those root files, not just their
+own module tree. Auth is keyless: a
 repo-scoped Workload Identity Federation provider
 (`github-actions-provider-cmp`, attribute-conditioned to this repo's `main`
 branch only) lets the workflow impersonate a dedicated deployer identity

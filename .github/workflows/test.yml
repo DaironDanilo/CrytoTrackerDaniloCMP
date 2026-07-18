@@ -6,12 +6,26 @@ on:
     paths:
       - "app/**"
       - "core/**"
+      - "gradle/libs.versions.toml"
+      - "gradle/wrapper/gradle-wrapper.properties"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
       - ".github/workflows/test.yml"
   pull_request:
     branches: [ main ]
     paths:
       - "app/**"
       - "core/**"
+      - "gradle/libs.versions.toml"
+      - "gradle/wrapper/gradle-wrapper.properties"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
       - ".github/workflows/test.yml"
   workflow_dispatch:
 

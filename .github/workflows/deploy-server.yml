@@ -1,7 +1,11 @@
 name: Deploy server
 
 # :server only. Triggers on server/** and core/** (the only module :server
-# depends on) so client-only changes never touch Cloud Run. No Cloud Build --
+# depends on), plus root build-infrastructure files that :server's build
+# also draws from (shared version catalog, root plugin config, module graph,
+# gradle.properties, wrapper version) -- a path filter can't tell whether a
+# change to one of those affects this side or the client side, so both this
+# workflow and build.yml/test.yml trigger on all of them. No Cloud Build --
 # the image is built with plain docker on the runner and pushed, matching
 # how :server has always been built (previously from a local Ubuntu box).
 on:
@@ -10,6 +14,13 @@ on:
     paths:
       - "server/**"
       - "core/**"
+      - "gradle/libs.versions.toml"
+      - "gradle/wrapper/gradle-wrapper.properties"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
       - ".github/workflows/deploy-server.yml"
 
 env:
