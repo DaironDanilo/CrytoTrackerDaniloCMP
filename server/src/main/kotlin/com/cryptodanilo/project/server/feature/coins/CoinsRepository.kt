@@ -22,10 +22,24 @@ class ExposedCoinsRepository : CoinsRepository {
         offset: Int,
     ): PagedResult<Coin> =
         newSuspendedTransaction {
-            val total = (Coins innerJoin CoinSnapshots).selectAll().count().toInt()
+            // binanceSymbol IS NOT NULL: the entire candle pipeline is
+            // Binance-kline-sourced, so a coin with no Binance USDT pair (a
+            // stablecoin can't trade against itself; plenty of ordinary
+            // altcoins simply aren't listed against USDT on Binance either)
+            // would show in the list with a permanently empty chart on
+            // selection. Filtering it out of the list here is simpler and
+            // more correct than the client having to special-case an asset
+            // it was never going to be able to show anything useful for.
+            val total =
+                (Coins innerJoin CoinSnapshots)
+                    .selectAll()
+                    .where { Coins.binanceSymbol.isNotNull() }
+                    .count()
+                    .toInt()
             val rows =
                 (Coins innerJoin CoinSnapshots)
                     .selectAll()
+                    .where { Coins.binanceSymbol.isNotNull() }
                     .orderBy(CoinSnapshots.rank to SortOrder.ASC_NULLS_LAST)
                     .limit(limit, offset.toLong())
                     .map { row ->

@@ -87,7 +87,7 @@ Errors share one shape:
 
 | Method | Path | Query params | Notes |
 |---|---|---|---|
-| `GET` | `/api/v1/coins` | `limit` (1-200, default 50), `offset` (default 0) | Paginated coin list, ordered by rank |
+| `GET` | `/api/v1/coins` | `limit` (1-200, default 50), `offset` (default 0) | Paginated coin list, ordered by rank. Only includes coins with a Binance USDT pair (`coins.binance_symbol IS NOT NULL`) — the candle pipeline is entirely Binance-kline-sourced, so any other coin would show in the list with a permanently empty chart on selection; filtered out here rather than left for the client to special-case |
 | `GET` | `/api/v1/coins/{coinId}/markets` | `limit`, `offset` | 404 if `coinId` doesn't exist |
 | `GET` | `/api/v1/coins/{coinId}/history` | `range` — one of `1d`/`5d`/`1m`/`6m`/`ytd`/`1y` (default `1y`) | Returns `List<Candle>`; 400 on invalid range, 404 on unknown coin, 502 if the data source fails |
 
