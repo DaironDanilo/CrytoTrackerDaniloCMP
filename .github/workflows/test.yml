@@ -46,8 +46,28 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
+      # app:shared's plain ktlintCheck aggregate pulls in compileKotlinIosArm64/
+      # compileKotlinIosSimulatorArm64 as a task-graph dependency -- Kotlin/
+      # Native's Apple targets can only compile on a macOS host (Apple's
+      # toolchain isn't distributed for other platforms), so that always fails
+      # on this ubuntu-latest runner regardless of code correctness. Verified
+      # locally that compileKotlinIosArm64 itself compiles clean on macOS, and
+      # that this explicit sub-task list has zero compile dependency (dry-run
+      # showed every one of these as a standalone SKIPPED/lint-only task) --
+      # :core:ktlintCheck's plain aggregate is unaffected by the same issue and
+      # didn't need this treatment.
       - name: Run ktlint
-        run: ./gradlew :core:ktlintCheck :app:shared:ktlintCheck :app:androidApp:ktlintCheck :app:desktopApp:ktlintCheck :app:webApp:ktlintCheck
+        run: |
+          ./gradlew :core:ktlintCheck \
+            :app:shared:ktlintCommonMainSourceSetCheck \
+            :app:shared:ktlintCommonTestSourceSetCheck \
+            :app:shared:ktlintAndroidMainSourceSetCheck \
+            :app:shared:ktlintDesktopMainSourceSetCheck \
+            :app:shared:ktlintDesktopTestSourceSetCheck \
+            :app:shared:ktlintWasmJsMainSourceSetCheck \
+            :app:shared:ktlintWebMainSourceSetCheck \
+            :app:shared:ktlintKotlinScriptCheck \
+            :app:androidApp:ktlintCheck :app:desktopApp:ktlintCheck :app:webApp:ktlintCheck
 
       - name: Run unit tests
         run: ./gradlew :app:shared:desktopTest
