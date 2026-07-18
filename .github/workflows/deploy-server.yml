@@ -41,17 +41,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create secrets.properties
-        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
-
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
       - name: Run server tests
         run: ./gradlew :server:test
-
-      - name: Build fat jar
-        run: ./gradlew :server:buildFatJar
 
       - id: auth
         uses: google-github-actions/auth@v2
@@ -65,10 +59,9 @@ jobs:
         run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
       - name: Build and push image
-        working-directory: server
         run: |
           IMAGE="us-central1-docker.pkg.dev/gcp-crypto-tracker/cryptotracker-server/server:${{ github.sha }}"
-          docker build -t "$IMAGE" .
+          docker build -f server/Dockerfile -t "$IMAGE" .
           docker push "$IMAGE"
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
 

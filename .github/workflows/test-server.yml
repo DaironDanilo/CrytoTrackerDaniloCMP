@@ -1,0 +1,60 @@
+name: Test server
+
+# Standalone from deploy-server.yml on purpose: this runs on pull_request too
+# (deploy-server.yml only triggers on push to main, so without this, a
+# backend test failure would only surface once the deploy pipeline already
+# tried to run). deploy-server.yml still runs :server:test itself as a
+# pre-deploy gate -- redundant on a green push, but it means deploy never
+# proceeds on a broken test even if this workflow's result is ignored.
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "server/**"
+      - "core/**"
+      - "gradle/libs.versions.toml"
+      - "gradle/wrapper/gradle-wrapper.properties"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
+      - ".github/workflows/test-server.yml"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "server/**"
+      - "core/**"
+      - "gradle/libs.versions.toml"
+      - "gradle/wrapper/gradle-wrapper.properties"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - "gradlew.bat"
+      - ".github/workflows/test-server.yml"
+  workflow_dispatch:
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.configuration-cache=false"
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Run unit tests
+        run: ./gradlew :server:test
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-test-reports
+          path: "server/build/reports/tests/"

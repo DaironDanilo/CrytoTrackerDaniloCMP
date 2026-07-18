@@ -1,0 +1,20 @@
+# :server's Dockerfile builds from the repo root (it's part of a multi-module
+# Gradle build and needs core/ + the root gradle files as context), so this
+# governs what reaches the Docker daemon for that build -- not just build
+# artifacts, but anything sensitive that isn't already excluded by being
+# gitignored (.dockerignore is evaluated independently of .gitignore).
+.git
+.gradle
+.kotlin
+**/build/
+*.iml
+.idea
+.DS_Store
+local.properties
+secrets.properties
+xcuserdata
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj
+BACKEND_ARCHITECTURE_PLAN.md

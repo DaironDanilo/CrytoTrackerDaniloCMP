@@ -140,9 +140,9 @@ which breaks server-side prepared statements otherwise.
 
 ### Continuous deployment
 
-`.github/workflows/deploy-server.yml` runs `:server:test`, builds the fat
-jar, builds/pushes the image with plain `docker build`/`docker push` (no
-Cloud Build), and deploys it to Cloud Run — triggered on push to `main`,
+`.github/workflows/deploy-server.yml` runs `:server:test` as a fast pre-build
+gate, then builds/pushes the image with plain `docker build`/`docker push`
+(no Cloud Build) and deploys it to Cloud Run — triggered on push to `main`,
 scoped to `server/**` and `core/**` (the only module `:server` depends on),
 plus root build-infrastructure files `:server`'s build also draws from
 (`gradle/libs.versions.toml`, root `build.gradle.kts`, `settings.gradle.kts`,
@@ -161,14 +161,29 @@ revision that runs as it). The client build/test workflows
 (`build.yml`/`test.yml`) are scoped to `app/**`/`core/**` the other way
 around, so a `:server`-only change never rebuilds the four client targets.
 
+### Image
+
+Multi-stage, distroless final image: an `eclipse-temurin:17-jdk` stage runs
+`:server:buildFatJar`, then only the resulting jar is copied into
+`gcr.io/distroless/java17-debian12:nonroot` — no shell, no package manager,
+smaller attack surface. Safe for a JVM app specifically because the fat jar
+is fully self-contained (no runtime dependency resolution, no shelling out),
+and the distroless *java* variant (not the bare "static" one) still ships a
+JRE with `cacerts`/tzdata, so outbound TLS to Supabase keeps working. Build
+context is the **repo root**, not `server/` — `:server` is part of the
+multi-module Gradle build (`implementation(projects.core)`), so the build
+stage needs `settings.gradle.kts`/`core/` to configure at all; verified this
+succeeds with no `local.properties`/`ANDROID_HOME` present, so the sibling
+Android/iOS/Desktop/Web modules being configured (not built) doesn't require
+an SDK.
+
 ### Manual (fallback)
 
 Same image/deploy path as CI, useful for testing a change before it's
-pushed:
+pushed. Must be run from the **repo root**, not `server/`:
 
 ```bash
-./gradlew :server:buildFatJar
-docker build -t <artifact-registry-repo>/cryptotracker-server:latest .
+docker build -f server/Dockerfile -t <artifact-registry-repo>/cryptotracker-server:latest .
 docker push <artifact-registry-repo>/cryptotracker-server:latest
 
 gcloud run deploy cryptotracker-server \
