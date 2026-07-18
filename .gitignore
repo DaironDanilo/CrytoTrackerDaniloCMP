@@ -18,3 +18,5 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 BACKEND_ARCHITECTURE_PLAN.md
+CLAUDE.local.md
+.claude/settings.local.json

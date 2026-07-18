@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew :server:test)",
+      "Bash(./gradlew :app:shared:desktopTest)",
+      "Bash(./gradlew :server:run)",
+      "Bash(./gradlew ktlintCheck)",
+      "Bash(./gradlew ktlintFormat)"
+    ],
+    "deny": [
+      "Read(**/build/**)",
+      "Read(.gradle/**)",
+      "Read(local.properties)",
+      "Read(secrets.properties)",
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)"
+    ]
+  }
+}
