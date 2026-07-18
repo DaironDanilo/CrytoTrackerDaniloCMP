@@ -1,0 +1,69 @@
+name: Deploy server
+
+# :server only. Triggers on server/** and core/** (the only module :server
+# depends on) so client-only changes never touch Cloud Run. No Cloud Build --
+# the image is built with plain docker on the runner and pushed, matching
+# how :server has always been built (previously from a local Ubuntu box).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "core/**"
+      - ".github/workflows/deploy-server.yml"
+
+env:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true -Dorg.gradle.configuration-cache=false"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-server
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create secrets.properties
+        run: echo "COIN_API_KEY=${{ secrets.COIN_API_KEY }}" > secrets.properties
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Run server tests
+        run: ./gradlew :server:test
+
+      - name: Build fat jar
+        run: ./gradlew :server:buildFatJar
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        working-directory: server
+        run: |
+          IMAGE="us-central1-docker.pkg.dev/gcp-crypto-tracker/cryptotracker-server/server:${{ github.sha }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy cryptotracker-server \
+            --image="$IMAGE" \
+            --region=us-central1 --project=gcp-crypto-tracker \
+            --quiet

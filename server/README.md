@@ -138,27 +138,45 @@ which breaks server-side prepared statements otherwise.
 
 ## Deployment
 
-Built and pushed from the Ubuntu box (no Cloud Build, to stay near zero
-cost), then deployed to Cloud Run from anywhere with the already-pushed
-image:
+### Continuous deployment
+
+`.github/workflows/deploy-server.yml` runs `:server:test`, builds the fat
+jar, builds/pushes the image with plain `docker build`/`docker push` (no
+Cloud Build), and deploys it to Cloud Run — triggered on push to `main`,
+scoped to `server/**` and `core/**` (the only module `:server` depends on)
+so client-only changes never touch Cloud Run. Auth is keyless: a
+repo-scoped Workload Identity Federation provider
+(`github-actions-provider-cmp`, attribute-conditioned to this repo's `main`
+branch only) lets the workflow impersonate a dedicated deployer identity
+(`github-actions-deployer-cmp`) with exactly three least-privilege grants —
+`artifactregistry.writer` on the `cryptotracker-server` Artifact Registry
+repo, `run.developer` on the `cryptotracker-server` Cloud Run service, and
+`iam.serviceAccountUser` on the runtime service account (needed to deploy a
+revision that runs as it). The client build/test workflows
+(`build.yml`/`test.yml`) are scoped to `app/**`/`core/**` the other way
+around, so a `:server`-only change never rebuilds the four client targets.
+
+### Manual (fallback)
+
+Same image/deploy path as CI, useful for testing a change before it's
+pushed:
 
 ```bash
-# on the Ubuntu box
 ./gradlew :server:buildFatJar
 docker build -t <artifact-registry-repo>/cryptotracker-server:latest .
 docker push <artifact-registry-repo>/cryptotracker-server:latest
 
-# from anywhere
 gcloud run deploy cryptotracker-server \
   --image=<artifact-registry-repo>/cryptotracker-server:latest \
   --min-instances=0 \
   --allow-unauthenticated
 ```
 
-Two dedicated service accounts, least-privilege: a pusher
-(`artifactregistry.writer`, scoped to this one Artifact Registry repo) and a
-runtime identity (`secretmanager.secretAccessor`, scoped to the
-`supabase-database-url` secret only).
+Two dedicated service accounts pre-date CI and are still used for this path,
+least-privilege: a pusher (`artifactregistry.writer`, scoped to this one
+Artifact Registry repo) and a runtime identity
+(`secretmanager.secretAccessor`, scoped to the `supabase-database-url`
+secret only).
 
 ## Related repo
 
