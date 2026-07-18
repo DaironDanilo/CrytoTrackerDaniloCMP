@@ -44,6 +44,9 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
+      - name: Run ktlint
+        run: ./gradlew :core:ktlintCheck :server:ktlintCheck
+
       - name: Run server tests
         run: ./gradlew :server:test
 
@@ -71,3 +74,10 @@ jobs:
             --image="$IMAGE" \
             --region=us-central1 --project=gcp-crypto-tracker \
             --quiet
+
+      - name: Smoke test the live deployment
+        run: |
+          URL=$(gcloud run services describe cryptotracker-server \
+            --region=us-central1 --project=gcp-crypto-tracker \
+            --format='value(status.url)')
+          server/scripts/smoke-test.sh "$URL"

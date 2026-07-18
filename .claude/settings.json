@@ -7,13 +7,32 @@
       "Bash(./gradlew ktlintCheck)",
       "Bash(./gradlew ktlintFormat)"
     ],
+    "ask": [
+      "Bash(git push*)"
+    ],
     "deny": [
       "Read(**/build/**)",
       "Read(.gradle/**)",
       "Read(local.properties)",
       "Read(secrets.properties)",
       "Read(**/*.jks)",
-      "Read(**/*.keystore)"
+      "Read(**/*.keystore)",
+      "Bash(gcloud run deploy --source=*)",
+      "Bash(gcloud run jobs deploy --source=*)",
+      "Bash(gcloud builds submit*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/ktlint-format.sh"
+          }
+        ]
+      }
     ]
   }
 }

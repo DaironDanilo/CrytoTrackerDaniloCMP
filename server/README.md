@@ -140,16 +140,24 @@ which breaks server-side prepared statements otherwise.
 
 ### Continuous deployment
 
-`.github/workflows/deploy-server.yml` runs `:server:test` as a fast pre-build
-gate, then builds/pushes the image with plain `docker build`/`docker push`
-(no Cloud Build) and deploys it to Cloud Run — triggered on push to `main`,
-scoped to `server/**` and `core/**` (the only module `:server` depends on),
-plus root build-infrastructure files `:server`'s build also draws from
-(`gradle/libs.versions.toml`, root `build.gradle.kts`, `settings.gradle.kts`,
-`gradle.properties`, the Gradle wrapper) — a path filter can't tell which
-side a version-catalog bump actually affects, so both this workflow and
-`build.yml`/`test.yml` trigger on all of those root files, not just their
-own module tree. Auth is keyless: a
+`.github/workflows/deploy-server.yml` runs `ktlintCheck` + `:server:test` as
+fast pre-build gates, then builds/pushes the image with plain `docker build`/
+`docker push` (no Cloud Build) and deploys it to Cloud Run — triggered on
+push to `main`, scoped to `server/**` and `core/**` (the only module
+`:server` depends on), plus root build-infrastructure files `:server`'s
+build also draws from (`gradle/libs.versions.toml`, root `build.gradle.kts`,
+`settings.gradle.kts`, `gradle.properties`, the Gradle wrapper) — a path
+filter can't tell which side a version-catalog bump actually affects, so
+both this workflow and `build.yml`/`test.yml` trigger on all of those root
+files, not just their own module tree.
+
+After deploying, it runs `server/scripts/smoke-test.sh` against the live
+Cloud Run URL as a real post-deploy check — a deploy that starts cleanly but
+serves wrong data or 500s would otherwise go unnoticed until someone hits it
+manually. Run the same script locally to verify a deploy:
+`server/scripts/smoke-test.sh [base_url]` (defaults to the live URL).
+
+Auth is keyless: a
 repo-scoped Workload Identity Federation provider
 (`github-actions-provider-cmp`, attribute-conditioned to this repo's `main`
 branch only) lets the workflow impersonate a dedicated deployer identity

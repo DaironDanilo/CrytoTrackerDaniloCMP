@@ -46,6 +46,9 @@ jobs:
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
 
+      - name: Run ktlint
+        run: ./gradlew :core:ktlintCheck :app:shared:ktlintCheck :app:androidApp:ktlintCheck :app:desktopApp:ktlintCheck :app:webApp:ktlintCheck
+
       - name: Run unit tests
         run: ./gradlew :app:shared:desktopTest
 
