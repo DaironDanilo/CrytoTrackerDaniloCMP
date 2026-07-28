@@ -105,8 +105,10 @@ never reach the check step above at all.
 
 `memory/MEMORY.md` is a **git-committed, repo-shared** knowledge base of
 non-obvious gotchas — distinct from any single AI tool's private session
-memory, which only that tool/session will ever see again. Check it for
-known traps before debugging something that feels like it's been hit
-before, and add an entry (same frontmatter format as the existing ones)
-when you learn something the hard way that a future agent — any agent, any
-tool, any session — would otherwise re-discover from scratch.
+memory, which only that tool/session will ever see again. Claude Code loads
+its index automatically every session (imported from `CLAUDE.md`); other
+tools should read it explicitly. Check it for known traps before debugging
+something that feels like it's been hit before, and add an entry (same
+frontmatter format as the existing ones) when you learn something the hard
+way that a future agent — any agent, any tool, any session — would
+otherwise re-discover from scratch.

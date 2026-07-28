@@ -1,9 +1,15 @@
 @AGENTS.md
+@memory/MEMORY.md
 
-Everything above is shared across AI coding tools (the open `AGENTS.md`
-standard — Codex, Cursor, Copilot, Gemini CLI, etc. all read it natively;
-Claude Code doesn't, hence this import) and kept there so it stays portable.
-Everything below is Claude-Code-specific mechanism, not duplicated content.
+Everything from `AGENTS.md` is shared across AI coding tools (the open
+`AGENTS.md` standard — Codex, Cursor, Copilot, Gemini CLI, etc. all read it
+natively; Claude Code doesn't, hence this import) and kept there so it
+stays portable. `memory/MEMORY.md` (the index only — a couple of lines;
+individual gotcha entries stay on-demand, loaded when actually relevant,
+same as Claude Code's own native auto-memory pattern) is imported here so
+its index is guaranteed loaded every session rather than relying on the
+prose instruction below being followed. Everything else below is
+Claude-Code-specific mechanism, not duplicated content.
 
 ## Nested CLAUDE.md files
 
