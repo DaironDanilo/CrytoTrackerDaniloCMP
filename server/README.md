@@ -59,9 +59,13 @@ request — that was tried and proved too slow/fragile for a fixed six-range
 chart. Instead, two Postgres tables are kept fresh by independent
 Cloud Run Jobs (in the backend data-platform repo) and read directly:
 
-- **`candle_rollups_hourly`** (speed layer) — 10-day retention, refreshed
-  every 5 minutes from BigQuery's `gold.hourly_candle_metrics`. Serves the
-  1D/5D ranges directly.
+- **`candle_rollups_hourly`** (speed layer) — 10-day retention, normally
+  refreshed every 5 minutes from BigQuery's `gold.hourly_candle_metrics`
+  (throttled to every 3h since 2026-07-20 to stay under Cloud Run's free
+  tier, with the whole upstream chain — raw ingestion, the Dataform gold
+  rebuild, and this sync — cadence-matched/offset together; see the
+  data-platform repo's `recurring/README.md` for the full math and the
+  revert-all-together command). Serves the 1D/5D ranges directly.
 - **`candle_rollups_daily`** (batch layer) — 13-month retention, refreshed
   once daily from `gold.daily_candle_metrics`. Serves 1M/6M/YTD/1Y, with
   today's bucket excluded (that table only updates once a day) and
