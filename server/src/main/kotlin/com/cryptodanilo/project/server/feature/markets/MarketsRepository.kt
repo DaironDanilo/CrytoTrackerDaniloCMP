@@ -2,9 +2,10 @@ package com.cryptodanilo.project.server.feature.markets
 
 import com.cryptodanilo.project.server.common.PagedResult
 import com.cryptodanilo.project.server.domain.Market
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 
 interface MarketsRepository {
     suspend fun getMarkets(
@@ -32,7 +33,8 @@ class ExposedMarketsRepository : MarketsRepository {
                     .selectAll()
                     .where { Markets.coinId eq coinId }
                     .orderBy(Markets.volumeUsd24h to SortOrder.DESC_NULLS_LAST)
-                    .limit(limit, offset.toLong())
+                    .limit(limit)
+                    .offset(offset.toLong())
                     .map { row ->
                         Market(
                             exchangeId = row[Markets.exchangeId],

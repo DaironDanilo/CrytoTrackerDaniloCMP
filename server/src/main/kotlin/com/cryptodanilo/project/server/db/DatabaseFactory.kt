@@ -2,7 +2,7 @@ package com.cryptodanilo.project.server.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.jdbc.Database
 import java.net.URI
 import javax.sql.DataSource
 

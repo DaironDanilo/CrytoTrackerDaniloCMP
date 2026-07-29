@@ -3,9 +3,12 @@ package com.cryptodanilo.project.server.feature.coins
 import com.cryptodanilo.project.server.common.PagedResult
 import com.cryptodanilo.project.server.db.Coins
 import com.cryptodanilo.project.server.domain.Coin
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.innerJoin
+import org.jetbrains.exposed.v1.core.isNotNull
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.experimental.newSuspendedTransaction
 
 interface CoinsRepository {
     suspend fun getCoins(
@@ -41,7 +44,8 @@ class ExposedCoinsRepository : CoinsRepository {
                     .selectAll()
                     .where { Coins.binanceSymbol.isNotNull() }
                     .orderBy(CoinSnapshots.rank to SortOrder.ASC_NULLS_LAST)
-                    .limit(limit, offset.toLong())
+                    .limit(limit)
+                    .offset(offset.toLong())
                     .map { row ->
                         Coin(
                             id = row[Coins.coinId],

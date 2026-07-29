@@ -1,8 +1,8 @@
 package com.cryptodanilo.project.server.feature.markets
 
 import com.cryptodanilo.project.server.db.Coins
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.timestamp
 
 private const val TABLE_NAME = "markets"
 private const val COLUMN_COIN_ID = "coin_id"

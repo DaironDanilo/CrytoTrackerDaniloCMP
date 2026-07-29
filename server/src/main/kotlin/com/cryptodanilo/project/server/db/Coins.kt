@@ -1,6 +1,6 @@
 package com.cryptodanilo.project.server.db
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 private const val TABLE_NAME = "coins"
 private const val COLUMN_COIN_ID = "coin_id"

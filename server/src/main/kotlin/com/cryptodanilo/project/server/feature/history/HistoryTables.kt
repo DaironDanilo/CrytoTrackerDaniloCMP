@@ -1,8 +1,8 @@
 package com.cryptodanilo.project.server.feature.history
 
 import com.cryptodanilo.project.server.db.Coins
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.javatime.timestamp
 
 private const val TABLE_NAME_HOURLY = "candle_rollups_hourly"
 private const val TABLE_NAME_DAILY = "candle_rollups_daily"
