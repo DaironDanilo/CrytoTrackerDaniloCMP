@@ -28,6 +28,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -109,50 +110,60 @@ fun RootScreen(
     // currently drawn. Applied identically to the bottom bar, rail, and the expanded panel.
     val selectedIconTint = if (isSystemInDarkTheme()) Color.White else Color.Black
 
-    val screenContent: @Composable () -> Unit = {
-        Scaffold(
-            topBar = {
-                // On compact, top bar visibility follows the shell state (hidden on the list,
-                // shown with a back button on the detail pane). On medium/expanded, only show it
-                // when there's an actual title to display — the list screen's title is always
-                // empty (see AppShellViewModel.setListMode), so no title ever appears above the
-                // search bar/coin list there; the detail screen's title is the coin name.
-                val showTopBar = if (isCompact) topBarState.showTopBar else topBarState.title.isNotEmpty()
-                if (showTopBar) {
-                    AppTopBar(state = topBarState)
-                }
-            },
-            containerColor = CryptoTrackerTheme.colors.background,
-        ) { innerPadding ->
-            // Crossfade (not the default show/hide) so tab switches are a plain 200ms fade —
-            // AnimatedVisibility's default expand/shrink spec animates size and reads as a
-            // diagonal slide, which is wrong for tab switching. `visible = true` is passed to
-            // both NavDisplays unconditionally: Crossfade alone decides which is on screen, and
-            // since it never flips back to false, the inner AnimatedVisibility never re-triggers.
-            Crossfade(
-                targetState = selectedTab,
-                animationSpec = tween(durationMillis = 200, easing = LinearEasing),
-                modifier = Modifier.padding(innerPadding).fillMaxSize(),
-            ) { tab ->
-                when (tab) {
-                    BottomTab.CRYPTO ->
-                        CryptoNavDisplay(
-                            backStack = cryptoBackStack,
-                            topBarViewModel = topBarViewModel,
-                            visible = true,
-                            onBackNavigableChanged = onBackNavigableChanged,
-                            backRequests = backRequests,
-                        )
-                    BottomTab.STOCKS ->
-                        StocksNavDisplay(
-                            backStack = stocksBackStack,
-                            topBarViewModel = topBarViewModel,
-                            visible = true,
-                        )
+    // movableContentOf, not a plain lambda: this same content is invoked from two structurally
+    // different call sites below (a plain Box on the expanded layout vs. NavigationSuiteScaffold's
+    // content slot otherwise). Compose identifies a subtree by its position in the composition, not
+    // by lambda identity, so crossing the isExpanded breakpoint would otherwise tear down and
+    // recreate everything underneath — including CoinListViewModel, silently resetting the selected
+    // coin back to the list's first entry. movableContentOf relocates the existing composition (and
+    // ViewModel store) instead of disposing it.
+    val screenContent =
+        remember {
+            movableContentOf {
+                Scaffold(
+                    topBar = {
+                        // On compact, top bar visibility follows the shell state (hidden on the list,
+                        // shown with a back button on the detail pane). On medium/expanded, only show it
+                        // when there's an actual title to display — the list screen's title is always
+                        // empty (see AppShellViewModel.setListMode), so no title ever appears above the
+                        // search bar/coin list there; the detail screen's title is the coin name.
+                        val showTopBar = if (isCompact) topBarState.showTopBar else topBarState.title.isNotEmpty()
+                        if (showTopBar) {
+                            AppTopBar(state = topBarState)
+                        }
+                    },
+                    containerColor = CryptoTrackerTheme.colors.background,
+                ) { innerPadding ->
+                    // Crossfade (not the default show/hide) so tab switches are a plain 200ms fade —
+                    // AnimatedVisibility's default expand/shrink spec animates size and reads as a
+                    // diagonal slide, which is wrong for tab switching. `visible = true` is passed to
+                    // both NavDisplays unconditionally: Crossfade alone decides which is on screen, and
+                    // since it never flips back to false, the inner AnimatedVisibility never re-triggers.
+                    Crossfade(
+                        targetState = selectedTab,
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                        modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                    ) { tab ->
+                        when (tab) {
+                            BottomTab.CRYPTO ->
+                                CryptoNavDisplay(
+                                    backStack = cryptoBackStack,
+                                    topBarViewModel = topBarViewModel,
+                                    visible = true,
+                                    onBackNavigableChanged = onBackNavigableChanged,
+                                    backRequests = backRequests,
+                                )
+                            BottomTab.STOCKS ->
+                                StocksNavDisplay(
+                                    backStack = stocksBackStack,
+                                    topBarViewModel = topBarViewModel,
+                                    visible = true,
+                                )
+                        }
+                    }
                 }
             }
         }
-    }
 
     if (isExpanded) {
         // NavigationSuiteType.NavigationDrawer renders via PermanentDrawerSheet, which hardcodes
