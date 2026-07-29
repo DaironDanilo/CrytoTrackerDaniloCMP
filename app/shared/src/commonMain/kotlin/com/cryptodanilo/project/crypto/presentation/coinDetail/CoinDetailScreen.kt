@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -62,6 +63,7 @@ import com.cryptodanilo.project.crypto.presentation.coinDetail.components.InfoCa
 import com.cryptodanilo.project.crypto.presentation.coinDetail.components.MarketsList
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListAction
 import com.cryptodanilo.project.crypto.presentation.coinList.CoinListState
+import com.cryptodanilo.project.crypto.presentation.coinList.components.COIN_ICON_SHARED_ELEMENT_DURATION_MILLIS
 import com.cryptodanilo.project.crypto.presentation.coinList.components.PriceChange
 import com.cryptodanilo.project.crypto.presentation.coinList.components.conditional
 import com.cryptodanilo.project.crypto.presentation.coinList.components.previewCoin
@@ -179,27 +181,62 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            Icon(
-                painter = painterResource(coin.iconRes),
-                contentDescription = coin.name,
-                tint = CryptoTrackerTheme.colors.primary,
-                modifier =
-                    Modifier
-                        .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
-                        .conditional(
-                            condition = shouldExistSharedElementTransition && animatedPaneScope != null,
-                            ifTrue = {
-                                sharedElement(
-                                    sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
-                                    animatedVisibilityScope = animatedPaneScope!!,
-                                    boundsTransform = { _, _ ->
-                                        tween(durationMillis = 1000)
-                                    },
-                                    renderInOverlayDuringTransition = false,
-                                )
-                            },
-                        ),
-            )
+            if (coin.iconRes == Res.drawable.question_sign) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
+                            .border(
+                                width = CryptoTrackerTheme.sizing.borderThin,
+                                color = CryptoTrackerTheme.colors.primary,
+                                shape = CircleShape,
+                            ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = coin.symbol.take(1).uppercase(),
+                        color = CryptoTrackerTheme.colors.primary,
+                        style = CryptoTrackerTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier =
+                            Modifier.conditional(
+                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                                ifTrue = {
+                                    sharedElement(
+                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                        animatedVisibilityScope = animatedPaneScope!!,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = COIN_ICON_SHARED_ELEMENT_DURATION_MILLIS)
+                                        },
+                                        renderInOverlayDuringTransition = false,
+                                    )
+                                },
+                            ),
+                    )
+                }
+            } else {
+                Icon(
+                    painter = painterResource(coin.iconRes),
+                    contentDescription = coin.name,
+                    tint = CryptoTrackerTheme.colors.primary,
+                    modifier =
+                        Modifier
+                            .size(CryptoTrackerTheme.sizing.coinDetailIconSize)
+                            .conditional(
+                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                                ifTrue = {
+                                    sharedElement(
+                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                        animatedVisibilityScope = animatedPaneScope!!,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = COIN_ICON_SHARED_ELEMENT_DURATION_MILLIS)
+                                        },
+                                        renderInOverlayDuringTransition = false,
+                                    )
+                                },
+                            ),
+                )
+            }
             Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
             Text(
                 text = coin.symbol,

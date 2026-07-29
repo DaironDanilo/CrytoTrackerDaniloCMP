@@ -50,6 +50,8 @@ import cryptotrackerdanilo.shared.generated.resources.Res
 import cryptotrackerdanilo.shared.generated.resources.question_sign
 import org.jetbrains.compose.resources.painterResource
 
+internal const val COIN_ICON_SHARED_ELEMENT_DURATION_MILLIS = 1000
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CoinListItem(
@@ -108,6 +110,19 @@ fun SharedTransitionScope.CoinListItem(
                         color = CryptoTrackerTheme.colors.primary,
                         style = CryptoTrackerTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
+                        modifier =
+                            Modifier.conditional(
+                                condition = shouldExistSharedElementTransition && animatedPaneScope != null,
+                                ifTrue = {
+                                    sharedElement(
+                                        sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
+                                        animatedVisibilityScope = animatedPaneScope!!,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = COIN_ICON_SHARED_ELEMENT_DURATION_MILLIS)
+                                        },
+                                    )
+                                },
+                            ),
                     )
                 } else {
                     Icon(
@@ -124,7 +139,7 @@ fun SharedTransitionScope.CoinListItem(
                                             sharedContentState = rememberSharedContentState(key = "image/${coin.id}"),
                                             animatedVisibilityScope = animatedPaneScope!!,
                                             boundsTransform = { _, _ ->
-                                                tween(durationMillis = 1000)
+                                                tween(durationMillis = COIN_ICON_SHARED_ELEMENT_DURATION_MILLIS)
                                             },
                                         )
                                     },
