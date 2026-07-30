@@ -23,20 +23,20 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
     <th>iOS</th>
   </tr>
   <tr>
-    <td><video src="https://github.com/user-attachments/assets/addecced-d20f-42d6-a02d-27293ce14f4d"></td>
-    <td><video src="https://github.com/user-attachments/assets/d69b64ae-29c7-4c4c-8144-edc40bcc315f"></td>
+    <td><video src="https://github.com/user-attachments/assets/34b47e19-c90d-49e8-a3ce-f563466ab968"></td>
+    <td><video src="https://github.com/user-attachments/assets/9477a25e-09e6-4c5f-b86d-d7334141cc88"></td>
   </tr>
   <tr>
     <th colspan="2">Desktop</th>
   </tr>
   <tr>
-    <td colspan="2"><video src="https://github.com/user-attachments/assets/0e80f837-89d0-407e-a636-1b4a4b92390f"></td>
+    <td colspan="2"><video src="https://github.com/user-attachments/assets/b7730197-95d1-4e14-abb0-77a1815e5fb0"></td>
   </tr>
   <tr>
     <th colspan="2">Web</th>
   </tr>
   <tr>
-    <td colspan="2"><video src="https://github.com/user-attachments/assets/48bc0159-ca51-45b8-b8b4-b79aa8e8f44b"></td>
+    <td colspan="2"><video src="https://github.com/user-attachments/assets/e05a1f51-6464-45d8-87d4-0b7b311feff0"></td>
   </tr>
   <tr>
     <th colspan="2">Web — Live on Netlify</th>
