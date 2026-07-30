@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
+import com.cryptodanilo.project.core.presentation.components.FavoriteStar
 import com.cryptodanilo.project.core.presentation.util.DisplayableNumber
 import com.cryptodanilo.project.core.presentation.util.formatCoinListPrice
 import com.cryptodanilo.project.core.presentation.util.formatFullPrice
@@ -60,6 +61,7 @@ fun SharedTransitionScope.CoinListItem(
     isSelected: Boolean = false,
     shouldExistSharedElementTransition: Boolean,
     onItemClick: () -> Unit,
+    onFavoriteClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val contentColor =
@@ -217,6 +219,10 @@ fun SharedTransitionScope.CoinListItem(
                     },
             )
         }
+        // Deliberately outside the weighted CHANGE column above (a fixed-size sibling, not
+        // sharing its flexible space with the price chip) — otherwise its touch box gets
+        // squeezed/clipped inconsistently depending on how wide that row's chip text is.
+        FavoriteStar(isFavorite = coin.isFavorite, onClick = onFavoriteClick)
     }
 }
 

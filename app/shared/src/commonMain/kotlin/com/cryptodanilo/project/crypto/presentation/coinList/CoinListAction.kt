@@ -40,4 +40,10 @@ sealed interface CoinListAction {
     data object OnLoadMoreMarkets : CoinListAction
 
     data object OnCoinsLoaded : CoinListAction
+
+    data class OnToggleFavorite(
+        val coinId: String,
+    ) : CoinListAction
+
+    data object OnToggleFavoritesFilter : CoinListAction
 }

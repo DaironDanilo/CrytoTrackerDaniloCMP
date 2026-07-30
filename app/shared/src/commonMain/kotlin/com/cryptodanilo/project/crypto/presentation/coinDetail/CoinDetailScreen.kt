@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cryptodanilo.project.core.presentation.components.FavoriteStar
 import com.cryptodanilo.project.core.presentation.components.LastUpdatedRow
 import com.cryptodanilo.project.core.presentation.components.ShimmerOverlay
 import com.cryptodanilo.project.core.presentation.util.formatAbbreviatedPrice
@@ -244,6 +245,11 @@ private fun SharedTransitionScope.CoinDetailHeaderAndTabs(
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center,
                 color = contentColor,
+            )
+            Spacer(modifier = Modifier.width(CryptoTrackerTheme.spacing.small))
+            FavoriteStar(
+                isFavorite = coin.isFavorite,
+                onClick = { onAction(CoinListAction.OnToggleFavorite(coin.id)) },
             )
         }
     }

@@ -3,6 +3,9 @@ package com.cryptodanilo.project.crypto.presentation.coinList.components
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +19,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -27,6 +33,7 @@ import androidx.compose.material3.adaptive.layout.AnimatedPaneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +55,7 @@ import cryptotrackerdanilo.shared.generated.resources.coin_list_header_change_pc
 import cryptotrackerdanilo.shared.generated.resources.coin_list_header_price
 import cryptotrackerdanilo.shared.generated.resources.coin_list_header_trend
 import cryptotrackerdanilo.shared.generated.resources.coins_all_loaded
+import cryptotrackerdanilo.shared.generated.resources.favorites_filter
 import cryptotrackerdanilo.shared.generated.resources.load_more
 import cryptotrackerdanilo.shared.generated.resources.retry
 import cryptotrackerdanilo.shared.generated.resources.search_no_results_hint
@@ -96,14 +104,19 @@ fun SharedTransitionScope.CoinListScreen(
 
         else -> {
             val displayedCoins =
-                if (state.searchQuery.isBlank()) {
-                    state.coins
-                } else {
-                    state.coins.filter { coin ->
-                        coin.symbol.contains(state.searchQuery, ignoreCase = true) ||
-                            coin.name.contains(state.searchQuery, ignoreCase = true)
+                state.coins
+                    .let { coins ->
+                        if (state.searchQuery.isBlank()) {
+                            coins
+                        } else {
+                            coins.filter { coin ->
+                                coin.symbol.contains(state.searchQuery, ignoreCase = true) ||
+                                    coin.name.contains(state.searchQuery, ignoreCase = true)
+                            }
+                        }
+                    }.let { coins ->
+                        if (state.showFavoritesOnly) coins.filter { it.isFavorite } else coins
                     }
-                }
 
             Column(modifier = modifier.fillMaxSize()) {
                 CoinSearchBar(
@@ -112,18 +125,27 @@ fun SharedTransitionScope.CoinListScreen(
                     modifier = Modifier.fillMaxWidth(),
                     isFocusable = isSearchBarFocusable,
                 )
-                state.lastUpdatedMs?.let { updatedAt ->
-                    LastUpdatedRow(
-                        updatedAt = updatedAt,
-                        isLoading = state.isManualRefreshing,
-                        onRefresh = { onAction(CoinListAction.OnManualRefresh) },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = CryptoTrackerTheme.spacing.medium,
-                                    vertical = CryptoTrackerTheme.spacing.extraSmall,
-                                ),
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = CryptoTrackerTheme.spacing.medium,
+                                vertical = CryptoTrackerTheme.spacing.extraSmall,
+                            ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    state.lastUpdatedMs?.let { updatedAt ->
+                        LastUpdatedRow(
+                            updatedAt = updatedAt,
+                            isLoading = state.isManualRefreshing,
+                            onRefresh = { onAction(CoinListAction.OnManualRefresh) },
+                        )
+                        Spacer(modifier = Modifier.size(CryptoTrackerTheme.spacing.small))
+                    }
+                    FavoritesFilterChip(
+                        isSelected = state.showFavoritesOnly,
+                        onClick = { onAction(CoinListAction.OnToggleFavoritesFilter) },
                     )
                 }
 
@@ -192,11 +214,15 @@ fun SharedTransitionScope.CoinListScreen(
                                         isSelected = coin.id == state.selectedCoinUi?.id,
                                         shouldExistSharedElementTransition = shouldExistSharedElementTransition,
                                         onItemClick = { onAction(CoinListAction.OnCoinClicked(coinUi = coin)) },
+                                        onFavoriteClick = { onAction(CoinListAction.OnToggleFavorite(coin.id)) },
                                         modifier = Modifier.fillMaxWidth(),
                                     )
                                 }
 
-                                if (state.searchQuery.isBlank()) {
+                                // Pagination is irrelevant to the favorites filter — it's a client-side
+                                // filter over whatever's already loaded, not a separate paged query, so
+                                // "Load more"/"all loaded" would misleadingly imply there's more to fetch.
+                                if (state.searchQuery.isBlank() && !state.showFavoritesOnly) {
                                     item {
                                         when {
                                             state.isLoadingMore -> {
@@ -246,6 +272,56 @@ fun SharedTransitionScope.CoinListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun FavoritesFilterChip(
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(CryptoTrackerTheme.sizing.cornerFull)
+    Row(
+        modifier =
+            modifier
+                .clip(shape)
+                .background(
+                    color =
+                        if (isSelected) {
+                            CryptoTrackerTheme.colors.primary.copy(alpha = 0.15f)
+                        } else {
+                            CryptoTrackerTheme.colors.surfaceContainerHigh
+                        },
+                    shape = shape,
+                ).border(
+                    width = CryptoTrackerTheme.sizing.borderThin,
+                    color =
+                        if (isSelected) {
+                            CryptoTrackerTheme.colors.primary.copy(alpha = 0.35f)
+                        } else {
+                            CryptoTrackerTheme.colors.outlineVariant
+                        },
+                    shape = shape,
+                ).clickable(onClick = onClick)
+                .padding(
+                    horizontal = CryptoTrackerTheme.spacing.small,
+                    vertical = CryptoTrackerTheme.spacing.extraSmall,
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(CryptoTrackerTheme.spacing.extraSmall),
+    ) {
+        Icon(
+            imageVector = if (isSelected) Icons.Filled.Star else Icons.Outlined.Star,
+            contentDescription = null,
+            tint = if (isSelected) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.onSurfaceVariant,
+            modifier = Modifier.size(CryptoTrackerTheme.sizing.iconSmall),
+        )
+        Text(
+            text = stringResource(Res.string.favorites_filter),
+            style = CryptoTrackerTheme.typography.bodySmall,
+            color = if (isSelected) CryptoTrackerTheme.colors.primary else CryptoTrackerTheme.colors.onSurface,
+        )
     }
 }
 

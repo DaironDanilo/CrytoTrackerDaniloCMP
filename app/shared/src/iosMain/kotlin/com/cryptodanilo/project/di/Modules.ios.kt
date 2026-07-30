@@ -3,6 +3,7 @@ package com.cryptodanilo.project.di
 import com.cryptodanilo.project.core.database.CoinDao
 import com.cryptodanilo.project.core.database.CoinPriceDao
 import com.cryptodanilo.project.core.database.CryptoDatabase
+import com.cryptodanilo.project.core.database.FavoriteCoinDao
 import com.cryptodanilo.project.core.database.getDatabaseBuilder
 import com.cryptodanilo.project.core.database.getRoomDatabase
 import io.ktor.client.engine.HttpClientEngine
@@ -17,4 +18,5 @@ actual val platformModule: Module
             single<CryptoDatabase> { getRoomDatabase(getDatabaseBuilder()) }
             single<CoinDao> { get<CryptoDatabase>().coinDao() }
             single<CoinPriceDao> { get<CryptoDatabase>().coinPriceDao() }
+            single<FavoriteCoinDao> { get<CryptoDatabase>().favoriteCoinDao() }
         }

@@ -18,6 +18,10 @@ data class CoinListState(
     val coins: List<CoinUi> = emptyList(),
     val selectedCoinUi: CoinUi? = null,
     val searchQuery: String = "",
+    // Filters the list to favorited coins only. Client-side, over whatever's currently
+    // loaded — a coin favorited on a page beyond the loaded ones won't show up here until
+    // that page is fetched (see CoinListScreen's displayedCoins).
+    val showFavoritesOnly: Boolean = false,
     val selectedDetailTab: DetailTab = DetailTab.Chart,
     val selectedTimeframe: ChartTimeframe = ChartTimeframe.ONE_DAY,
     val isLoadingCoinHistory: Boolean = false,

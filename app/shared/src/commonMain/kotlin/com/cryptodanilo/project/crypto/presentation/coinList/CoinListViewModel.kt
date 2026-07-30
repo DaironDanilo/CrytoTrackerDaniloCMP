@@ -2,6 +2,8 @@ package com.cryptodanilo.project.crypto.presentation.coinList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cryptodanilo.project.core.database.FavoriteCoinDao
+import com.cryptodanilo.project.core.database.FavoriteCoinEntity
 import com.cryptodanilo.project.core.domain.util.onError
 import com.cryptodanilo.project.core.domain.util.onSuccess
 import com.cryptodanilo.project.core.presentation.util.toUiString
@@ -28,6 +30,7 @@ import kotlin.time.ExperimentalTime
 
 class CoinListViewModel(
     private val coinDataSource: CoinDataSource,
+    private val favoriteCoinDao: FavoriteCoinDao,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CoinListState())
     val state: StateFlow<CoinListState> = _state
@@ -37,6 +40,10 @@ class CoinListViewModel(
 
     private var currentOffset = 0
     private var currentMarketsOffset = 0
+
+    // Kept in sync by loadCoins() (initial load) and toggleFavorite() (every mutation) — not
+    // reloaded on every refresh/loadMore, since those never change which coins are favorited.
+    private var favoriteCoinIds: Set<String> = emptySet()
 
     init {
         loadCoins()
@@ -63,18 +70,49 @@ class CoinListViewModel(
                     selectCoin(_state.value.coins.first())
                 }
             }
+            is CoinListAction.OnToggleFavorite -> toggleFavorite(action.coinId)
+            CoinListAction.OnToggleFavoritesFilter ->
+                _state.update { it.copy(showFavoritesOnly = !it.showFavoritesOnly) }
+        }
+    }
+
+    private fun applyFavorites(coins: List<CoinUi>): List<CoinUi> = coins.map { it.copy(isFavorite = it.id in favoriteCoinIds) }
+
+    private fun toggleFavorite(coinId: String) {
+        val isCurrentlyFavorite = coinId in favoriteCoinIds
+        viewModelScope.launch {
+            if (isCurrentlyFavorite) {
+                favoriteCoinDao.removeFavorite(coinId)
+            } else {
+                favoriteCoinDao.addFavorite(FavoriteCoinEntity(coinId))
+            }
+            favoriteCoinIds =
+                if (isCurrentlyFavorite) favoriteCoinIds - coinId else favoriteCoinIds + coinId
+            _state.update { current ->
+                current.copy(
+                    coins =
+                        current.coins.map { coin ->
+                            if (coin.id == coinId) coin.copy(isFavorite = !isCurrentlyFavorite) else coin
+                        },
+                    selectedCoinUi =
+                        current.selectedCoinUi?.let {
+                            if (it.id == coinId) it.copy(isFavorite = !isCurrentlyFavorite) else it
+                        },
+                )
+            }
         }
     }
 
     private fun loadCoins() {
         _state.update { it.copy(isLoading = true, isError = false) }
         viewModelScope.launch {
+            favoriteCoinIds = favoriteCoinDao.getFavoriteCoinIds().toSet()
             val result = coinDataSource.getCoins(limit = PAGE_SIZE, offset = 0)
             val lastCachedAt = coinDataSource.getLastCachedAt()
             result
                 .onSuccess { coins ->
                     currentOffset = PAGE_SIZE
-                    val coinUis = coins.map { it.toCoinUi() }
+                    val coinUis = applyFavorites(coins.map { it.toCoinUi() })
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -117,7 +155,7 @@ class CoinListViewModel(
         result
             .onSuccess { coins ->
                 currentOffset = PAGE_SIZE
-                val coinUis = coins.map { it.toCoinUi() }
+                val coinUis = applyFavorites(coins.map { it.toCoinUi() })
                 _state.update {
                     it.copy(
                         coins = coinUis,
@@ -205,7 +243,7 @@ class CoinListViewModel(
                     _state.update {
                         it.copy(
                             isLoadingMore = false,
-                            coins = it.coins + coins.map { coin -> coin.toCoinUi() },
+                            coins = it.coins + applyFavorites(coins.map { coin -> coin.toCoinUi() }),
                             hasMoreCoins = coins.size >= PAGE_SIZE,
                             lastUpdatedMs = lastCachedAt ?: it.lastUpdatedMs,
                         )
