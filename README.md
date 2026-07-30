@@ -127,10 +127,8 @@ approximation. Compose still owns everything inside each tab (coin list, coin de
 unchanged; only the tab bar chrome itself is native. iPad and pre-iOS 26 devices keep the
 existing, fully Compose-driven adaptive layout shown above.
 
-<!-- Replace with your own screen recording of the app switching between the Crypto and Stocks
-tabs on an iOS 26 device/simulator, converted to a GIF -->
 <p align="center">
-  <img src="assets/liquid_glass_tab_bar.gif" alt="iOS 26 Liquid Glass tab bar — switching between the Crypto and Stocks tabs" width="300" />
+  <img src="https://github.com/user-attachments/assets/445703db-dad6-4bd0-9a55-65277d24c7a4" alt="iOS 26 Liquid Glass tab bar — switching between the Crypto and Stocks tabs" width="300" />
 </p>
 
 ---
