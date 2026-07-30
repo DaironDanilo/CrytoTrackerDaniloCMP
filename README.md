@@ -69,6 +69,7 @@ A cryptocurrency tracking app built with **Compose Multiplatform 1.11.0**, targe
 - Shared UI and business logic across all four platforms
 - Native iOS text input (introduced in CMP 1.11.0)
 - Local database cache via Room KMP across all four platforms (Android, iOS, Desktop, Web/OPFS)
+- Native iOS 26 Liquid Glass tab bar on iPhone, with a fully Compose-driven fallback on older iOS versions and iPad
 - **<a href="https://danilo-cryptotracker-kmp.netlify.app/" target="_blank" rel="noopener noreferrer">Live web demo</a>** — runs in any browser via Kotlin/Wasm, no install required
 
 ---
@@ -116,6 +117,22 @@ The list/detail flow, navigation shell, and tab switcher all reflow automaticall
     </td>
   </tr>
 </table>
+---
+
+## iOS 26 Liquid Glass Tab Bar
+
+On iPhone running iOS 26+, tab switching (Crypto / Stocks) is handed off to a native SwiftUI
+`TabView`, which renders the system's real Liquid Glass material — not a Compose-drawn
+approximation. Compose still owns everything inside each tab (coin list, coin detail, etc.)
+unchanged; only the tab bar chrome itself is native. iPad and pre-iOS 26 devices keep the
+existing, fully Compose-driven adaptive layout shown above.
+
+<!-- Replace with your own screen recording of the app switching between the Crypto and Stocks
+tabs on an iOS 26 device/simulator, converted to a GIF -->
+<p align="center">
+  <img src="assets/liquid_glass_tab_bar.gif" alt="iOS 26 Liquid Glass tab bar — switching between the Crypto and Stocks tabs" width="300" />
+</p>
+
 ---
 
 ## Tech Stack
