@@ -17,11 +17,11 @@ struct ComposeView: UIViewControllerRepresentable {
 // layout (rail/expanded panel in RootScreen.kt), which a plain two-item TabView doesn't replace.
 @available(iOS 26.0, *)
 private struct CryptoTabComposeView: UIViewControllerRepresentable {
-    @Binding var isBottomBarHidden: Bool
+    @Binding var isDetailActive: Bool
 
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.CryptoTabViewController { isVisible in
-            isBottomBarHidden = !isVisible.boolValue
+            isDetailActive = !isVisible.boolValue
         }
     }
 
@@ -30,36 +30,47 @@ private struct CryptoTabComposeView: UIViewControllerRepresentable {
 
 @available(iOS 26.0, *)
 private struct StocksTabComposeView: UIViewControllerRepresentable {
-    @Binding var isBottomBarHidden: Bool
+    @Binding var isDetailActive: Bool
 
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.StocksTabViewController { isVisible in
-            isBottomBarHidden = !isVisible.boolValue
+            isDetailActive = !isVisible.boolValue
         }
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
-// isBottomBarHidden is shared across both tabs' callbacks: only the Crypto tab ever reports
-// false (opening a coin detail screen on compact width — see AppShellViewModel.setDetailMode),
-// Stocks always reports true, so there's no fight for control since just one tab is on screen.
+// `.toolbar(_:for: .tabBar)` only reliably hides the floating Liquid Glass tab bar when the view
+// setting it lives under a NavigationStack — applied directly on the bare TabView (no
+// NavigationStack ancestor) the preference has nothing to propagate through and is ignored.
+// Each tab therefore gets its own NavigationStack (nav bar hidden — Compose draws its own top
+// bar) purely so this toggle has somewhere to attach; no actual push/pop happens; Compose keeps
+// fully owning the coin list <-> coin detail transition and its own crossfade animation.
 @available(iOS 26.0, *)
 private struct NativeTabContentView: View {
-    @State private var isBottomBarHidden = false
+    @State private var isCryptoDetailActive = false
+    @State private var isStocksDetailActive = false
 
     var body: some View {
         TabView {
             Tab("Crypto", systemImage: "bitcoinsign.circle") {
-                CryptoTabComposeView(isBottomBarHidden: $isBottomBarHidden)
-                    .ignoresSafeArea(.all)
+                NavigationStack {
+                    CryptoTabComposeView(isDetailActive: $isCryptoDetailActive)
+                        .ignoresSafeArea(.all)
+                        .toolbar(.hidden, for: .navigationBar)
+                        .toolbar(isCryptoDetailActive ? .hidden : .visible, for: .tabBar)
+                }
             }
             Tab("Stocks", systemImage: "chart.line.uptrend.xyaxis") {
-                StocksTabComposeView(isBottomBarHidden: $isBottomBarHidden)
-                    .ignoresSafeArea(.all)
+                NavigationStack {
+                    StocksTabComposeView(isDetailActive: $isStocksDetailActive)
+                        .ignoresSafeArea(.all)
+                        .toolbar(.hidden, for: .navigationBar)
+                        .toolbar(isStocksDetailActive ? .hidden : .visible, for: .tabBar)
+                }
             }
         }
-        .toolbar(isBottomBarHidden ? .hidden : .visible, for: .tabBar)
     }
 }
 
