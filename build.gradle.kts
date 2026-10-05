@@ -23,6 +23,16 @@ rootProject.plugins.withType(WasmYarnPlugin::class.java) {
     rootProject.the<WasmYarnRootExtension>().resolution("**/ws", "8.21.1")
 }
 
+// wasmJs uses Yarn (lockfile: kotlin-js-store/wasm/yarn.lock), but KGP still registers the npm
+// `kotlinWasm*PackageLock` tasks, which fail input validation since build/wasm/package-lock.json
+// never exists. Redirect each to its Yarn equivalent so either name does the right thing.
+listOf("Restore", "Store", "Upgrade").forEach { action ->
+    tasks.matching { it.name == "kotlinWasm${action}PackageLock" }.configureEach {
+        enabled = false
+        dependsOn("kotlinWasm${action}YarnLock")
+    }
+}
+
 subprojects {
     pluginManager.apply("org.jlleitschuh.gradle.ktlint")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
